@@ -1,0 +1,36 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="page-dark" data-room data-event-id="<%= ev.id %>">
+  <div class="crumbs"><a href="/">Home</a> › <a href="/auctions">Join Auctions</a> › <%= ev.name %></div>
+  <div class="page-head">
+    <div><h1 class="page-title"><%= ev.name %></h1><p class="muted" style="margin:0"><%= ev.location_name || 'National auction – all of Spain' %> · <%= dateTime(ev.starts_at) %> (Madrid) · <span data-event-status><%- badge(ev.status) %></span></p></div>
+    <span class="conn" data-conn>Connecting…</span>
+  </div>
+  <% if (!elig.ok) { %><div class="alert alert-warn"><%= elig.reason %> <% if (!user) { %><a href="/login?next=/auctions/<%= ev.id %>/live" style="color:#fff;font-weight:700">Sign in</a><% } %></div><% } %>
+  <div class="live-grid">
+    <section class="on-block" aria-live="polite">
+      <div class="ob-hd"><span>On The Block</span><span data-lot-label>—</span></div>
+      <div class="grid-2" style="padding:16px;align-items:center">
+        <div><img data-cur-img src="/media/car/automobile.svg" alt="" style="width:100%;border-radius:6px;aspect-ratio:4/3;object-fit:cover"><h2 data-cur-title style="font-size:19px;margin-top:10px">Waiting for the auction to start…</h2><p class="hint" data-cur-meta></p></div>
+        <div class="center">
+          <div class="dial" data-dial style="--p:100%"><div><div class="sub" data-dial-label>Current bid</div><div class="amt" data-price>—</div><div class="sub"><span data-clock>—</span></div></div></div>
+          <p class="hint"><span data-bid-count>0</span> bids · reserve <span data-reserve>—</span></p>
+          <% if (elig.ok) { %>
+            <button class="btn btn-green btn-lg btn-block" type="button" data-quick-bid disabled>Bid —</button>
+            <form class="inline-form" data-custom-bid style="margin-top:10px;justify-content:center"><label class="sr-only" for="custom">Custom maximum (€)</label><input id="custom" type="number" min="0" step="25" placeholder="Max bid €" style="width:140px"><button class="btn btn-blue" type="submit">Set max</button></form>
+          <% } else { %><a class="btn btn-blue btn-block" href="<%= user ? '/dashboard/membership' : '/login?next=/auctions/' + ev.id + '/live' %>"><%= user ? 'Upgrade to bid' : 'Sign In to Bid' %></a><% } %>
+          <p class="hint" data-my-status style="min-height:20px"></p>
+        </div>
+      </div>
+      <div style="padding:0 16px 16px" class="history"><h3 style="font-size:15px">Bids on this lot</h3><ul data-history><li class="muted">—</li></ul></div>
+      <% if (ev.status === 'scheduled') { %><div class="alert alert-info" style="margin:0 16px 16px">This auction starts in <strong data-countdown="<%= new Date(ev.starts_at).toISOString() %>">—</strong>. Pre-bids are accepted on each lot page until then.<% if (user && user.has('auctions.manage')) { %> <button class="btn btn-green btn-sm" type="button" data-api="/api/v1/admin/events/<%= ev.id %>/start" data-confirm="Start this auction now?">Start now (admin)</button><% } %></div><% } %>
+    </section>
+    <aside class="card-dark" style="padding:0">
+      <div class="card-head-blue" style="margin:0;border-radius:6px 6px 0 0">Sale list (<%= lots.length %> lots)</div>
+      <div class="queue"><ul><% lots.forEach(function (l) { %><li data-queue-lot="<%= l.id %>" class="<%= ev.current_lot_id === l.id ? 'cur' : '' %>"><img src="<%= images[l.vehicle_id] || '/media/car/automobile.svg' %>" alt="" width="64" height="48" loading="lazy"><div><a href="/lot/<%= l.lot_number %>" style="color:#fff;text-decoration:none"><strong><%= lotTitle(l) %></strong></a><br><span class="hint">Lot # <%= l.lot_number %> · <%= l.location_city %></span></div><span data-queue-status><%- badge(l.status) %></span></li><% }) %></ul></div>
+    </aside>
+  </div>
+  <script type="application/json" id="room-lots"><%- JSON.stringify(lots.map(function (l) { return { id: l.id, lot_number: Number(l.lot_number), title: lotTitle(l), image: images[l.vehicle_id] || null, meta: l.primary_damage + ' · ' + l.odometer_km + ' km · ' + l.location_city }; })).replace(/</g, '\\u003c') %></script>
+</main>
+<%- include('../partials/footer', { hideCta: true }) %>
+<%- include('../partials/foot', { scripts: ['/socket.io/socket.io.js', '/js/live.js'] }) %>

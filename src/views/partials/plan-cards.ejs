@@ -1,0 +1,17 @@
+<% var planText=function(text){if(lang!=='es')return text;var map={"For those who want to look at auctions, but don't want to bid.":'Para quienes quieren explorar subastas sin ofertar.','For those who plan to buy only a few vehicles per year.':'Para quienes planean comprar unos pocos vehículos al año.','For those who plan to buy multiple vehicles on a regular basis.':'Para quienes compran varios vehículos de forma habitual.','View an auction':'Ver una subasta','Add vehicles to your Watchlist':'Añadir vehículos a favoritos','Create vehicle alerts':'Crear alertas de vehículos','Access and participate in our online auctions':'Acceder y participar en las subastas en línea','Use the Calculator Fee':'Usar la calculadora de tarifas','Save your favorite searches':'Guardar búsquedas favoritas','Everything included in Basic':'Todo lo incluido en Basic','Receive priority customer service':'Recibir atención prioritaria','Receive phone support':'Recibir asistencia telefónica'};return map[text]||String(text).replace(/^Bid on a vehicle up to (.+) in every auction$/,'Ofertar hasta $1 por vehículo en cada subasta').replace(/^Bid on up to (\d+) vehicles at each auction with a limit of (.+)$/,'Ofertar por hasta $1 vehículos por subasta, con un límite de $2');}; %>
+<div class="plans">
+<% plans.forEach(function (p) { var feats = Array.isArray(p.features) ? p.features : []; %>
+  <article class="plan <%= p.code !== 'guest' ? 'plan-hl' : '' %>">
+    <h3><%= p.name %> <span class="price"><%= p.price_cents?eur(p.price_cents):(lang==='es'?'Gratis':'Free') %></span></h3>
+    <p class="plan-desc"><%= planText(p.description) %></p>
+    <ul><% feats.forEach(function (f) { %><li><svg class="ic"><use href="#i-check-circle"/></svg> <span><%= planText(f) %></span></li><% }) %></ul>
+    <% if (typeof from !== 'undefined' && from === 'register') { %>
+      <button class="btn btn-blue btn-pill btn-block" type="button" data-api="/api/v1/memberships/choose" data-method="POST" data-body='{"plan":"<%= p.code %>","from":"register"}'>Become a <%= p.name %> Member</button>
+    <% } else if (user && user.is('buyer')) { %>
+      <button class="btn btn-blue btn-pill btn-block" type="button" data-api="/api/v1/memberships/choose" data-method="POST" data-body='{"plan":"<%= p.code %>"}' <%= user.plan && user.plan.code === p.code ? 'disabled' : '' %>><%= user.plan && user.plan.code === p.code ? 'Your current plan' : 'Become a ' + p.name + ' Member' %></button>
+    <% } else { %>
+      <a class="btn btn-blue btn-pill btn-block" href="/register?plan=<%= p.code %>"><%= lang==='es'?'Elegir membresía '+p.name:'Become a '+p.name+' Member' %></a>
+    <% } %>
+  </article>
+<% }) %>
+</div>

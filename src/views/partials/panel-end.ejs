@@ -1,0 +1,11 @@
+<% if (typeof memberLayout !== 'undefined' && memberLayout) { %>
+  </main>
+</div>
+<%- include('footer') %>
+<% } else { %>
+    </main>
+  </div>
+</div>
+<% } %>
+<div id="toast-region" class="toasts" role="status" aria-live="polite"></div>
+<%- include('foot', { scripts: (typeof scripts !== 'undefined' ? scripts : []) }) %>

@@ -1,0 +1,26 @@
+<%- include('../../partials/panel-start') %>
+<div class="m-head"><div><h1 class="m-title">Buying Power</h1><p class="lead">Your buying power is the total you can commit in active bids. It depends on your membership and is checked by the server on every bid.</p></div></div>
+<div class="w-grid w-grid-top">
+  <section class="widget w-power"><div class="w-hd"><h2><svg class="ic"><use href="#i-wallet"/></svg>Available now</h2></div><div class="w-bd">
+    <div class="bp-big"><%= !bp.canBid ? '0,00€' : bp.available === null ? 'Unlimited' : eur(bp.available) %></div>
+    <% if (bp.canBid && bp.limit) { %><div class="bp-meter"><span style="width:<%= bp.usedPct %>%"></span></div><p class="hint"><%= bp.usedPct %>% used · <%= eur(bp.committed) %> of <%= eur(bp.limit) %></p><% } %>
+    <% if (!elig.ok) { %><div class="alert alert-warn" style="margin-top:10px"><%= elig.reason %></div><% } %>
+  </div></section>
+  <section class="widget"><div class="w-hd"><h2><svg class="ic"><use href="#i-id"/></svg>Your limits</h2></div><div class="w-bd">
+    <dl class="kv-list"><dt>Membership</dt><dd><%= bp.plan || 'None' %></dd><dt>Max. per vehicle</dt><dd><%= bp.perVehicle ? eur(bp.perVehicle) : (bp.canBid ? 'No limit' : '—') %></dd><dt>Vehicles per auction</dt><dd><%= bp.maxLots ? 'up to ' + bp.maxLots : (bp.canBid ? 'No limit' : '—') %></dd><dt>Total per auction</dt><dd><%= bp.limit ? eur(bp.limit) : (bp.canBid ? 'No limit' : '—') %></dd></dl>
+  </div></section>
+  <section class="widget"><div class="w-hd"><h2><svg class="ic"><use href="#i-receipt"/></svg>Committed</h2></div><div class="w-bd">
+    <dl class="kv-list"><dt>Active bids</dt><dd><%= bp.activeLots %> lot(s)</dd><dt>Winning</dt><dd><%= bp.winning %></dd><dt>Max. bids total</dt><dd><%= eur(bp.committed) %></dd><dt>Unpaid purchases</dt><dd class="<%= bp.unpaid ? 'txt-warn' : '' %>"><%= eur(bp.unpaid) %></dd></dl>
+    <% if (bp.unpaid) { %><a class="btn btn-green btn-sm" href="/dashboard/payments">Pay now</a><% } %>
+  </div></section>
+</div>
+<section class="widget"><div class="w-hd"><h2>Increase your buying power</h2><a href="/membership">Compare memberships ›</a></div><div class="w-bd">
+  <div class="plan-compare"><% plans.forEach(function (p) { var mine = user.plan && user.plan.code === p.code; %>
+    <div class="pc <%= mine ? 'on' : '' %>"><h3><%= p.name %></h3><div class="pc-price"><%= p.price_cents ? eur(p.price_cents) + ' / year' : 'Free' %></div>
+      <ul><li><%= p.can_bid ? 'Can bid' : 'Cannot bid' %></li><li><%= p.max_bid_cents ? 'Up to ' + eur(p.max_bid_cents) + ' per vehicle' : (p.can_bid ? 'No limit per vehicle' : 'Watch auctions only') %></li><% if (p.max_lots_per_event) { %><li>Up to <%= p.max_lots_per_event %> vehicles per auction</li><% } %><% if (p.max_total_cents) { %><li>Combined limit <%= eur(p.max_total_cents) %></li><% } %></ul>
+      <% if (mine) { %><span class="badge badge-green">Your plan</span><% } else { %><a class="btn btn-blue btn-sm" href="/dashboard/membership">Choose <%= p.name %></a><% } %></div><% }) %></div>
+</div></section>
+<section class="widget"><div class="w-hd"><h2>Bids using your buying power</h2><a href="/dashboard/bids">Bid Status ›</a></div><div class="w-bd w-flush">
+  <% if (!active_lots.length) { %><div class="empty">No active bids.</div><% } else { %><table class="tbl"><thead><tr><th>Lot</th><th>Vehicle</th><th class="num">My max</th><th>Status</th></tr></thead><tbody><% active_lots.forEach(function (r) { %><tr><td><a href="/lot/<%= r.lot_number %>">#<%= r.lot_number %></a></td><td><%= r.year %> <%= r.make %> <%= r.model %></td><td class="num"><%= r.my_max ? eur(r.my_max) : '—' %></td><td><%- r.leading ? '<span class="badge badge-green">Winning</span>' : '<span class="badge badge-red">Outbid</span>' %></td></tr><% }) %></tbody></table><% } %>
+</div></section>
+<%- include('../../partials/panel-end') %>

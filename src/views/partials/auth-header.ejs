@@ -1,0 +1,10 @@
+<header class="auth-hdr">
+  <a href="/" class="auth-logo" aria-label="<%= ht('Ir al inicio', 'Go to home') %>"><%- include('logo') %></a>
+  <nav class="auth-hdr-right" aria-label="<%= ht('Cuenta', 'Account') %>">
+    <a href="/help"><%= ht('¿Necesita ayuda?', 'Need help?') %></a>
+    <details class="auth-lang"><summary><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg> <%= langs[lang].label %> <svg class="ic ic-xs" aria-hidden="true"><use href="#i-chev"/></svg></summary>
+      <div class="auth-lang-pop"><% Object.keys(langs).forEach(function (l) { %><a href="?<%= qsWith({ lang: l }) %>" lang="<%= langs[l].html %>" class="<%= l === lang ? 'on' : '' %>"><%= langs[l].label %></a><% }) %></div></details>
+    <% if (typeof authOther !== 'undefined') { %><a class="auth-switch" href="<%= authOther[0] %>"><%= authOther[1] %></a><% } %>
+  </nav>
+</header>
+<% if (typeof authProgress !== 'undefined') { %><div class="auth-progress" aria-hidden="true"><span style="width:<%= authProgress %>%"></span></div><% } %>

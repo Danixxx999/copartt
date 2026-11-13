@@ -1,0 +1,27 @@
+<%- include('../../partials/panel-start') %>
+<div class="bid-content-heading"><h2><%= {current:'Todas las ofertas',won:'Lotes ganados',lost:'Lotes perdidos',counter:'Mis Contraofertas'}[tab] %></h2></div>
+<nav class="m-tabs bid-hidden-tabs" aria-label="Estado de la oferta">
+  <a href="/dashboard/bids" class="<%= tab === 'current' ? 'on' : '' %>" <%- tab === 'current' ? 'aria-current="page"' : '' %>>Ofertas actuales <span><%= groups.current.length %></span></a>
+  <a href="/dashboard/bids?tab=won" class="<%= tab === 'won' ? 'on' : '' %>" <%- tab === 'won' ? 'aria-current="page"' : '' %>>Lotes ganados <span><%= groups.won.length %></span></a>
+  <a href="/dashboard/bids?tab=lost" class="<%= tab === 'lost' ? 'on' : '' %>" <%- tab === 'lost' ? 'aria-current="page"' : '' %>>Lotes perdidos <span><%= groups.lost.length %></span></a>
+  <a href="/dashboard/bids?tab=counter" class="<%= tab === 'counter' ? 'on' : '' %>" <%- tab === 'counter' ? 'aria-current="page"' : '' %>>Mis Contraofertas <span><%= groups.counter.length %></span></a>
+</nav>
+<div class="table-actions"><button type="button" data-export-table>Exportar</button><button type="button" data-print>Imprimir</button></div><div class="data-table" data-table><%- include('../../partials/table-tools', { count: groups[tab].length }) %><div class="widget m-tab-panel"><div class="w-bd w-flush">
+<% var rows = groups[tab]; if (!rows.length) { %>
+  <div class="table-wrap"><table class="tbl"><thead><tr><% ['Imágenes','Número de lote','Año','Marca','Modelo','Locales','Fecha de venta','Odómetro','Documento','Daño','Estado de la oferta','Mi oferta máxima'].forEach(function(h){ %><th><%= h %></th><% }) %></tr></thead><tbody><tr><td colspan="12" class="empty-cell"><%= { current: 'No tiene ninguna oferta. Busque vehículos para realizar una oferta.', won: 'Actualmente no hay artículos para mostrar.', lost: 'No hay lotes perdidos.', counter: 'No hay contraofertas pendientes.' }[tab] %> <a href="/vehicle-finder">Buscador de vehículos ›</a></td></tr></tbody></table></div>
+<% } else if (tab === 'counter') { %>
+  <div class="table-wrap"><table class="tbl"><thead><tr><th></th><th>Información del lote</th><th>Fecha de venta</th><th class="num">Su oferta</th><th class="num">Contraoferta del vendedor</th><th>Recibida</th><th>Responder</th></tr></thead><tbody>
+  <% rows.forEach(function (r) { %><tr><td><img class="mini-img" src="<%= r.image %>" alt=""></td><td><a href="/lot/<%= r.lot_number %>"><strong><%= r.year %> <%= r.make %> <%= r.model %></strong></a><br><span class="hint">Lot #<%= r.lot_number %> · <%= r.location_name %></span></td><td><%= date(r.auction_date) %></td><td class="num"><%= eur(r.current_bid_cents) %></td><td class="num"><strong class="txt-blue"><%= eur(r.counter_offer_cents) %></strong></td><td><%= dateTime(r.counter_offer_at) %></td>
+    <td class="actions"><button class="btn btn-green btn-sm" type="button" data-api="/api/v1/lots/<%= r.id %>/counter-response" data-body='{"accept":true}' data-confirm="Accept the counter offer of <%= eur(r.counter_offer_cents) %>? This is binding and an invoice will be issued.">Aceptar</button><button class="btn btn-red btn-sm" type="button" data-api="/api/v1/lots/<%= r.id %>/counter-response" data-body='{"accept":false}' data-confirm="Decline this counter offer?">Rechazar</button></td></tr><% }) %>
+  </tbody></table></div>
+<% } else { %>
+  <div class="table-wrap"><table class="tbl"><thead><tr><th></th><th>Información del lote</th><th>Fecha de venta</th><th class="num"><%= tab === 'won' ? 'Precio de venta' : 'Oferta actual' %></th><th class="num">Mi oferta máxima</th><th>Estado de la oferta</th><th>Estado del lote</th><th></th></tr></thead><tbody>
+  <% rows.forEach(function (r) { %><tr><td><img class="mini-img" src="<%= r.image %>" alt=""></td><td><a href="/lot/<%= r.lot_number %>"><strong><%= r.year %> <%= r.make %> <%= r.model %></strong></a><br><span class="hint">Lot #<%= r.lot_number %> · <%= r.location_name %></span></td><td><%= dateTime(r.auction_date) %></td><td class="num"><%= eur(r.current_bid_cents) %></td><td class="num"><%= r.my_max ? eur(r.my_max) : '—' %></td>
+    <td><% if (tab === 'won') { %><span class="badge badge-green"><%= r.sold_via === 'buy_now' ? 'Bought – Buy It Now' : r.sold_via === 'counter_offer' ? 'Won – counter offer' : r.sold_via === 'seller_approval' ? 'Won – seller approved' : 'Won' %></span><% } else if (tab === 'lost') { %><span class="badge badge-gray"><%= r.status === 'no_sale' ? 'Not sold' : r.status === 'cancelled' ? 'Lot withdrawn' : 'Outbid' %></span><% } else if (r.status === 'pending_seller_approval') { %><span class="badge badge-amber">On approval</span><% } else if (r.leading) { %><span class="badge badge-green">Winning</span><% } else { %><span class="badge badge-red">Outbid</span><% } %></td>
+    <td><%- badge(r.status) %></td>
+    <td><% if (r.order_id && r.leading) { %><a class="btn btn-green btn-sm" href="/dashboard/purchases/<%= r.order_id %>"><%= r.order_status === 'pending_payment' ? 'Pay now' : 'Open' %></a><% } else if (['prebidding','live'].includes(r.status)) { %><a class="btn btn-blue btn-sm" href="/lot/<%= r.lot_number %>"><%= r.leading ? 'Raise max' : 'Bid again' %></a><% } %></td></tr><% }) %>
+  </tbody></table></div>
+<% } %>
+</div></div>
+<%- include('../../partials/table-tools', { count: groups[tab].length }) %></div>
+<%- include('../../partials/panel-end') %>

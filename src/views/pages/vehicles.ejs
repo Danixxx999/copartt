@@ -1,0 +1,57 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="page-dark">
+  <div class="crumbs"><a href="/">Home</a> › <a href="/vehicle-finder">Vehicle Finder</a> › Search Results</div>
+  <div class="page-head"><div><h1 class="page-title">Search Results</h1><p class="muted" style="margin:0"><%= result.total %> vehicle<%= result.total === 1 ? '' : 's' %> found<%= f.q ? ' for "' + f.q + '"' : '' %></p><%- include('../partials/region-scope') %></div>
+    <div class="actions"><% if (user) { %><button class="btn btn-light" type="button" data-save-search><svg class="ic"><use href="#i-star"/></svg> Guardar búsqueda</button><% } else { %><a class="btn btn-light" href="/login?next=<%= encodeURIComponent('/vehicles?' + qsWith({})) %>">Sign in to save this search</a><% } %>
+      <a class="btn btn-outline" style="color:#fff" href="/vehicle-alerts">Create alert</a></div></div>
+  <div class="results-layout">
+    <aside class="filters" aria-label="Filters">
+      <h2>Refine your search</h2>
+      <form action="/vehicles" method="get">
+        <div class="form-row"><label for="r-q">Keyword</label><input id="r-q" name="q" value="<%= f.q || '' %>" placeholder="Make, model, lot #"></div>
+        <div class="form-row"><label for="r-cond">Condition</label><select id="r-cond" name="condition"><option value="">All</option><option value="used" <%= f.condition==='used'?'selected':'' %>>Used</option><option value="salvage" <%= f.condition==='salvage'?'selected':'' %>>Salvage</option></select></div>
+        <div class="form-row"><label for="r-type">Vehicle type</label><select id="r-type" name="type"><option value="">All types</option><% types.forEach(function (x) { %><option value="<%= x.code %>" <%= f.type===x.code?'selected':'' %>><%= x.name %></option><% }) %></select></div>
+        <div class="form-row"><label for="r-make">Make</label><select id="r-make" name="make" data-make-select data-target="r-model"><option value="">All makes</option><% makes.forEach(function (m) { %><option value="<%= m.slug %>" data-id="<%= m.id %>" <%= f.make===m.slug?'selected':'' %>><%= m.name %></option><% }) %></select></div>
+        <div class="form-row"><label for="r-model">Model</label><select id="r-model" name="model" data-selected="<%= f.model || '' %>"><option value="">All models</option></select></div>
+        <div class="form-row"><span class="lbl">Year</span><div class="range-row"><input name="year_from" type="number" min="1920" max="2100" placeholder="From" value="<%= f.year_from || '' %>" aria-label="Year from"><span>–</span><input name="year_to" type="number" min="1920" max="2100" placeholder="To" value="<%= f.year_to || '' %>" aria-label="Year to"></div></div>
+        <div class="form-row"><label for="r-odo">Max. kilometres</label><select id="r-odo" name="odo_max"><option value="">Any</option><% [25000,50000,100000,150000,200000].forEach(function (k) { %><option value="<%= k %>" <%= String(f.odo_max)===String(k)?'selected':'' %>><%= k.toLocaleString('es-ES') %> km</option><% }) %></select></div>
+        <div class="form-row"><label for="r-dmg">Primary damage</label><select id="r-dmg" name="damage"><option value="">Any</option><% damages.forEach(function (d) { %><option value="<%= d.code %>" <%= f.damage===d.code?'selected':'' %>><%= d.name %></option><% }) %></select></div>
+        <div class="form-row"><label for="r-loc">Location</label><select id="r-loc" name="location"><option value="">All locations</option><% locations.forEach(function (l) { %><option value="<%= l.code %>" <%= f.location===l.code?'selected':'' %>><%= l.name %></option><% }) %></select></div>
+        <div class="form-row"><label for="r-st">Sale status</label><select id="r-st" name="status"><option value="">Open (pre-bid &amp; live)</option><option value="closed" <%= f.status==='closed'?'selected':'' %>>Closed / sold</option><option value="all" <%= f.status==='all'?'selected':'' %>>All</option></select></div>
+        <input type="hidden" name="sort" value="<%= f.sort || '' %>">
+        <button class="btn btn-blue btn-block" type="submit">Apply filters</button>
+        <a class="btn btn-outline btn-block" style="color:#fff;margin-top:8px" href="/vehicles">Clear all</a>
+      </form>
+    </aside>
+    <section aria-live="polite">
+      <div class="results-bar">
+        <div class="view-toggle"><a class="<%= f.view !== 'list' ? 'on' : '' %>" href="?<%= qsWith({ view: null }) %>">Grid</a><a class="<%= f.view === 'list' ? 'on' : '' %>" href="?<%= qsWith({ view: 'list' }) %>">List</a></div>
+        <form method="get" class="inline-form"><% Object.keys(f).filter(function (k) { return k !== 'sort' && k !== 'page' && f[k] !== '' && f[k] !== undefined && typeof f[k] === 'string'; }).forEach(function (k) { %><input type="hidden" name="<%= k %>" value="<%= f[k] %>"><% }) %>
+          <label for="sort" class="lbl">Sort by</label><select id="sort" name="sort" data-autosubmit style="width:auto"><% [['auction_date','Auction date'],['lot_number','Lot number'],['year_desc','Year (newest)'],['year_asc','Year (oldest)'],['odometer','Odometer'],['bid_asc','Current bid (low → high)'],['bid_desc','Current bid (high → low)'],['make','Make / model']].forEach(function (s) { %><option value="<%= s[0] %>" <%= (f.sort||'auction_date')===s[0]?'selected':'' %>><%= s[1] %></option><% }) %></select></form>
+      </div>
+      <% if (!result.items.length) { %>
+        <div class="empty"><strong style="color:#fff">No vehicles match your search.</strong><p>Try removing some filters, or <a href="/vehicle-alerts" style="color:var(--blue)">create a vehicle alert</a> to be notified when one arrives.</p></div>
+      <% } else if (f.view === 'list') { %>
+        <div class="table-wrap"><table class="tbl results-table"><thead><tr><th>Image</th><th>Lot info</th><th>Vehicle info</th><th>Condition</th><th>Sale info</th><th class="num">Bids</th><th></th></tr></thead><tbody>
+          <% result.items.forEach(function (l) { %><tr><td><a href="/lot/<%= l.lot_number %>"><img src="<%= l.image %>" alt="" loading="lazy"></a></td>
+            <td><a href="/lot/<%= l.lot_number %>"><strong><%= lotTitle(l) %></strong></a><br>Lot # <%= l.lot_number %></td>
+            <td><%= km(l.odometer_km) %> · <%= cap(l.fuel) %><br><%= l.location_name %></td>
+            <td><%= l.primary_damage %><br><span class="muted"><%= l.condition === 'salvage' ? 'Salvage' : 'Used' %> · <%= l.has_keys ? 'Keys' : 'No keys' %></span></td>
+            <td><%- badge(l.status) %><br><span class="muted"><%= dateTime(l.auction_date) %></span></td>
+            <td class="num"><strong><%= eur(l.current_bid_cents || l.starting_bid_cents) %></strong><br><span class="muted"><%= l.bid_count %> bids</span></td>
+            <td><a class="btn btn-blue btn-sm btn-pill" href="/lot/<%= l.lot_number %>"><%= l.status === 'live' ? 'Bid live' : 'Bid now' %></a></td></tr><% }) %>
+        </tbody></table></div>
+      <% } else { %>
+        <div class="results-grid"><% result.items.forEach(function (l) { %><%- include('../partials/lot-card', { l: l, watched: watched }) %><% }) %></div>
+      <% } %>
+      <% if (result.pages > 1) { %><nav class="pager" aria-label="Pagination">
+        <% if (result.page > 1) { %><a href="?<%= qsWith({ page: result.page - 1 }) %>" rel="prev">‹ Prev</a><% } %>
+        <% for (var i = Math.max(1, result.page - 3); i <= Math.min(result.pages, result.page + 3); i++) { %><% if (i === result.page) { %><span class="on" aria-current="page"><%= i %></span><% } else { %><a href="?<%= qsWith({ page: i }) %>"><%= i %></a><% } %><% } %>
+        <% if (result.page < result.pages) { %><a href="?<%= qsWith({ page: result.page + 1 }) %>" rel="next">Next ›</a><% } %>
+      </nav><% } %>
+    </section>
+  </div>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

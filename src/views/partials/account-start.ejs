@@ -1,0 +1,15 @@
+<%- include('head', { bodyClass: 'account-body' }) %>
+<%- include('header') %>
+<div class="account-wrap">
+  <aside class="account-side" aria-label="<%= t('Mi cuenta') %>">
+    <% menu.forEach(function (g) { var open = g[1].some(function (i) { return current === i[0]; }); %>
+      <% if (g[0]) { %>
+      <details class="acc-group" <%= open ? 'open' : '' %>><summary><%= t(g[0]) %></summary>
+        <ul><% g[1].forEach(function (i) { %><li><a href="<%= i[0] %>" class="<%= current === i[0] ? 'on' : '' %>" <%- current === i[0] ? 'aria-current="page"' : '' %>><%= t(i[1]) %></a></li><% }) %></ul>
+      </details>
+      <% } else { %>
+      <ul class="acc-flat"><% g[1].forEach(function (i) { %><li><a href="<%= i[0] %>" class="<%= current === i[0] ? 'on' : '' %>" <%- current === i[0] ? 'aria-current="page"' : '' %>><%= t(i[1]) %></a></li><% }) %></ul>
+      <% } %>
+    <% }) %>
+  </aside>
+  <main id="main" class="account-main">

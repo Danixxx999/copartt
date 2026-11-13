@@ -1,0 +1,45 @@
+/* ───────── Idioma y región del sitio (panel emergente estilo referencia) ───────── */
+.flag { display: inline-block; vertical-align: middle; border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,.15); flex: none; }
+.lr-switch { position: relative; }
+.lr-switch > summary { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; list-style: none; font-weight: 700; font-family: var(--font-h); color: #111; }
+.lr-switch > summary::-webkit-details-marker { display: none; }
+.lr-pop { position: absolute; right: -40px; top: calc(100% + 12px); width: 300px; background: #0b0f16; color: #fff; border-radius: 6px; padding: 18px 20px 16px; z-index: 80; box-shadow: 0 16px 40px rgba(0,0,0,.45); text-align: center; }
+.lr-pop::before { content: ''; position: absolute; top: -8px; right: 64px; border: 8px solid transparent; border-top: 0; border-bottom-color: #0b0f16; }
+.lr-pop h2 { font-size: 18px; font-weight: 900; margin: 0 0 6px; color: #fff; }
+.lr-pop h2 + .lr-q { margin-top: 0; }
+.lr-q { color: var(--blue); font-weight: 700; font-size: 13px; margin: 0 0 8px; }
+.lr-text { font-size: 12px; line-height: 1.5; color: #e5e7eb; margin: 0 0 14px; }
+.lr-lang { display: flex; gap: 10px; margin-bottom: 20px; }
+.lr-lang select { flex: 1; background: #1f2530; color: #fff; border: 1px solid #3a4250; border-radius: 4px; padding: 9px 10px; font-size: 15px; }
+.lr-lang .btn { min-width: 70px; }
+.lr-region { text-align: left; margin-bottom: 12px; }
+.lr-region > summary { display: flex; align-items: center; gap: 10px; background: #1f2530; border: 1px solid #3a4250; border-radius: 4px; padding: 9px 10px; cursor: pointer; list-style: none; font-weight: 700; }
+.lr-region > summary::-webkit-details-marker { display: none; }
+.lr-region .lr-caret { margin-left: auto; opacity: .8; }
+.lr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 8px; background: #11161f; border: 1px solid #3a4250; border-top: 0; padding: 8px; }
+.lr-grid a { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 4px; color: #fff; text-decoration: none; font-size: 13px; font-weight: 700; }
+.lr-grid a:hover, .lr-grid a.on { background: #26324a; }
+.lr-more { display: block; text-align: left; color: var(--blue); font-size: 12.5px; margin-top: 6px; text-decoration: none; }
+.lr-more:hover { text-decoration: underline; }
+.hdr-bell { position: relative; color: #111; display: inline-flex; }
+.hdr-bell .bell-dot { position: absolute; top: 0; right: 1px; width: 8px; height: 8px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 2px #fff; }
+.region-scope { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 6px 0 0; font-size: 13.5px; color: inherit; opacity: .92; }
+.region-scope a { color: var(--blue); }
+.country-select { display: flex; align-items: center; gap: 8px; }
+.country-select select { flex: 1; }
+/* Pie: bandera + país dentro de la misma caja gris (el select hereda width:150px de .ftr-select) */
+.ftr-select.country-select, .buyer-portal .ftr-select.country-select { width: 190px; max-width: 190px; box-sizing: border-box; background: #c3c6cb; border-radius: 2px; padding: 0 0 0 10px; overflow: hidden; }
+.ftr-select.country-select select, .buyer-portal .ftr-select.country-select select { width: auto; min-width: 0; flex: 1; background: transparent; padding: 10px 6px; font-weight: 700; }
+/* Tablero: semana interactiva y copiar */
+.copy-btn { background: none; border: 0; color: inherit; cursor: pointer; padding: 0 2px; vertical-align: middle; opacity: .8; }
+.copy-btn:hover { opacity: 1; color: var(--blue); }
+.week-strip a { position: relative; text-decoration: none; color: inherit; }
+.week-strip a .dot { position: absolute; bottom: 2px; left: 50%; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--green); }
+.week-strip a.is-today span { color: var(--blue); }
+.auction-pills a.on { border-color: var(--blue) !important; color: var(--blue) !important; }
+.finance-deposits { font-size: 13px; }
+/* Árabe: la estructura de la página se mantiene; cada bloque de texto se escribe de derecha a izquierda. */
+.script-rtl h1, .script-rtl h2, .script-rtl h3, .script-rtl p, .script-rtl a, .script-rtl span, .script-rtl li, .script-rtl label,
+.script-rtl td, .script-rtl th, .script-rtl button, .script-rtl summary, .script-rtl option, .script-rtl small, .script-rtl strong { unicode-bidi: plaintext; }
+.script-rtl input[type=search], .script-rtl textarea { direction: rtl; }
+@media (max-width: 600px) { .lr-pop { position: fixed; left: 8px; right: 8px; width: auto; top: 64px; } .lr-pop::before { display: none; } }

@@ -1,0 +1,54 @@
+<%- include('../partials/account-start') %>
+<h1><%= t('Método de pago y depósitos') %></h1>
+<nav class="acc-pills" aria-label="<%= t('Método de pago y depósitos') %>"><a href="?tab=methods" class="<%= tab === 'methods' ? 'on' : '' %>"><%= t('Métodos de pago') %></a><a href="?tab=deposit" class="<%= tab === 'deposit' ? 'on' : '' %>"><%= t('Depósito') %></a></nav>
+<% if (!provider.live) { %><div class="acc-note"><svg class="ic"><use href="#i-shield"/></svg> <span><%= ht('Pasarela activa', 'Active gateway') %>: <strong><%= provider.name %></strong>. <%= ht('No se cobra dinero real. No introduzca tarjetas reales.', 'No real money is charged. Do not enter real cards.') %> <%= provider.notes %></span></div><% } %>
+<% if (tab === 'methods') { %>
+  <p class="acc-lead"><%= ht('Gestione sus métodos de pago para sus compras. Establezca una tarjeta predeterminada, añada o elimine las guardadas. Solo se guardan la marca, los cuatro últimos dígitos y la caducidad.', 'Manage your payment methods. Set a default card, add or remove saved ones. Only the brand, last four digits and expiry are stored.') %></p>
+  <h2 class="acc-h2"><%= t('Métodos de pago guardados') %></h2>
+  <div class="acc-list">
+    <% if (!methods.length) { %><div class="acc-empty"><%= ht('No tiene métodos de pago guardados.', 'You have no saved payment methods.') %></div><% } %>
+    <% methods.forEach(function (m) { %><div class="acc-item">
+      <span class="card-brand brand-<%= m.brand %>"><%= m.brand.toUpperCase() %></span><span>***<%= m.last4 %> &nbsp; Exp: <%= String(m.exp_month).padStart(2, '0') %>/<%= m.exp_year %></span><span class="acc-muted"><%= m.holder %></span>
+      <span class="acc-spacer"></span>
+      <span class="acc-muted"><%= ht('Poder adquisitivo', 'Buying power') %>: <strong class="txt-ok"><%= bp.available === null ? t('Sin límite') : eur(bp.available) %></strong></span>
+      <% if (m.is_default) { %><span class="acc-tag"><%= t('Predeterminado') %></span><% } else { %><button class="link-btn" type="button" data-api="/api/v1/account/payment-methods/<%= m.id %>/default"><%= ht('Hacer predeterminado', 'Make default') %></button><% } %>
+      <button class="link-btn danger" type="button" data-api="/api/v1/account/payment-methods/<%= m.id %>" data-method="DELETE" data-confirm="<%= ht('¿Eliminar esta tarjeta?', 'Remove this card?') %>" aria-label="<%= ht('Eliminar', 'Remove') %>">✕</button>
+    </div><% }) %>
+  </div>
+  <button class="acc-add" type="button" data-open-dialog="dlg-card"><svg class="ic"><use href="#i-plus"/></svg> <%= t('Añadir nuevo método de pago') %></button>
+  <h2 class="acc-h2"><%= t('Opciones de financiamiento') %></h2>
+  <div class="acc-list">
+    <div class="acc-item"><span class="fin-ico" aria-hidden="true">€</span><span><%= ht('Transferencia bancaria (vehículos)', 'Bank transfer (vehicles)') %></span><span class="acc-spacer"></span><a href="/dashboard/payments"><%= ht('Ver pagos', 'View payments') %> ›</a></div>
+    <div class="acc-item"><span class="fin-ico" aria-hidden="true">%</span><span><%= ht('Financiación para profesionales', 'Dealer floor-plan financing') %> <span class="acc-muted">— <%= ht('el propietario puede conectar una entidad desde Administración › Pagos', 'the owner can connect a lender from Administration › Payments') %></span></span></div>
+  </div>
+  <dialog id="dlg-card"><div class="dlg"><h2><%= t('Añadir nuevo método de pago') %></h2>
+    <form data-api="/api/v1/account/payment-methods" novalidate autocomplete="off">
+      <div class="form-row"><label for="c-h"><%= ht('Titular de la tarjeta', 'Cardholder name') %></label><input id="c-h" name="holder" value="<%= user.name %>" required></div>
+      <div class="form-row"><label for="c-n"><%= ht('Número de tarjeta', 'Card number') %></label><input id="c-n" name="number" inputmode="numeric" maxlength="23" placeholder="4242 4242 4242 4242" required></div>
+      <div class="form-grid"><div class="form-row"><label for="c-m"><%= ht('Mes', 'Month') %></label><select id="c-m" name="exp_month"><% for (var mm = 1; mm <= 12; mm++) { %><option value="<%= mm %>"><%= String(mm).padStart(2, '0') %></option><% } %></select></div>
+        <div class="form-row"><label for="c-y"><%= ht('Año', 'Year') %></label><select id="c-y" name="exp_year"><% for (var yy = new Date().getFullYear(); yy <= new Date().getFullYear() + 10; yy++) { %><option <%= yy === new Date().getFullYear() + 3 ? 'selected' : '' %>><%= yy %></option><% } %></select></div>
+        <div class="form-row"><label for="c-c">CVC</label><input id="c-c" name="cvc" inputmode="numeric" maxlength="4" placeholder="123" required></div></div>
+      <label class="check"><input type="checkbox" name="make_default" <%= methods.length ? '' : 'checked' %>> <%= ht('Usar como predeterminada', 'Use as default') %></label>
+      <p class="hint"><%= provider.notes %></p>
+      <div class="dlg-actions"><button class="btn btn-light" type="button" data-close><%= t('Cerrar') %></button><button class="btn btn-blue" type="submit"><%= t('Guardar') %></button></div>
+    </form></div></dialog>
+<% } else { %>
+  <p class="acc-lead"><%= ht('Un depósito demuestra su solvencia y se refleja en su panel. Puede solicitar su reembolso en cualquier momento; Finanzas lo revisa.', 'A deposit shows your solvency and appears in your dashboard. You can request a refund at any time; Finance reviews it.') %></p>
+  <div class="kpis acc-kpis"><div class="kpi ok"><div class="v"><%= eur(held) %></div><div class="l"><%= t('Depósitos') %></div></div><div class="kpi info"><div class="v"><%= bp.available === null ? t('Sin límite') : eur(bp.available) %></div><div class="l"><%= t('Poder adquisitivo disponible') %></div></div></div>
+  <% if (!methods.length) { %><div class="acc-empty"><%= ht('Primero añada una tarjeta en "Métodos de pago".', 'First add a card in "Payment methods".') %> <a href="?tab=methods"><%= t('Añadir nuevo método de pago') %></a></div><% } else { %>
+  <form class="acc-card acc-deposit" data-api="/api/v1/account/deposits" data-confirm="<%= ht('¿Confirmar el depósito? (simulado, sin dinero real)', 'Confirm deposit? (simulated, no real money)') %>" novalidate>
+    <div class="form-grid">
+      <div class="form-row"><label for="d-a"><%= ht('Importe (€)', 'Amount (€)') %></label><input id="d-a" name="amount" type="number" min="100" max="50000" step="50" value="600" required></div>
+      <div class="form-row"><label for="d-m"><%= ht('Tarjeta', 'Card') %></label><select id="d-m" name="payment_method_id"><% methods.forEach(function (m) { %><option value="<%= m.id %>" <%= m.is_default ? 'selected' : '' %>><%= m.brand.toUpperCase() %> ***<%= m.last4 %></option><% }) %></select></div>
+    </div>
+    <button class="btn btn-blue" type="submit"><%= ht('Realizar depósito', 'Make deposit') %></button>
+  </form><% } %>
+  <h2 class="acc-h2"><%= ht('Historial de depósitos', 'Deposit history') %></h2>
+  <div class="acc-list">
+    <% if (!deposits.length) { %><div class="acc-empty"><%= ht('Sin depósitos.', 'No deposits.') %></div><% } %>
+    <% deposits.forEach(function (d) { %><div class="acc-item"><span><%= date(d.created_at) %></span><code><%= d.reference %></code><span class="acc-muted"><%= d.brand ? d.brand.toUpperCase() + ' ***' + d.last4 : '' %></span><span class="acc-spacer"></span><strong><%= eur(d.amount_cents) %></strong>
+      <span class="acc-tag <%= d.status %>"><%= { held: ht('Activo', 'Held'), refund_requested: ht('Reembolso solicitado', 'Refund requested'), refunded: ht('Reembolsado', 'Refunded') }[d.status] %></span>
+      <% if (d.status === 'held') { %><button class="link-btn" type="button" data-api="/api/v1/account/deposits/<%= d.id %>/refund" data-confirm="<%= ht('¿Solicitar el reembolso de este depósito?', 'Request a refund of this deposit?') %>"><%= ht('Solicitar reembolso', 'Request refund') %></button><% } %></div><% }) %>
+  </div>
+<% } %>
+<%- include('../partials/account-end') %>

@@ -1,0 +1,9 @@
+<%- include('../../partials/panel-start') %>
+<h1>Watchlist</h1><p class="lead">Vehicles you are following. Stars on any lot add or remove it here.</p>
+<div class="p-card">
+<% if (!items.length) { %><div class="empty">No vehicles yet. <a href="/vehicles">Browse the inventory</a> and click “Watch”.</div><% } else { %>
+<div class="table-wrap"><table class="tbl"><thead><tr><th></th><th>Vehicle</th><th>Location</th><th>Auction</th><th class="num">Current bid</th><th>Status</th><th></th></tr></thead><tbody>
+<% items.forEach(function (l) { %><tr><td><img class="mini-img" src="<%= l.image %>" alt=""></td><td><a href="/lot/<%= l.lot_number %>"><strong><%= lotTitle(l) %></strong></a><br><span class="hint">Lot #<%= l.lot_number %> · <%= l.primary_damage %></span></td><td><%= l.location_city %></td><td><%= dateTime(l.auction_date) %></td><td class="num"><%= eur(l.current_bid_cents || l.starting_bid_cents) %></td><td><%- badge(l.status) %></td><td class="actions"><a class="btn btn-blue btn-sm" href="/lot/<%= l.lot_number %>">Bid</a><button class="btn btn-light btn-sm" data-api="/api/v1/watchlist/<%= l.id %>" data-body='{"reload":true}' data-confirm="Remove from Watchlist?" type="button">Remove</button></td></tr><% }) %>
+</tbody></table></div><% } %>
+</div>
+<%- include('../../partials/panel-end') %>

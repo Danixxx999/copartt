@@ -1,0 +1,25 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="page-dark">
+  <div class="wrap grid-2" style="align-items:start">
+    <div>
+      <h1 class="page-title">Contact Us</h1>
+      <p>Member Services can help with registration, documents, bidding, payments, pickup and transport.</p>
+      <dl class="spec-list"><dt>Phone (demo)</dt><dd>+34 900 000 000</dd><dt>Email (demo)</dt><dd>support@copart.test</dd><dt>Hours</dt><dd>Mon–Fri 8:00–15:00 (Madrid)</dd></dl>
+      <p style="margin-top:16px"><a href="/locations" style="color:var(--blue)">Find a yard near you ›</a> · <a href="/faq" style="color:var(--blue)">Common questions ›</a></p>
+    </div>
+    <div class="card-dark">
+      <div class="card-head-blue">Send us a message</div>
+      <form data-api="/api/v1/support/tickets" data-reset novalidate>
+        <div class="form-row"><label for="c-n">Name</label><input id="c-n" name="name" value="<%= user ? user.name : '' %>" required autocomplete="name"></div>
+        <div class="form-row"><label for="c-e">Email</label><input id="c-e" name="email" type="email" value="<%= user ? user.email : '' %>" required autocomplete="email"></div>
+        <div class="form-row"><label for="c-t">Topic</label><select id="c-t" name="topic"><option value="general">General</option><option value="registration">Registration &amp; documents</option><option value="bidding">Bidding</option><option value="payments">Payments</option><option value="transport">Transport &amp; pickup</option><option value="selling">Selling</option></select></div>
+        <div class="form-row"><label for="c-s">Subject</label><input id="c-s" name="subject" required></div>
+        <div class="form-row"><label for="c-m">Message</label><textarea id="c-m" name="message" rows="5" required></textarea></div>
+        <button class="btn btn-blue btn-block" type="submit">Send</button>
+      </form>
+    </div>
+  </div>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

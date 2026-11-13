@@ -1,0 +1,69 @@
+<%- include('../partials/head', { bodyClass: 'reg-body auth-body' }) %>
+<%- include('../partials/auth-header', { authOther: user ? ['/dashboard', t('dashboard')] : ['/login', t('sign_in')], authProgress: step === 'account' ? 20 : step === 'membership' ? 60 : 90 }) %>
+<main id="main" class="page-dark auth-reg" style="padding-top:0">
+  <% if (step !== 'account') { %><div class="reg-steps" aria-label="<%= ht('Progreso del registro', 'Registration progress') %>">
+    <span class="done"><%= ht('Crear cuenta', 'Create account') %></span>
+    <span class="<%= step === 'membership' ? 'on' : 'done' %>" <%= step === 'membership' ? 'aria-current=step' : '' %>><%= ht('Elegir membresía', 'Choose membership') %></span>
+    <span class="<%= step === 'documents' ? 'on' : '' %>" <%= step === 'documents' ? 'aria-current=step' : '' %>><%= ht('Enviar documentos', 'Document submission') %></span>
+  </div><% } %>
+
+  <% if (step === 'account') { %>
+  <section class="auth-join" aria-labelledby="join-h">
+    <h1 id="join-h"><%= ht('Únase a la familia', 'Join the family') %></h1>
+    <form data-api="/api/v1/auth/register" novalidate class="auth-form">
+      <div class="form-row"><label for="em"><%= t('Correo electrónico') %></label><input id="em" name="email" type="email" autocomplete="email" required></div>
+      <div class="form-row"><label for="pw"><%= ht('Cree una contraseña', 'Create password') %> <span class="info-dot" title="<%= ht('Mínimo 10 caracteres, con letras y números.', 'At least 10 characters, letters and numbers.') %>">ⓘ</span></label><div class="pw-wrap"><input id="pw" name="password" type="password" autocomplete="new-password" required><button type="button" data-toggle-pw="pw" aria-label="<%= ht('Mostrar contraseña', 'Show password') %>"><svg class="ic"><use href="#i-eye"/></svg></button></div></div>
+      <div class="auth-2col"><div class="form-row"><label for="fn"><%= ht('Nombre', 'First name') %></label><input id="fn" name="first_name" autocomplete="given-name" required></div><div class="form-row"><label for="ln"><%= ht('Apellidos', 'Last name') %></label><input id="ln" name="last_name" autocomplete="family-name" required></div></div>
+      <div class="form-row"><label for="ph"><%= ht('Número de móvil (opcional)', 'Mobile number (optional)') %></label><div class="auth-phone"><label class="sr-only" for="pp"><%= t('Prefijo') %></label><select id="pp" name="phone_prefix"><option value="+34">+34 ES</option><option value="+57">+57 CO</option><option value="+1">+1 US</option><option value="+52">+52 MX</option><option value="+351">+351 PT</option><option value="+33">+33 FR</option><option value="+49">+49 DE</option><option value="+44">+44 UK</option></select><input id="ph" name="phone" inputmode="numeric" placeholder="600 000 000" autocomplete="tel-national"></div></div>
+      <label class="check auth-business"><input type="checkbox" data-business-check> <span><%= ht('Me registro como empresa', 'I am registering as a business') %></span></label>
+      <input type="hidden" name="account_type" value="individual" data-account-type>
+      <div class="form-row" id="company-row" hidden><label for="company_name"><%= ht('Nombre de la empresa', 'Company name') %></label><input id="company_name" name="company_name" autocomplete="organization"></div>
+      <input type="hidden" name="terms" value="true">
+      <p class="auth-terms"><%= ht('Al continuar, confirma que tiene al menos 18 años y que ha leído y acepta los', 'By continuing, you agree that you are at least 18 years of age and that you have read and agreed to the') %> <a href="/page/terms"><%= ht('Términos y condiciones para miembros', 'Member Terms and Conditions') %></a>, <%= ht('las', 'the') %> <a href="/page/terms"><%= ht('Condiciones de uso del sitio web', 'Website Terms of Service') %></a> <%= ht('y la', 'and the') %> <a href="/page/privacy"><%= t('privacy') %></a>.</p>
+      <button class="btn auth-btn" type="submit"><%= ht('Aceptar y continuar', 'Agree and continue') %></button>
+    </form>
+    <div class="auth-sep"><%= ht('o', 'or') %></div>
+    <%- include('../partials/social-login') %>
+    <p class="auth-foot"><%= ht('¿Ya es miembro?', 'Already a member?') %> <a href="/login"><%= t('sign_in') %></a></p>
+  </section>
+
+  <% } else if (step === 'membership') { %>
+  <div class="wrap">
+    <% if (invoice) { %>
+      <div class="reg-card">
+        <h1>Complete your membership payment</h1>
+        <p>Invoice <strong><%= invoice.invoice_number %></strong> · Total <strong><%= eur(invoice.total_cents) %></strong> (VAT included).</p>
+        <div class="alert alert-warn"><strong>Sandbox only.</strong> No real card is charged and card data is never stored. Use the test card <code>4242 4242 4242 4242</code>.</div>
+        <form data-api="/api/v1/invoices/<%= invoice.id %>/payments/demo" novalidate>
+          <input type="hidden" name="method" value="card_demo"><input type="hidden" name="scope" value="full">
+          <div class="form-row"><label for="cn">Card number (test)</label><input id="cn" name="card_number" inputmode="numeric" value="4242 4242 4242 4242" autocomplete="off"></div>
+          <div class="grid-2"><div class="form-row"><label for="ce">Expiry</label><input id="ce" value="12/30" autocomplete="off"></div><div class="form-row"><label for="cc">CVC</label><input id="cc" value="123" autocomplete="off"></div></div>
+          <button class="btn btn-blue btn-block" type="submit">Pay <%= eur(invoice.total_cents) %> (sandbox)</button>
+        </form>
+        <p class="hint" style="margin-top:12px"><a href="/register/membership" style="color:var(--blue)">← Choose a different membership</a></p>
+      </div>
+      <script type="application/json" id="after-pay">{"redirect":"/register/documents"}</script>
+    <% } else { %>
+      <h1 class="sec-title" style="margin-top:10px">Choose your Membership</h1>
+      <p class="sec-sub">Guests can browse and watch vehicles. To bid you need a Basic or Premium membership and verified documents.</p>
+      <%- include('../partials/plan-cards', { plans: plans, from: 'register' }) %>
+    <% } %>
+  </div>
+
+  <% } else { %>
+  <div class="reg-card">
+    <h1>Document Submission</h1>
+    <p>Upload a clear copy of your identity document<% if (user.account_type === 'business') { %> and your business licence<% } %>. Our team reviews documents before enabling bidding. Accepted: PDF, JPG, PNG, WEBP · max 8 MB. <strong>Use fictitious documents in this demo.</strong></p>
+    <% if (docs.length) { %><ul class="history" style="margin-bottom:16px"><% docs.forEach(function (d) { %><li><span><%= d.doc_type.replace('_',' ') %> · <%= d.original_name %></span><%- badge(d.status) %></li><% }) %></ul><% } %>
+    <form data-api="/api/v1/documents" novalidate>
+      <input type="hidden" name="from" value="register">
+      <div class="form-row"><label for="dt">Document type</label><select id="dt" name="doc_type"><option value="id_card">National ID (DNI/NIE)</option><option value="passport">Passport</option><option value="driving_license">Driving licence</option><option value="business_license">Business licence (CIF / IAE)</option><option value="proof_of_address">Proof of address</option></select></div>
+      <div class="form-row"><label for="file">File</label><input id="file" type="file" name="file" accept=".pdf,.jpg,.jpeg,.png,.webp" required></div>
+      <button class="btn btn-blue btn-block" type="submit">Upload and finish</button>
+    </form>
+    <p style="text-align:center;margin-top:16px"><button class="btn btn-outline" style="color:#fff" type="button" data-api="/api/v1/registration/skip-documents">Do it later – go to my dashboard</button></p>
+  </div>
+  <% } %>
+</main>
+<%- include('../partials/footer', { hideCta: true }) %>
+<%- include('../partials/foot', { scripts: ['/js/register.js'] }) %>

@@ -1,0 +1,30 @@
+<%- include('../partials/account-start') %>
+<% var chosen = prefs.preferred_locations || []; %>
+<h1><%= t('Ubicación e idioma') %></h1>
+<h2 class="acc-h2"><%= ht('Instalaciones', 'Facilities') %></h2>
+<p class="acc-muted"><%= ht('Recibirá recordatorios de subastas y avisos de eventos según dónde oferta y compra. Elija sus sedes preferidas y pulse Guardar.', 'Get auction reminders and event emails based on where you bid and buy. Choose your preferred yards and press Save.') %></p>
+<form data-api="/api/v1/account/preferences" data-method="PATCH" novalidate>
+  <input type="hidden" name="_lists" value="preferred_locations">
+  <div class="acc-dashed">
+    <% if (!chosen.length) { %><p><%= ht('No hay instalaciones seleccionadas. Pulse "Agregar ubicación" para añadirlas.', 'No facilities selected. Press "Add location" to add some.') %></p><% } %>
+    <div class="acc-chips"><% locations.filter(function (l) { return chosen.includes(l.code); }).forEach(function (l) { %><span class="acc-chip"><%- include('../partials/flag', { code: l.country }) %> <%= l.name %></span><% }) %></div>
+  </div>
+  <details class="acc-picker"><summary class="acc-add"><svg class="ic"><use href="#i-plus"/></svg> <%= ht('Agregar ubicación', 'Add location') %></summary>
+    <div class="acc-checks"><% locations.forEach(function (l) { %><label class="check"><input type="checkbox" name="preferred_locations" value="<%= l.code %>" data-multi <%= chosen.includes(l.code) ? 'checked' : '' %>> <%- include('../partials/flag', { code: l.country }) %> <%= l.name %></label><% }) %></div>
+    <button class="btn btn-blue btn-sm" type="submit"><%= t('Guardar') %></button>
+  </details>
+</form>
+<hr class="acc-hr">
+<h2 class="acc-h2"><%= ht('Preferencias de idioma', 'Language preferences') %></h2>
+<p><%= ht('Establecer idioma para el sitio web y las notificaciones.', 'Set the language for the website and notifications.') %></p>
+<form class="acc-lang" data-api="/api/v1/account/preferences" data-method="PATCH" novalidate>
+  <label class="sr-only" for="pl"><%= t('lang_title') %></label>
+  <select id="pl" name="language"><% Object.keys(langs).forEach(function (l) { %><option value="<%= l %>" <%= l === lang ? 'selected' : '' %>><%= langs[l].label %></option><% }) %></select>
+  <p class="acc-green"><%= t('can_read') %></p>
+  <button class="btn btn-blue" type="submit"><%= ht('Sí, puedo leerlo', 'Yes, I can read it') %></button>
+</form>
+<hr class="acc-hr">
+<h2 class="acc-h2"><%= t('region_title') %></h2>
+<p><%= t('region_blurb', { region: regionName, country: countryName(region) }) %></p>
+<div class="acc-regions"><% Object.keys(regions).forEach(function (c) { %><a href="?region=<%= c %>" class="<%= c === region ? 'on' : '' %>"><%- include('../partials/flag', { code: c }) %> <%= regions[c] %></a><% }) %></div>
+<%- include('../partials/account-end') %>

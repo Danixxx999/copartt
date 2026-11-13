@@ -1,0 +1,8 @@
+<%- include('../../partials/panel-start') %>
+<h1 style="display:flex;justify-content:space-between;align-items:center;gap:10px">My Vehicles <a class="btn btn-blue btn-sm" href="/seller/vehicles/new">+ New vehicle</a></h1>
+<div class="filters-bar"><% [['','All'],['draft','Drafts'],['pending_approval','Pending'],['approved','Listed'],['rejected','Rejected'],['sold','Sold'],['withdrawn','Withdrawn']].forEach(function (s) { %><a class="chip <%= status === s[0] ? 'on' : '' %>" href="?status=<%= s[0] %>"><%= s[1] %></a><% }) %></div>
+<div class="p-card"><% if (!items.length) { %><div class="empty">No vehicles in this status.</div><% } else { %>
+<div class="table-wrap"><table class="tbl"><thead><tr><th></th><th>Vehicle</th><th>VIN</th><th>Yard</th><th class="num">Photos</th><th>Status</th><th>Lot</th><th></th></tr></thead><tbody>
+<% items.forEach(function (v) { %><tr><td><% if (v.image) { %><img class="mini-img" src="<%= v.image %>" alt=""><% } %></td><td><strong><%= v.year %> <%= v.make %> <%= v.model %></strong><br><span class="hint">#<%= v.id %> · <%= cap(v.condition) %> · <%= km(v.odometer_km) %></span><% if (v.rejection_reason) { %><br><span class="hint" style="color:#991b1b">Rejected: <%= v.rejection_reason %></span><% } %></td><td><code><%= v.vin %></code></td><td><%= v.location_name %></td><td class="num"><%= v.photos %></td><td><%- badge(v.status) %></td><td><% if (v.lot_number) { %><a href="/lot/<%= v.lot_number %>">#<%= v.lot_number %></a> <%- badge(v.lot_status) %><% } else { %>—<% } %></td><td><a class="btn btn-light btn-sm" href="/seller/vehicles/<%= v.id %>/edit"><%= ['draft','rejected'].includes(v.status) ? 'Edit' : 'View' %></a></td></tr><% }) %>
+</tbody></table></div><% } %></div>
+<%- include('../../partials/panel-end') %>

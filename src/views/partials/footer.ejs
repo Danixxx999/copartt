@@ -1,0 +1,27 @@
+<% if (!user && (typeof hideCta === 'undefined' || !hideCta)) { %>
+<section class="cta-band"><div class="cta-shapes" aria-hidden="true"></div><p><%= t('cta_register') %></p><a class="btn btn-brown btn-pill" href="/register"><%= t('register').toUpperCase() %></a></section>
+<% } %>
+<footer class="site-footer">
+  <div class="ftr-grid">
+    <div class="ftr-brand">
+      <a href="/" aria-label="copart home"><%- include('logo') %></a>
+      <form class="ftr-select" method="get"><label class="sr-only" for="ftr-lang"><%= t('lang_title') %></label><select id="ftr-lang" name="lang" data-autosubmit><% Object.keys(langs).forEach(function (l) { %><option value="<%= l %>" <%= lang===l?'selected':'' %>><%= langs[l].label %></option><% }) %></select></form>
+      <form class="ftr-select country-select" method="get"><%- include('flag', { code: region }) %><label class="sr-only" for="ftr-region"><%= t('region_title') %></label><select id="ftr-region" name="region" data-autosubmit><% Object.keys(regions).forEach(function (c) { %><option value="<%= c %>" <%= region===c?'selected':'' %>><%= regions[c] %></option><% }) %></select></form>
+    </div>
+    <% if(referenceLayout) { %><%- include('member-footer-columns') %><% } else { %>
+    <div><h3><%= t('get_to_know') %></h3><a href="/page/about-us"><%= t('about') %></a><a href="/how-it-works"><%= t('how_it_works') %></a><a href="/videos"><%= t('videos') %></a><a href="/page/company-details"><%= t('company') %></a><a href="/api/docs">API v1</a></div>
+    <div><h3><%= t('our_locations') %></h3><a href="/locations">All yards</a><a href="/locations/MAD">Madrid</a><a href="/locations/BCN">Barcelona</a><a href="/locations/SVQ">Sevilla</a><a href="/locations/VLC">Valencia</a></div>
+    <div><h3><%= t('services') %></h3><a href="/transport"><%= t('transport') %></a><a href="/sell-a-vehicle"><%= t('sell_vehicle') %></a><a href="/membership"><%= t('member') %></a><a href="/fee-calculator">Fee Calculator</a></div>
+    <div><h3><%= t('support') %></h3><a href="/how-to-buy"><%= t('how_to_buy') %></a><a href="/faq"><%= t('common_questions') %></a><a href="/help"><%= t('help_center') %></a><a href="/contact"><%= t('contact_us') %></a></div>
+    <div><h3><%= t('connect') %></h3><span class="muted-link">Facebook (demo)</span><span class="muted-link">Instagram (demo)</span><span class="muted-link">YouTube (demo)</span><span class="muted-link">LinkedIn (demo)</span></div>
+    <% } %>
+  </div>
+  <div class="ftr-bottom">
+    <% if(referenceLayout && !isMemberPortal) { %><button type="button" data-cookie-settings class="footer-cookie-settings"><%= t('Preferencias de cookies') %></button><% } %>
+    <span>© <%= new Date().getFullYear() %> copart · Academic project</span>
+    <nav aria-label="Legal"><a href="/sitemap"><%= t('site_map') %></a><a href="/contact"><%= t('contact_us') %></a><a href="/page/privacy"><%= t('privacy') %></a><a href="/page/terms"><%= t('terms') %></a><a href="/page/company-details"><%= t('company') %></a><a href="/page/cookie-policy"><%= t('cookies') %></a></nav>
+  </div>
+  <p class="academic-note" role="note"><%= t('academic') %></p>
+</footer>
+<a class="chat-fab" href="/contact" aria-label="Contact support"><svg class="ic ic-lg"><use href="#i-chat"/></svg></a>
+<div id="toast-region" class="toasts" role="status" aria-live="polite"></div>

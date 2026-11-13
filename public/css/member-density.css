@@ -1,0 +1,210 @@
+/* Medidas de la referencia: escritorio de 1900px y escala proporcional hasta 1280px.
+   Los tamaños se expresan por componente para conservar el diseño al usar zoom. */
+.buyer-portal {
+  --portal-text: clamp(11px, .7vw, 13px);
+  --portal-space: clamp(8px, .84vw, 16px);
+  font-size: var(--portal-text);
+}
+.buyer-portal .hdr-main {
+  height: clamp(80px, 5.26vw, 100px);
+  min-height: 0;
+  padding: 10px 1.65vw;
+  gap: 0;
+}
+.buyer-portal .hdr-logo { min-width: 0; width: 12vw; align-items: flex-start; gap: 7px; }
+.buyer-portal .hdr-logo svg { width: clamp(110px, 7.2vw, 138px); height: 36px; }
+.buyer-portal .portal-caption { font-size: var(--portal-text); padding-left: 15px; }
+.buyer-portal .hdr-search { flex: 0 1 46.2vw; max-width: 880px; margin-left: 2.4vw; gap: 16px; }
+.buyer-portal .hdr-search input, .buyer-portal .hdr-search .btn { height: clamp(30px, 2vw, 38px); min-height: 0; font-size: var(--portal-text); }
+.buyer-portal .hdr-search .btn { padding: 0 17px; }
+.buyer-portal.panel-body .hdr-search input:not([type=checkbox]):not([type=radio]):not([type=file]) { min-height: 0; font-size: var(--portal-text); padding: 0 12px 0 32px; border: 2px solid #34383b; border-radius: 3px; }
+.buyer-portal .hdr-search .ic { width: 17px; height: 17px; margin-left: 11px; }
+.buyer-portal .hdr-right { gap: 12px; }
+.buyer-portal .hdr-right summary, .buyer-portal .acct-menu>summary { font-size: var(--portal-text); }
+.buyer-portal .hdr-main::after { width: 130px; height: 80px; background-size: 24px 24px; opacity: .45; }
+.buyer-portal .hdr-nav>ul { padding: 0; gap: 0; }
+.buyer-portal .hdr-nav>ul>li>a, .buyer-portal .hdr-nav>ul>li>button { min-height: 0; height: clamp(40px, 2.63vw, 50px); padding: 0 clamp(10px, 1.1vw, 21px); font-size: var(--portal-text); border-radius: 0; }
+.buyer-portal .hdr-nav>ul>li>a.nav-help, .buyer-portal .hdr-nav>ul>li>a.nav-sell { height: clamp(32px, 2.1vw, 40px); min-height: 0; margin: 4px 6px; padding: 0 12px; border-radius: 5px; }
+.buyer-portal .hdr-nav .drop { min-width: 180px; }
+.buyer-portal .hdr-nav .drop a { padding: 13px 15px; font-size: var(--portal-text); }
+.buyer-portal .hdr-logo, .buyer-portal .hdr-right { flex-shrink: 0; }
+
+/* Asiento del conductor y tablas. */
+.buyer-portal .member-wrap { padding: 16px 6px 30px 0; gap: 9px; min-height: clamp(400px, 26.7vw, 506px); }
+.buyer-portal .member-wrap.lots-layout { grid-template-columns: clamp(170px, 11.4vw, 215px) minmax(0,1fr); }
+.buyer-portal .member-wrap.bids-layout { grid-template-columns: clamp(244px, 16.1vw, 305px) minmax(0,1fr); padding-top: 0; }
+.buyer-portal .member-nav { align-self: start; max-height: none; overflow: visible; }
+.buyer-portal .action-sidebar, .buyer-portal .bid-sidebar { position: relative; }
+.buyer-portal .action-sidebar h3 { padding: 7px 6px; font-size: 16px; line-height: 1.15; }
+.buyer-portal .action-sidebar ul, .buyer-portal .bid-sidebar ul { padding: 0; }
+.buyer-portal .action-sidebar li a { display: flex; gap: 3px; align-items: center; padding: 4px 6px; font-size: 12px; line-height: 1.2; }
+.radio-dot { display: inline-block; width: 15px; height: 15px; border: 1px solid #8b8b8b; border-radius: 50%; flex-shrink: 0; }
+.buyer-portal .member-nav li a .radio-dot { flex: 0 0 15px; }
+.selected .radio-dot { border: 1px solid #19a8ff; box-shadow: inset 0 0 0 2px black; background: #19a8ff; }
+.collapse-actions { position: absolute; right: 17px; top: 4px; height: 53px; width: 21px; border: 0; border-radius: 4px; background: #65aaff; color: black; font-size: 23px; cursor: pointer; }
+.sidebar-filter { padding: 5px 6px; background: #111; border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; font-size: 17px; }
+.sidebar-filter button { border: 0; background: none; color: #65aaff; font-size: 12px; cursor: pointer; }
+.buyer-portal .bid-sidebar h3 { background: #65aaff; color: #000; padding: 9px 20px; font-size: 15px; }
+.buyer-portal .bid-sidebar li a { color: #c5c7cb; padding: 11px 20px; font-size: 13px; border-bottom: 1px solid #344651; }
+.bid-sidebar li a b { margin-left: auto; font-size: 16px; }
+.reference-page-heading { display: flex; align-items: center; justify-content: space-between; padding: 26px 16px 19px; }
+.reference-page-heading h1 { font-size: 30px; color: #6aa8ff; margin: 0; }
+.reference-page-heading button { border: 0; background: none; color: #999; font-size: 13px; cursor: pointer; }
+.buyer-portal .member-main h1 { font-size: 23px; margin: 0 0 3px; }
+.buyer-portal .m-head { align-items: flex-start; margin: 0 0 8px; border-bottom: 1px solid #222; padding-bottom: 8px; }
+.buyer-portal .m-head p { font-size: 12px; margin: 0; }
+.buyer-portal .m-head .btn { border: 0; font-size: 12px; padding: 6px; color: #999; }
+.buyer-portal .table-actions { gap: 3px; margin: 8px 0 10px; align-items: center; }
+.buyer-portal .table-actions button { padding: 5px 10px; font-size: 12px; line-height: 1.1; }
+.buyer-portal .tbl th, .buyer-portal .tbl td { padding: 8px 9px; font-size: 11px; text-transform: none; letter-spacing: 0; border-bottom: 1px solid #27343d; }
+.buyer-portal .tbl th { background: #222; color: #c6c6c9; font-weight: 700; white-space: nowrap; }
+.buyer-portal .data-table { border-radius: 0; }
+.buyer-portal .data-tools { display: block; padding: 0; border: 0; font-size: 12px; }
+.tools-search, .tools-pagination { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; border-bottom: 1px solid #344651; gap: 10px; }
+.tools-search label { display: flex; align-items: center; gap: 6px; font-size: 11px; }
+.buyer-portal.panel-body .data-tools input:not([type=checkbox]):not([type=radio]):not([type=file]) { height: 30px; min-height: 0; width: 160px!important; padding: 6px 9px; font-size: 11px; border-color: #252525; }
+.buyer-portal.panel-body .data-tools select { width: auto; min-height: 0; padding: 5px 9px; font-size: 11px; border-color: #252525; }
+.buyer-portal .data-tools button { padding: 6px 13px; font-size: 11px; }
+.buyer-portal .data-table .empty-cell { padding: 3px 8px; line-height: 1.2; }
+.buyer-portal .bid-hidden-tabs, .buyer-portal .bids-layout .table-actions { display: none; }
+.bid-content-heading h2 { font-size: 23px; margin: 7px 12px 8px; }
+.buyer-portal .bids-layout .member-main { border: 1px solid #344651; border-radius: 4px; align-self: start; }
+.buyer-portal .member-wrap.bids-layout { min-height: clamp(342px, 22.5vw, 427px); }
+.buyer-portal .bid-sidebar li a { padding-top: 8px; padding-bottom: 8px; }
+.buyer-portal .bids-layout .data-table { border: 0; }
+.buyer-portal .bids-layout .widget { border: 0; margin: 0; }
+.buyer-portal .bids-layout .data-tools { display: flex; align-items: center; justify-content: space-between; padding: 4px 10px; }
+.buyer-portal .bids-layout .tools-search, .buyer-portal .bids-layout .tools-pagination { border: 0; padding: 4px 0; }
+.buyer-portal .bids-layout .tools-search { order: 2; }
+.buyer-portal .bids-layout .tools-search>span { display: none; }
+.buyer-portal .bids-layout .tools-pagination { flex: 1; padding-right: 8px; }
+.member-wrap.sidebar-collapsed { grid-template-columns: 36px minmax(0,1fr)!important; }
+.sidebar-collapsed .action-sidebar>*:not(.collapse-actions) { display: none; }
+.sidebar-collapsed .collapse-actions { position: static; width: 34px; }
+
+/* Tablero: cuatro columnas y tarjetas de vehículos a la escala de las capturas. */
+.buyer-portal .member-home { display: block; padding: 20px 2vw 30px; background: #000; }
+.buyer-portal .dashboard-greeting h1 { font-size: clamp(26px, 1.7vw, 32px); }
+.dashboard-greeting { margin-bottom: 20px; }
+.dashboard-greeting p { font-size: var(--portal-text); margin: 6px 0; }
+.dashboard-columns { grid-template-columns: repeat(4, minmax(350px,1fr)); min-width: 1500px; gap: 12px; }
+.dash-card { padding: 20px; min-height: 505px; border-radius: 13px; }
+.dash-card h2 { font-size: 26px; }
+.dash-card h2 small, .dash-card header>a { font-size: 13px; }
+.dash-card header { margin-bottom: 16px; }
+.finance-line { font-size: 15px; margin: 16px 0 25px; gap: 5px; }
+.finance-line strong { font-size: 21px; }
+.dash-card hr { margin: 18px 0; }
+.title-empty { font-size: 14px; }
+.auction-pills { font-size: 12px; gap: 5px; }
+.auction-pills>a { padding: 4px 6px; }
+.week-strip { margin: 8px 0 20px; }
+.dashboard-events { max-height: 275px; }
+.dashboard-events article { grid-template-columns: 90px 1fr 70px; gap: 8px; margin-bottom: 20px; }
+.dashboard-events article>div { padding-left: 17px; }
+.dashboard-events time { font-size: 14px; }
+.task-box { padding: 15px; }
+.task-box h3 { font-size: 19px; }.task-box p { font-size: 14px; }
+.dashboard-recent { padding-top: 38px; }.dashboard-recent h2 { font-size: 25px; margin-bottom: 24px; }
+.recent-grid { grid-template-columns: repeat(auto-fill,minmax(300px,416px)); gap: 36px; }
+.recent-lot { min-height: 630px; background: #030303; box-shadow: 0 0 24px #171717; padding: 0 8px; }
+.recent-lot>a>img { height: auto; aspect-ratio: 4/3; object-fit: cover; }
+.recent-lot>div { padding: 12px 4px 18px; }.recent-lot h3 { font-size: 14px; }.recent-lot p { font-size: 12px; margin: 5px 0; }
+.recent-lot hr { margin: 8px 0; }.recent-lot .btn { font-size: 16px; padding: 10px; }
+.recent-bid label { display: block; font-size: 14px; font-weight: 700; margin: 7px 0; }
+.buyer-portal .recent-bid .bid-stepper { border: 1px solid #252525; border-radius: 6px; padding: 4px 6px; margin: 8px 0; }
+.buyer-portal.panel-body .recent-bid input:not([type=checkbox]):not([type=radio]):not([type=file]) { min-height: 28px; padding: 3px; border: 0; font-size: 17px; }
+.recent-bid .bid-stepper button { width: 25px; height: 25px; font-size: 19px; }.recent-bid .increment-guide { display: inline-block; font-size: 12px; margin: 0 0 12px; }
+
+/* Ficha: 1600px de ancho a 1900px; galería 40%, datos 34.5%, oferta 23%. */
+.buyer-portal .reference-lot { width: 84.6%; max-width: 1604px; margin: 0 auto; padding: 30px 0; }
+.buyer-portal:has(.reference-lot) .hdr-main, .buyer-portal:has(.reference-lot) .mobile-search { display: none; }
+.buyer-portal .reference-lot>.crumbs { display: none; }
+.buyer-portal .reference-lot .page-head { min-height: 80px; padding: 0 0 14px; margin-bottom: 10px; }
+.buyer-portal .reference-lot .page-title { font-size: 25px!important; color: #c5c8ce!important; }
+.buyer-portal .reference-lot .page-head p { font-size: 14px; }
+.buyer-portal .reference-lot .page-head { position: relative; padding-top: 40px; margin-top: -10px; min-height: 120px; }
+.lot-sale-meta { margin-left: auto; text-align: right; align-self: flex-end; }.lot-sale-meta a { color: #6aa8ff; text-decoration: none; font-weight: 700; }.lot-sale-meta p { margin: 10px 0!important; }
+.buyer-portal .reference-lot .page-head>.watch-btn { position: absolute; right: 0; top: 0; background: none; border: 0; color: #6aa8ff; font-size: 14px; padding: 0; }
+.gallery-favorite { position: absolute; right: 6px; top: 6px; border: 0; border-radius: 5px; background: #050d19; color: #6aa8ff; padding: 7px; font-size: 14px; cursor: pointer; }
+.sale-details { border-top: 1px solid #222; padding-top: 12px; margin-top: 12px; }.sale-details summary { color: #65aaff; font-size: 12px; cursor: pointer; }
+.buyer-portal .reference-lot .bb-hd { color: #a8b2bb; }.buyer-portal .reference-lot [data-price-label] { font-size: 16px; text-transform: uppercase; font-weight: 700; }.buyer-portal .reference-lot .big-bid { font-family: var(--font); font-weight: 700; color: #c5c8d0; }
+.buyer-portal .lot-grid { grid-template-columns: minmax(0,1.2fr) minmax(0,1.03fr) minmax(0,.7fr); gap: 16px; }
+.buyer-portal .specs-col, .buyer-portal .bid-box { padding: 16px; border-radius: 12px; }
+.buyer-portal .specs-col>h2, .buyer-portal .specs-col>.hl-chips { display: none; }
+.buyer-portal .spec-list { border: 0; border-radius: 0; gap: 0; grid-template-columns: 43% 57%; font-size: 12px; }
+.buyer-portal .spec-list dt, .buyer-portal .spec-list dd { padding: 8px 0; border: 0; text-align: left; line-height: 1.35; }
+.buyer-portal .spec-list dt { color: #c3c5c8; font-weight: 700; }.buyer-portal .spec-list dd { color: #999; font-weight: 400; }
+.buyer-portal .thumbs { grid-template-columns: repeat(5,minmax(0,1fr)); gap: 10px; max-height: 245px; padding: 7px 5px; }
+.buyer-portal .thumbs button { aspect-ratio: 1.25; border-radius: 4px; }
+.buyer-portal .reference-lot .gallery-controls { margin-top: -34px; padding: 0 8px; position: relative; z-index: 1; pointer-events: none; height: 26px; }
+.gallery-controls button, .gallery-controls span { pointer-events: auto; }.gallery-controls span { background: #ddd9; color: #111; border-radius: 4px; padding: 3px 8px; }
+.buyer-portal .big-bid { font-size: 34px; }.buyer-portal .bb-body { padding-top: 10px; gap: 14px; }
+.buyer-portal .bb-body .hint { font-size: 12px; }.buyer-portal .bb-body .btn { font-size: 14px; padding: 12px; }
+.buyer-portal .bb-body .clock { font-size: 20px; }.buyer-portal .bb-hd { font-size: 12px; }
+.buyer-portal #bid-form input { font-size: 17px; }.buyer-portal .bid-stepper button { width: 26px; height: 26px; font-size: 18px; }
+
+/* Pie alineado en siete columnas, con la misma densidad que las referencias. */
+.buyer-portal .site-footer { padding: 0; }
+.buyer-portal .ftr-grid { grid-template-columns: repeat(7,minmax(0,1fr)); gap: 24px; padding: 58px 30px 26px; }
+.buyer-portal .ftr-grid h3 { font-size: 16px; font-weight: 500; margin-bottom: 15px; }
+.buyer-portal .ftr-grid a, .buyer-portal .ftr-grid .muted-link { font-size: 13px; margin-bottom: 9px; color: #000; }
+.buyer-portal .ftr-grid a:not(:first-child), .buyer-portal .ftr-grid .muted-link { font-weight: 700; }
+.buyer-portal .tbl th .sort-column { border: 0; background: none; color: inherit; font: inherit; padding: 0; cursor: pointer; text-align: left; }
+.sort-column::before { content: '◆'; font-size: 8px; margin-right: 3px; color: #aaa; }
+.column-picker { position: relative; }.column-picker summary { border: 1px solid #333; border-radius: 4px; padding: 5px 10px; color: #bbb; cursor: pointer; list-style: none; font-size: 12px; line-height: 1.1; }
+.column-picker>div { position: absolute; z-index: 5; background: #111; padding: 12px; border: 1px solid #444; min-width: 220px; }.column-picker label { display: flex; align-items: center; gap: 8px; padding: 3px; font-size: 12px; }
+.buyer-portal .ftr-brand svg { width: 110px; height: 36px; }.buyer-portal .ftr-select { max-width: 170px; margin-top: 17px; }
+.buyer-portal .ftr-select select { background: #c3c6cb; color: #000; min-height: 0; padding: 10px; font-size: 16px; border: 0; border-radius: 2px; }
+.buyer-portal .ftr-bottom, .buyer-portal .academic-note { font-size: 11px; }
+.buyer-portal .chat-fab { width: 40px; height: 40px; bottom: 18px; right: 18px; }
+
+@media(max-width:1100px) and (min-width:761px) {
+  .buyer-portal .hdr-nav>ul>li>a, .buyer-portal .hdr-nav>ul>li>button { padding: 0 8px; font-size: 11px; }
+  .buyer-portal .hdr-right .country { display: none; }.buyer-portal .hdr-search { flex: 1; margin-left: 12px; }
+  .buyer-portal .lot-grid { grid-template-columns: minmax(0,1fr) minmax(250px,.7fr); }.buyer-portal .lot-grid .specs-col { grid-column: 1/-1; grid-row: 2; }
+  .buyer-portal .ftr-grid { grid-template-columns: repeat(4,minmax(0,1fr)); }
+}
+/* La captura de localhost estaba a una escala de pantalla mayor. Mantener las
+   medidas físicas de la referencia también en el escritorio CSS de 1520px. */
+@media(min-width:761px) and (max-width:1590px) {
+  .buyer-portal .member-wrap { padding-top: 13px; gap: 7px; }
+  .buyer-portal .member-main h1 { font-size: 18px; }.buyer-portal .m-head p { font-size: 9.5px; }
+  .buyer-portal .m-head { padding-bottom: 6px; margin-bottom: 6px; }
+  .buyer-portal .action-sidebar h3 { font-size: 13px; padding: 6px 5px; }
+  .buyer-portal .action-sidebar li a { font-size: 9.5px; padding: 3px 5px; }.buyer-portal .member-nav li a .radio-dot { flex-basis: 12px; width: 12px; height: 12px; }
+  .collapse-actions { width: 17px; height: 42px; right: 14px; font-size: 18px; }.sidebar-filter { padding: 4px 5px; }.sidebar-filter button { font-size: 9.5px; }
+  .buyer-portal .bid-sidebar h3 { font-size: 12px; padding: 7px 16px; }.buyer-portal .bid-sidebar li a { font-size: 10.5px; padding: 8px 16px; }
+  .reference-page-heading { padding: 21px 13px 15px; }.reference-page-heading h1 { font-size: 24px; }.bid-content-heading h2 { font-size: 18px; margin: 6px 10px; }
+  .buyer-portal .table-actions { margin: 6px 0 8px; }.buyer-portal .table-actions button, .column-picker summary { font-size: 9.5px; padding: 4px 8px; }
+  .buyer-portal .tbl th, .buyer-portal .tbl td { font-size: 9px; padding: 6px 7px; }
+  .buyer-portal .data-tools { font-size: 9.5px; }.tools-search label { font-size: 9px; }.tools-search,.tools-pagination { padding: 5px 8px; }
+  .buyer-portal.panel-body .data-tools input:not([type=checkbox]):not([type=radio]):not([type=file]) { height: 24px; width: 128px!important; font-size: 9px; padding: 4px 7px; }
+  .buyer-portal.panel-body .data-tools select { padding: 4px 7px; font-size: 9px; }.buyer-portal .data-tools button { padding: 5px 10px; font-size: 9px; }
+  .buyer-portal .ftr-grid { gap: 19px; padding: 46px 24px 21px; }.buyer-portal .ftr-grid h3 { font-size: 13px; margin-bottom: 12px; }
+  .buyer-portal .ftr-grid a,.buyer-portal .ftr-grid .muted-link { font-size: 10.5px; margin-bottom: 7px; }.buyer-portal .ftr-brand svg { width: 88px; height: 29px; }
+  .buyer-portal .ftr-select { max-width: 136px; margin-top: 14px; }.buyer-portal .ftr-select select { padding: 8px; font-size: 13px; }
+  .dash-card { min-height: 404px; padding: 16px; }.dash-card h2 { font-size: 21px; }.finance-line { font-size: 12px; margin: 13px 0 20px; }.finance-line strong { font-size: 17px; }
+  .dashboard-columns { min-width: 1200px; grid-template-columns: repeat(4,minmax(280px,1fr)); gap: 10px; }
+  .recent-grid { grid-template-columns: repeat(auto-fill,minmax(260px,332px)); gap: 29px; }.recent-lot { min-height: 504px; }.recent-lot h3 { font-size: 11px; }.recent-lot p { font-size: 9.5px; }.recent-lot .btn { font-size: 13px; padding: 8px; }
+  .recent-bid label { font-size: 11px; }.buyer-portal.panel-body .recent-bid input:not([type=checkbox]):not([type=radio]):not([type=file]) { font-size: 14px; min-height: 22px; }
+  .buyer-portal .reference-lot .page-title { font-size: 20px!important; }.buyer-portal .reference-lot .page-head p { font-size: 11px; }.buyer-portal .reference-lot .page-head { min-height: 96px; padding-top: 32px; }
+  .buyer-portal .spec-list { font-size: 9.5px; }.buyer-portal .spec-list dt,.buyer-portal .spec-list dd { padding: 6px 0; }
+  .buyer-portal .specs-col,.buyer-portal .bid-box { padding: 13px; }.buyer-portal .big-bid { font-size: 27px; }
+}
+@media(max-width:760px) {
+  .buyer-portal { font-size: 14px; }.buyer-portal .hdr-main { height: 82px; padding: 10px 14px; gap: 8px; }
+  .buyer-portal .hdr-logo { width: 125px; }.buyer-portal .portal-caption { font-size: 11px; padding: 0; }
+  .buyer-portal .hdr-search { display: none; }.buyer-portal .hdr-right summary { font-size: 13px; }
+  .buyer-portal .hdr-nav>ul>li>a,.buyer-portal .hdr-nav>ul>li>button { width: 100%; height: 40px; font-size: 14px; }
+  .buyer-portal .hdr-nav .drop a { font-size: 13px; }.buyer-portal .hdr-nav>ul>li>a.nav-help,.buyer-portal .hdr-nav>ul>li>a.nav-sell { margin: 0; height: 40px; }
+  .buyer-portal .member-wrap { display: block; padding: 12px; min-height: 480px; }.buyer-portal .member-nav { margin-bottom: 14px; }
+  .buyer-portal .reference-page-heading { padding: 18px 12px; }.reference-page-heading h1 { font-size: 26px; }
+  .buyer-portal .bids-layout .data-tools { display: block; }.buyer-portal .data-tools .tools-pagination { flex-wrap: wrap; }.tools-search { flex-wrap: wrap; }
+  .buyer-portal .member-home { padding: 16px 12px; }.dashboard-columns { grid-template-columns: 1fr; min-width: 0; }.dash-card { min-height: 300px; }.dashboard-scroll { overflow: visible; }
+  .dash-card h2 { font-size: 25px; }.title-card { min-height: 320px; }.dashboard-greeting p { font-size: 13px; }
+  .dashboard-recent { padding-top: 25px; }.recent-grid { grid-template-columns: minmax(0,1fr); }.recent-lot { min-height: 0; padding-bottom: 16px; }
+  .buyer-portal .reference-lot { width: auto; margin: 0 12px; padding-top: 18px; }.buyer-portal .lot-grid { grid-template-columns: minmax(0,1fr); }.buyer-portal .lot-grid .specs-col { grid-column: auto; grid-row: auto; }
+  .buyer-portal .reference-lot .page-title { font-size: 23px!important; }.buyer-portal .reference-lot .page-head p { font-size: 12px; }
+  .buyer-portal .spec-list { font-size: 13px; }.buyer-portal .ftr-grid { grid-template-columns: repeat(2,minmax(0,1fr)); padding: 30px 20px; }
+}

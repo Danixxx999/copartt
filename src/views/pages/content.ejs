@@ -1,0 +1,11 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="page-dark">
+  <article class="wrap-narrow content-body">
+    <h1 class="page-title"><%= page.title %></h1>
+    <p class="hint">Last updated <%= date(page.updated_at) %></p>
+    <%- page.body_html %>
+  </article>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

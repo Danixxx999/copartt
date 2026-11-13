@@ -1,0 +1,94 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main">
+  <% if (homeBanners && homeBanners.length) { %><div class="home-banners"><% homeBanners.forEach(function (b) { %><div class="home-banner"><span><%= b.text %></span><% if (b.link_url) { %> <a href="<%= b.link_url %>"><%= b.link_text || 'Learn more' %> ›</a><% } %></div><% }) %></div><% } %>
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <h1>100% Online Auto Auctions</h1>
+        <p class="hero-lead">Exclusive for automotive professionals.</p>
+        <p class="hero-lead">Over <span class="brown">20+</span> Thousand Used, Salvage and Repairable Cars, Trucks &amp; SUVs sold per year!</p>
+        <div class="hero-steps">
+          <div class="step-card"><h2><span class="step-num">1</span> Register</h2><p>Sign up for an copart Basic or Premium Membership. Professionals only!</p></div>
+          <div class="step-card"><h2><span class="step-num">2</span> Find</h2><p>Search our inventory of more than <span class="brown"><%= stats.open %></span> used, salvage &amp; repairable vehicles.</p></div>
+          <div class="step-card"><h2><span class="step-num">3</span> Bid</h2><p>Bid on our auto auctions. Every Tuesday and Thursday at 11 AM.</p></div>
+        </div>
+        <a class="btn btn-brown btn-pill btn-lg" href="<%= user ? '/vehicle-finder' : '/register' %>"><%= user ? 'Find a Vehicle' : 'Register to Start Bidding' %> ›</a>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hv-panel hv-1"><img src="/media/car/suv.svg?view=rear&color=%23b45309&seed=3" alt=""></div>
+        <div class="hv-panel hv-2"><img src="/media/car/automobile.svg?view=side&color=%23cbd5e1&seed=1" alt=""></div>
+        <div class="hv-floor"></div>
+      </div>
+    </div>
+    <div class="dots-deco" aria-hidden="true"></div>
+  </section>
+
+  <section class="sec-dark memberships" aria-labelledby="mem-title">
+    <div class="dots-left" aria-hidden="true"></div><div class="dots-right" aria-hidden="true"></div>
+    <h2 id="mem-title" class="sec-title">Membership Options</h2>
+    <p class="sec-sub">As an copart Member, you'll be able to search our massive inventory, used and repairable cars, trucks and SUVs. Unlock additional features by upgrading to a Basic or Premium Membership—you'll be able to jump right into the auction and start bidding in our live auctions!</p>
+    <ul class="checks-row"><li><svg class="ic"><use href="#i-check"/></svg> Pay Annually</li><li><svg class="ic"><use href="#i-check"/></svg> Refund available within 7 days</li><li><svg class="ic"><use href="#i-check"/></svg> Access to over 10.000 vehicles</li></ul>
+    <%- include('../partials/plan-cards', { plans: plans, from: 'home' }) %>
+  </section>
+
+  <section class="sec-dark popular" aria-labelledby="pop-title">
+    <h2 id="pop-title" class="sec-title">Popular Vehicles Right Now</h2>
+    <div class="carousel" data-carousel>
+      <button class="car-arrow prev" type="button" aria-label="Previous vehicles" data-carousel-prev>‹</button>
+      <div class="carousel-track" data-carousel-track>
+        <% popular.forEach(function (l) { %><%- include('../partials/lot-card', { l: l }) %><% }) %>
+      </div>
+      <button class="car-arrow next" type="button" aria-label="Next vehicles" data-carousel-next>›</button>
+    </div>
+  </section>
+
+  <section class="what-is">
+    <div class="what-left">
+      <h2>What is copart?</h2>
+      <p>copart is an academic platform specializing in <a href="/vehicles?condition=salvage">online auctions of damaged and faulty vehicles</a>.</p>
+      <p>Our demo connects national sellers with buyers. We list a wide range of vehicles from <a href="/vehicles">insurance companies</a>, <a href="/vehicles">dealerships</a>, <a href="/vehicles">rental fleets</a>, and <a href="/vehicles">leasing companies</a>.</p>
+      <p>Our clients — workshops, dismantlers, car traders, and dealerships — can access a diverse inventory of <a href="/vehicles?type=automobile">cars</a>, <a href="/vehicles?type=suv">SUVs</a>, <a href="/vehicles?type=motorcycle">motorcycles</a>, and <a href="/vehicles?type=van">vans</a> for <a href="/vehicles?condition=salvage">repair</a> or <a href="/vehicles?condition=salvage">dismantling</a>.</p>
+      <p><a href="/auctions/calendar">The auctions</a> take place in real time, with direct awards to the highest bidder, without waiting or further negotiations. A very convenient and transparent system for our buyers.</p>
+      <p>We offer a unique online platform that allows smart browsing and searching of the inventory, pre-bidding, and live bidding from any computer, phone, or mobile device.</p>
+      <a class="btn btn-brown btn-pill btn-caps" href="/membership">Become a member</a>
+    </div>
+    <div class="what-right">
+      <h2>Search copart's Extensive Used &amp; Repairable Cars for sale</h2>
+      <div class="cat-grid">
+        <div class="cat"><a class="cat-tile" href="/vehicles?featured=1"><strong>Featured Articles</strong><span>Search Now ›</span><img src="/media/car/automobile.svg?view=side&color=%23e5e7eb&damage=front&seed=2" alt=""></a>
+          <ul><li><a href="/vehicles?damage=front">Front damage ›</a></li><li><a href="/vehicles?odo_max=50000">Low mileage ›</a></li><li><a href="/vehicles?damage=mechanical">Mechanical damage ›</a></li><li><a href="/vehicles?damage=side">Side damage ›</a></li><li><a href="/vehicles?damage=minor">Minor damage and scratches</a></li></ul></div>
+        <div class="cat"><a class="cat-tile" href="/vehicles?type=automobile"><strong>Passenger Cars</strong><span>Search Now ›</span><img src="/media/car/automobile.svg?view=side&color=%23f472b6&seed=4" alt=""></a>
+          <ul><li><a href="/vehicles?sort=year_desc">Latest models ›</a></li><li><a href="/vehicles?type=suv">SUV ›</a></li><li><a href="/vehicles?damage=theft">Recovered from theft ›</a></li><li><a href="/vehicles?type=suv">Off-road vehicle ›</a></li><li><a href="/vehicles?transmission=automatic">Automatic ›</a></li><li><a href="/vehicles?fuel=electric">Electric ›</a></li><li><a href="/vehicles?fuel=hybrid">Hybrid ›</a></li></ul></div>
+        <div class="cat"><a class="cat-tile" href="/vehicles?type=commercial"><strong>Commercial Vehicles</strong><span>Search Now ›</span><img src="/media/car/commercial.svg?view=side&color=%23f8fafc&seed=5" alt=""></a>
+          <ul><li><a href="/vehicles?type=commercial">Tractor units ›</a></li><li><a href="/vehicles?type=van">Panel Vans ›</a></li><li><a href="/vehicles?type=van">Vans ›</a></li><li><a href="/vehicles?type=van">Pick-ups ›</a></li></ul></div>
+        <div class="cat"><a class="cat-tile" href="/vehicles?type=motorcycle"><strong>Motorcycles</strong><span>Search Now ›</span><img src="/media/car/motorcycle.svg?view=side&color=%23334155&seed=6" alt=""></a>
+          <ul><li><a href="/vehicles?type=motorcycle">Motorcycles ›</a></li><li><a href="/vehicles?type=motorcycle">Road motorcycles ›</a></li><li><a href="/vehicles?type=motorcycle">Scooters ›</a></li><li><a href="/vehicles?type=motorcycle">City motorcycles ›</a></li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec-dark makes-sec" aria-labelledby="makes-title">
+    <h2 id="makes-title" class="sec-title">copart Auto Auction - Used &amp; Repairable Cars for Sale</h2>
+    <div class="makes-wrap">
+      <div class="tabs" data-tabs>
+        <div class="tab-list" role="tablist"><button role="tab" aria-selected="true" data-tab="t-makes">Makes</button><button role="tab" aria-selected="false" data-tab="t-featured">Featured</button><button role="tab" aria-selected="false" data-tab="t-types">Types</button><button role="tab" aria-selected="false" data-tab="t-trending">Trending</button></div>
+        <div class="tab-panel" id="t-makes" role="tabpanel"><ul class="link-cols"><% facets.makes.forEach(function (m) { %><li><a href="/vehicles?make=<%= m.slug %>"><%= m.name %></a> <span>(<%= m.count %>)</span></li><% }) %></ul><div class="center"><a class="btn btn-blue btn-pill btn-xs" href="/vehicle-finder">View More</a></div></div>
+        <div class="tab-panel" id="t-featured" role="tabpanel" hidden><ul class="link-cols"><li><a href="/vehicles?featured=1">Featured vehicles</a> <span>(<%= facets.featured.featured %>)</span></li><li><a href="/vehicles?odo_max=50000">Low mileage</a> <span>(<%= facets.featured.low_mileage %>)</span></li><li><a href="/vehicles?fuel=electric">Electric &amp; hybrid</a> <span>(<%= facets.featured.electrified %>)</span></li><li><a href="/vehicles?transmission=automatic">Automatic</a> <span>(<%= facets.featured.automatic %>)</span></li></ul></div>
+        <div class="tab-panel" id="t-types" role="tabpanel" hidden><ul class="link-cols"><% facets.types.forEach(function (t2) { %><li><a href="/vehicles?type=<%= t2.code %>"><%= t2.name %></a> <span>(<%= t2.count %>)</span></li><% }) %></ul></div>
+        <div class="tab-panel" id="t-trending" role="tabpanel" hidden><ul class="link-cols"><% facets.damages.forEach(function (d) { %><li><a href="/vehicles?damage=<%= d.code %>"><%= d.name %></a> <span>(<%= d.count %>)</span></li><% }) %></ul></div>
+      </div>
+      <a class="ad-box" href="/vehicles"><span class="ad-1">BE THE FIRST TO BID</span><span class="ad-2">SALVAGED<br>AND DAMAGED</span><span class="ad-3">VEHICLES</span><img src="/media/car/suv.svg?view=front&color=%23111827&seed=9" alt=""><span class="ad-4">Cars, vans and SUVs<br>on sale.</span><span class="ad-btn">BID NOW!</span></a>
+    </div>
+  </section>
+
+  <section class="sec-dark promo-row">
+    <a class="promo" href="/membership"><strong>copart APP</strong><em>Next-level functions</em><span class="promo-btn">MEMBERSHIP</span></a>
+    <a class="promo" href="/sell-a-vehicle"><strong>SELL YOUR VEHICLE</strong><em>And get the best price</em><span class="promo-btn">MORE INFORMATION</span></a>
+    <a class="promo" href="/vehicles"><strong>START BIDDING</strong><em>Discover the vehicles available</em><span class="promo-btn">VIEW INVENTORY</span></a>
+    <a class="promo" href="/transport"><strong>TRANSPORT SERVICE</strong><em>National &amp; international</em><span class="promo-btn">MORE INFORMATION</span></a>
+  </section>
+  <section class="sec-dark follow"><h2 class="sec-title">Follow Us</h2><p class="muted">Social links are disabled in this academic demo.</p></section>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

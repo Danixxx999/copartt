@@ -1,0 +1,6 @@
+<%- include('../partials/account-start') %>
+<div class="acc-headrow"><h1><%= t('Notificaciones') %></h1><% if (items.some(function (n) { return !n.read_at; })) { %><button class="btn btn-outline btn-sm" type="button" data-api="/api/v1/notifications/read-all"><%= ht('Marcar todas como leídas', 'Mark all as read') %></button><% } %></div>
+<% if (!items.length) { %><div class="acc-empty"><%= ht('No tiene notificaciones.', 'You have no notifications.') %></div><% } %>
+<div class="acc-list"><% items.forEach(function (n) { %><a class="acc-item acc-notif <%= n.read_at ? '' : 'unread' %>" href="<%= n.link || '#' %>"><svg class="ic" aria-hidden="true"><use href="#i-bell"/></svg><div><strong><%= n.title %></strong><br><span class="acc-muted"><%= n.body %></span></div><span class="acc-spacer"></span><span class="acc-muted"><%= dateTime(n.created_at) %></span></a><% }) %></div>
+<p class="acc-muted"><a href="/account/preferences/communication"><%= t('Preferencias de comunicación') %> ›</a></p>
+<%- include('../partials/account-end') %>

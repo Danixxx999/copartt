@@ -1,0 +1,15 @@
+<%- include('../partials/account-start') %>
+<h1><%= t('Preferencias de comunicación') %></h1>
+<p class="acc-lead"><%= ht('Elija qué mensajes quiere recibir. Los avisos de pago y seguridad de la cuenta se envían siempre.', 'Choose which messages you want to receive. Payment and account security notices are always sent.') %></p>
+<% [['comm_outbid', ht('Le han superado la oferta', 'You have been outbid'), ht('Aviso inmediato cuando otro miembro supera su oferta máxima.', 'Instant notice when another member beats your maximum bid.'), true],
+    ['comm_watchlist', ht('Recordatorios de la lista de favoritos', 'Watchlist reminders'), ht('El día antes de que sus favoritos salgan a subasta.', 'The day before your watched lots go to auction.'), true],
+    ['comm_auction_reminders', ht('Recordatorios de subastas', 'Auction reminders'), ht('Subastas de sus sedes preferidas.', 'Auctions at your preferred yards.'), true],
+    ['comm_alerts', ht('Alertas de vehículos', 'Vehicle alerts'), ht('Nuevos lotes que coinciden con sus alertas.', 'New lots matching your alerts.'), true],
+    ['comm_newsletter', ht('Novedades y promociones', 'News and promotions'), ht('Boletín con novedades de la plataforma.', 'Newsletter with platform news.'), false],
+    ['comm_sms', ht('Mensajes de texto (SMS)', 'Text messages (SMS)'), ht('Solo para avisos urgentes de sus pujas.', 'Only for urgent bid notices.'), false]].forEach(function (c) { var on = prefs[c[0]] === undefined ? c[3] : prefs[c[0]]; %>
+<form class="acc-toggle-row acc-card" data-api="/api/v1/account/preferences" data-method="PATCH" data-autosave novalidate>
+  <div><h3><%= c[1] %></h3><p class="acc-muted"><%= c[2] %></p></div>
+  <label class="switch"><input type="checkbox" name="<%= c[0] %>" <%= on ? 'checked' : '' %>><span></span><span class="sr-only"><%= c[1] %></span></label>
+</form>
+<% }) %>
+<%- include('../partials/account-end') %>

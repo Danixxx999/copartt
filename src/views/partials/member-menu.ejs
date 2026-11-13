@@ -1,0 +1,10 @@
+<% var menus = [
+ ['Tablero', '/dashboard'], ['Asiento del Conductor', '/dashboard/lots'],
+ ['Inventario', [['Buscador de vehículos','/vehicle-finder'],['Listado de Ventas','/sales-list'],['Lista de favoritos','/watchList'],['Búsquedas guardadas','/savedsearch'],['Alerta de Vehículos','/vehicle-alerts']]],
+ ['Subastas', [['Subastas de hoy','/auctions'],['Calendario de subastas','/auctions/calendar'],['Unirse a Subastas','/auctions#sales']]],
+ ['Estado de la oferta', [['Mis ofertas','/dashboard/bids'],['Lotes ganados','/dashboard/bids?tab=won'],['Lotes perdidos','/dashboard/bids?tab=lost'],['Mis Contraofertas','/dashboard/bids?tab=counter']]],
+ ['Pagos', [['Pagos adeudados','/dashboard/payments'],['Historial de pago','/dashboard/payments?tab=history'],['Depósitos y poder adquisitivo','/dashboard/buying-power'],['Facturas','/dashboard/invoices']]],
+ ['Ubicaciones','/locations'], ['Servicios y Soporte', [['Transporte','/transport'],['Informes de Vehículos','/how-to-buy'],['Ayuda con la licencia','/dashboard/documents'],['Videos','/videos'],['Contáctenos','/contact']]], ['Centro de Ayuda','/help'], ['venda su auto','/sell-a-vehicle']
+]; menus.forEach(function(m) { if (Array.isArray(m[1])) { var on = m[1].some(function(n){return path === n[1].split('?')[0].split('#')[0]}); %>
+<li class="has-drop"><button type="button" class="<%= on ? 'active' : '' %>" aria-expanded="false"><%= t(m[0]) %> <svg class="ic ic-xs"><use href="#i-chev"/></svg></button><ul class="drop"><% m[1].forEach(function(n){ %><li><a href="<%= n[1] %>"><%= t(n[0]) %></a></li><% }) %></ul></li>
+<% } else { %><li><a href="<%= m[1] %>" class="<%= path === m[1] ? 'active' : '' %> <%= m[1] === '/help' ? 'nav-help' : m[1] === '/sell-a-vehicle' ? 'nav-sell' : '' %>"><%= t(m[0]) %></a></li><% } }) %>

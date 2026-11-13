@@ -1,0 +1,5 @@
+<%- include('../../partials/panel-start') %>
+<div class="m-head"><div><h1 class="m-title">Recently Viewed</h1><p class="lead">The last lots you opened, newest first.</p></div></div>
+<% if (!items.length) { %><div class="widget"><div class="w-bd"><div class="empty">You have not opened any lot yet. <a href="/vehicles">Browse the inventory</a>.</div></div></div>
+<% } else { %><div class="results-grid member-grid"><% items.forEach(function (l) { %><%- include('../../partials/lot-card', { l: l }) %><% }) %></div><% } %>
+<%- include('../../partials/panel-end') %>

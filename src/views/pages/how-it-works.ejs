@@ -1,0 +1,56 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="page-dark" style="padding-top:20px">
+  <section class="hiw-top">
+    <div>
+      <h1>How it Works</h1>
+      <h3>More than 20,000 Cars, Trucks, SUVs, Motorcycles and More for Sale</h3>
+      <p>copart car auctions have something for everyone — used car buyers, dismantlers, dealers, body shops, or salvage buyers.</p>
+      <h3>A Better Way to Buy</h3>
+      <p>Buy your next car from the comfort of your own home. Win your car at an online auction or set up an automatic bidding in our system.</p>
+      <h3>Academic Project</h3>
+      <p>copart replicates a 100% online car auction featuring used, wholesale and salvage vehicles, built for a university course.</p>
+      <a class="btn btn-blue btn-pill" href="/vehicles" style="margin-top:14px">Search Inventory</a>
+    </div>
+    <div class="photo-grid" aria-hidden="true"><img src="/media/car/automobile.svg?view=interior&color=%233b82f6" alt=""><img src="/media/car/automobile.svg?view=side&color=%23b91c1c&damage=front&seed=3" alt=""><img class="wide" src="/media/car/commercial.svg?view=side&color=%230f172a&seed=8" alt=""></div>
+  </section>
+  <section class="wrap"><h2 class="h-under">After You've Registered:</h2>
+    <div class="feat-4">
+      <div><svg class="ic"><use href="#i-upload-cloud"/></svg><h3>Upload Documents</h3><p>Upload in your profile the necessary documentation depending on your business.</p><a href="/dashboard/documents">Document Uploader</a></div>
+      <div><svg class="ic"><use href="#i-heart-search"/></svg><h3>Search and Save</h3><p>Browse vehicles every week. Sign up for alerts to get notified when a new vehicle is available in our inventory.</p><a href="/vehicle-finder">Vehicle Finder</a><a href="/vehicle-alerts">Set an Alert</a><a href="/vehicles">Save a Search</a></div>
+      <div><svg class="ic"><use href="#i-cal-big"/></svg><h3>Join Auctions</h3><p>Join the fun and use our real-time virtual bidding room with proxy (maximum) bids.</p><a href="/auctions/calendar">Auction Calendar</a></div>
+      <div><svg class="ic"><use href="#i-truck-big"/></svg><h3>Get it Delivered</h3><p>We offer national and international transport services.</p><a href="/transport">Transport Service</a></div>
+    </div>
+  </section>
+  <section class="split" style="margin:0 -24px">
+    <div style="padding:0"><img src="/media/car/automobile.svg?view=side&color=%23dc2626&seed=11" alt="" style="width:100%;height:100%;object-fit:cover"></div>
+    <div><h2 class="h-under">Why Buy with copart?</h2>
+      <ul style="line-height:1.9"><li><strong>Huge selection:</strong> cars, SUVs, vans, commercial vehicles and motorcycles.</li><li><strong>Transparent:</strong> real-time bidding, public bid history and direct awards to the highest bidder.</li><li><strong>Pre-bid 24/7:</strong> set your maximum bid and the system bids for you.</li><li><strong>Inspect before you bid:</strong> photo reports and yard visits by appointment.</li><li><strong>All online:</strong> invoices, payments, pickup PIN and transport from your dashboard.</li></ul></div>
+  </section>
+  <section class="wrap" style="padding:50px 0">
+    <h2 class="h-under">Buying Step by Step</h2>
+    <div class="grid-3" style="margin-top:24px">
+      <div class="card-dark"><h3>1. Register &amp; membership</h3><p class="hint">Create your account (individual or business), choose Guest, Basic or Premium and upload your ID. Guest members can browse and watch but not bid.</p></div>
+      <div class="card-dark"><h3>2. Find &amp; inspect</h3><p class="hint">Use the Vehicle Finder, filters and alerts. Check damages, documents and location. Visit the yard by appointment.</p></div>
+      <div class="card-dark"><h3>3. Pre-bid or bid live</h3><p class="hint">Set a maximum before the sale or bid live in the auction room. Bids in the final seconds extend the clock.</p></div>
+      <div class="card-dark"><h3>4. Pay</h3><p class="hint">Winners receive an invoice. The vehicle is paid by bank transfer (upload the receipt) and fees by card (sandbox). Finance validates the payment.</p></div>
+      <div class="card-dark"><h3>5. Pick up</h3><p class="hint">Once fully paid, a pickup PIN appears in your dashboard. Show it at the yard; Logistics validates it and releases the vehicle.</p></div>
+      <div class="card-dark"><h3>6. Or get it delivered</h3><p class="hint">Request a transport quote, accept it and pay it. Track the shipment until delivery.</p></div>
+    </div>
+  </section>
+  <section class="split" style="margin:0 -24px;background:var(--navy)">
+    <div><h2 style="font-size:30px;font-weight:900">Delivery and Transportation</h2><div class="underline-blue"></div>
+      <p>copart has 2 options when it comes to getting your vehicle:</p>
+      <p><strong>copart Delivery</strong><br>We offer International and National delivery service for all buyers who wish to request it. Once the auction is over, you will receive an optional budget.</p>
+      <p><strong>Pick up your Vehicle with External Transport Service</strong><br>You have 5 working days of free storage while you arrange for pick-up. For safety reasons and to avoid accidents during loading and transport, <strong>no loads will be made in transport vehicles that are not specifically prepared for the transport of vehicles.</strong></p></div>
+    <div style="padding:0"><img src="/media/car/commercial.svg?view=side&color=%231e3a8a&seed=12" alt="" style="width:100%;height:100%;object-fit:cover"></div>
+  </section>
+  <section class="wrap faq" style="padding:50px 0"><h2 class="h-under">FAQ</h2>
+    <details><summary>Can I bid with a Guest membership?</summary><p>No. Guests can view auctions, add vehicles to the Watchlist and create alerts. Bidding requires Basic or Premium plus approved documents.</p></details>
+    <details><summary>What is a pre-bid?</summary><p>A maximum amount you set before the auction. The system raises your bid automatically, by the minimum increment, only as much as needed to keep you in the lead.</p></details>
+    <details><summary>What happens if the reserve is not met?</summary><p>The lot goes “On approval”: the seller decides whether to accept the highest bid. You'll be notified either way.</p></details>
+    <details><summary>How long do I have to pay?</summary><p>The invoice shows the due date (5 days by default in this demo). <a href="/how-to-buy" style="color:var(--blue)">More in How to Buy</a>.</p></details>
+  </section>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

@@ -1,0 +1,18 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="page-dark">
+  <div class="wrap-narrow">
+    <h1 class="page-title">Fee Calculator</h1>
+    <p class="muted">Estimate the total cost of a vehicle from its hammer price. Uses the same server-side rules as real invoices. Demo values, not real tariffs.</p>
+    <form method="get" class="inline-form" style="width:100%;margin:16px 0"><label for="amt" class="lbl">Bid amount (€)</label><input id="amt" name="amount" type="number" min="1" step="1" value="<%= amount || '' %>" required style="max-width:220px"><button class="btn btn-blue" type="submit">Calculate</button></form>
+    <% if (breakdown) { %>
+      <table class="tbl"><thead><tr><th>Concept</th><th class="num">Net</th><th class="num">VAT</th><th class="num">Total</th></tr></thead><tbody>
+        <% breakdown.items.forEach(function (i) { %><tr><td><%= i.description %></td><td class="num"><%= eur(i.amount_cents) %></td><td class="num"><%= eur(i.tax_cents) %></td><td class="num"><%= eur(i.amount_cents + i.tax_cents) %></td></tr><% }) %>
+        <tr><td><strong>Total</strong></td><td class="num"><%= eur(breakdown.subtotal) %></td><td class="num"><%= eur(breakdown.tax) %></td><td class="num"><strong><%= eur(breakdown.total) %></strong></td></tr>
+      </tbody></table>
+      <p class="hint">Vehicle (bank transfer): <%= eur(breakdown.vehicle_total) %> · Fees (card allowed): <%= eur(breakdown.fees_total) %>. Transport and storage not included.</p>
+    <% } %>
+  </div>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

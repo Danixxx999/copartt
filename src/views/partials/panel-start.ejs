@@ -1,0 +1,58 @@
+<%
+  var groups = (typeof navGroups !== 'undefined' && navGroups) ? navGroups : [[null, nav]];
+  var isMember = typeof memberLayout !== 'undefined' && memberLayout;
+  var cur = (typeof active !== 'undefined' && active) ? active : null;
+  if (!cur && path === '/dashboard/lots') cur = '/dashboard/lots';
+  if (!cur) { var best = ''; groups.forEach(function (g) { g[1].forEach(function (n) { var h = n[0]; if ((path === h || path.indexOf(h + '/') === 0) && h.length > best.length) best = h; }); }); cur = best; }
+%>
+<% if (isMember) { %>
+<%- include('head', { bodyClass: 'panel-body member-body' }) %>
+<%- include('header') %>
+<% if(path === '/dashboard/bids') { %><div class="reference-page-heading"><h1><%= {current:'Mis ofertas',won:'Lotes ganados',lost:'Lotes perdidos',counter:'Mis Contraofertas'}[tab] %></h1><button type="button" data-print>▣ Imprimir</button></div><% } %>
+<div class="member-wrap <%= path === '/dashboard' ? 'member-home' : path === '/dashboard/payments' ? 'payment-layout' : path === '/dashboard/lots' ? 'lots-layout' : path === '/dashboard/bids' ? 'bids-layout' : '' %>">
+  <aside class="member-nav" aria-label="<%= area %>">
+    <% if(path === '/dashboard/lots' || path === '/dashboard/bids') { %><%- include('action-sidebar') %><% } else { %>
+    <div class="mn-user">
+      <span class="mn-avatar" aria-hidden="true"><%= (user.first_name || '?').charAt(0) %><%= (user.last_name || '').charAt(0) %></span>
+      <div><strong><%= user.name %></strong><span>Member # <%= String(user.id).padStart(6, '0') %></span>
+        <% if (user.plan) { %><span class="mn-plan plan-<%= user.plan.code %>"><%= user.plan.name %> member</span><% } else if (user.is('seller')) { %><span class="mn-plan plan-seller">Seller</span><% } %></div>
+    </div>
+    <% if (user.is('buyer')) { %><h3>Lista de Acción</h3><ul><li><a href="/dashboard/lots" class="<%= path === '/dashboard/lots' ? 'on' : '' %>">◉ Mis Lotes</a></li></ul><% } %><details class="mn-mobile" open><summary><%= area %> menu</summary>
+    <% groups.forEach(function (g) { %>
+      <% if (g[0]) { %><h3><%= t(g[0]) %></h3><% } %>
+      <ul><% g[1].forEach(function (n) { var on = n[0] === cur; %><li><a href="<%= n[0] %>" class="<%= on ? 'on' : '' %>" <%- on ? 'aria-current="page"' : '' %>><svg class="ic" aria-hidden="true"><use href="#i-<%= n[2] %>"/></svg><span><%= t(n[1]) %></span><% if (n[4]) { %><span class="mn-count"><%= n[4] %></span><% } %></a></li><% }) %></ul>
+    <% }) %>
+    </details>
+    
+    <% } %>
+  </aside>
+  <main id="main" class="member-main">
+<% } else { %>
+<%- include('head', { bodyClass: 'panel-body' }) %>
+<%- include('impersonation-bar') %>
+<div class="panel">
+  <nav class="sidebar" aria-label="<%= area %> navigation">
+    <a href="/" aria-label="copart home" style="padding:6px 4px 12px"><%- include('logo') %></a>
+    <div class="area"><%= t(area) %></div>
+    <% groups.forEach(function (g) { %>
+      <% if (g[0]) { %><div class="grp"><%= t(g[0]) %></div><% } %>
+      <% g[1].forEach(function (n) { var on = n[0] === cur; %><a href="<%= n[0] %>" class="<%= on ? 'on' : '' %>" <%- on ? 'aria-current="page"' : '' %>><svg class="ic"><use href="#i-<%= n[2] %>"/></svg><%= t(n[1]) %></a><% }) %>
+    <% }) %>
+    <div class="tag-proposal">Private screens: <strong>academic proposal</strong> (no reference screenshots available).</div>
+  </nav>
+  <div style="min-width:0">
+    <header class="topbar">
+      <form action="/vehicles" method="get" role="search"><label class="sr-only" for="tb-q">Search vehicles</label><input id="tb-q" name="q" placeholder="Search vehicles, lot #…"></form>
+      <div class="right">
+        <a href="/" class="btn btn-light btn-sm"><%= t("View site") %></a>
+        <a href="/dashboard/notifications" aria-label="Notifications" style="position:relative"><svg class="ic ic-lg"><use href="#i-bell"/></svg><% if (unread) { %><span class="dot-count"><%= unread %></span><% } %></a>
+        <details class="user-menu"><summary><svg class="ic"><use href="#i-user"/></svg> <%= user.name %> <span class="badge badge-gray"><%= user.roles.join(', ') %></span></summary>
+          <div class="menu-pop menu-right">
+            <% if (user.is('buyer')) { %><a href="/dashboard">Member dashboard</a><% } %><% if (user.is('seller')) { %><a href="/seller">Seller portal</a><% } %><% if (user.isAdminArea && homeFor(user) === '/admin') { %><a href="/admin">Administration</a><% } %><% if (user.has('finance.review')) { %><a href="/finance">Finance</a><% } %><% if (user.has('logistics.manage')) { %><a href="/ops">Logistics</a><% } %>
+            <a href="/dashboard/profile">Profile &amp; security</a>
+            <form method="post" action="/logout"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button type="submit">Sign Out</button></form>
+          </div></details>
+      </div>
+    </header>
+    <main id="main" class="panel-main">
+<% } %>

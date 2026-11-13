@@ -1,0 +1,8 @@
+<%- include('cookie-preferences') %>
+<script src="/js/cookie-preferences.js" defer></script>
+<script src="/js/app.js" defer></script>
+<script src="/js/member.js" defer></script>
+<% if (typeof scripts !== 'undefined') { scripts.forEach(function (s) { %><script src="<%= s %>" defer></script>
+<% }) } %>
+</body>
+</html>

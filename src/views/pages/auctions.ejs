@@ -1,0 +1,23 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="page-dark">
+  <div class="wrap">
+    <div class="page-head"><div><h1 class="page-title">Subastas de hoy</h1><p class="muted" style="margin:0">Consulte las subastas de hoy para ver lo que está a la venta. Explore por ubicación, horario y estado de la venta.</p></div><a class="btn btn-blue btn-pill" href="/auctions/calendar">Calendario de subastas</a></div>
+    <% if (!events.length) { %><div class="empty">There are no live or upcoming auctions right now. <a href="/auctions/calendar" style="color:var(--blue)">See the calendar</a>.</div><% } %>
+    <div class="auction-list-layout"><section class="data-table" data-table id="sales"><%- include('../partials/table-tools', {count:events.length}) %><div class="table-wrap"><table class="tbl"><thead><tr><th>Nombre de la venta</th><th>Hora de venta (Madrid)</th><th>Ubicación</th><th class="num">Artículos</th><th>Estado</th><th>Comienza en</th><th></th></tr></thead><tbody>
+      <% events.forEach(function (e) { %><tr>
+        <td><strong><%= e.name %></strong></td><td><%= weekday(e.starts_at) %> <%= dateTime(e.starts_at) %></td><td><%= e.location_name || 'All of Spain' %></td><td class="num"><%= e.lots %><% if (e.status === 'live') { %> <span class="muted">(<%= e.remaining %> left)</span><% } %></td>
+        <td><%- badge(e.status) %></td><td><% if (e.status === 'scheduled') { %><span data-countdown="<%= new Date(e.starts_at).toISOString() %>">—</span><% } else { %>Now<% } %></td>
+        <td class="actions"><a class="btn btn-sm <%= e.status === 'live' ? 'btn-green' : 'btn-blue' %>" href="/auctions/<%= e.id %>/live"><%= e.status === 'live' ? 'Sumarse a la subasta' : 'Ver lista de venta' %></a><a class="btn btn-sm btn-outline" style="color:#fff" href="/vehicles?event=<%= e.id %>&status=all">Lots</a></td>
+      </tr><% }) %>
+    </tbody></table></div>
+</section><aside class="auction-explainer"><h2>Subastas de Hoy</h2><p>Consulte las subastas en línea de copart y los vehículos disponibles. Puede ver la lista de venta antes de entrar a cada sala.</p><h2>¿Cuándo es la próxima subasta?</h2><p>Consulte el calendario para ver las fechas, las ubicaciones y los lotes programados. Las salas en vivo muestran las pujas en tiempo real.</p><a href="/auctions/calendar">Ver calendario de subastas</a></aside></div>
+    <div class="grid-3" style="margin-top:30px">
+      <div class="card-dark"><h3>1. Pre-bid</h3><p class="hint">Set your maximum bid on any lot before the auction starts. The system bids for you up to that amount.</p></div>
+      <div class="card-dark"><h3>2. Bid live</h3><p class="hint">Join the room: lots are sold one by one with a short countdown that extends when bids arrive in the final seconds.</p></div>
+      <div class="card-dark"><h3>3. Win &amp; pay</h3><p class="hint">Winners receive an invoice instantly. Pay the vehicle by bank transfer and the fees by card (sandbox).</p></div>
+    </div>
+  </div>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

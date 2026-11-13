@@ -1,0 +1,19 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="page-dark">
+  <div class="wrap">
+    <h1 class="page-title">Help Center</h1>
+    <p>How can we help you today?</p>
+    <form action="/faq" class="loc-search" style="margin:10px 0 30px"><label class="sr-only" for="hq">Search help</label><input id="hq" name="q" placeholder="Search questions (e.g. payment, PIN, membership)"><button class="btn btn-blue" type="submit">Search</button></form>
+    <div class="grid-3">
+      <a class="card-dark" style="text-decoration:none" href="/how-it-works"><h3 style="color:var(--blue)">Getting started</h3><p class="hint">Registration, memberships and documents.</p></a>
+      <a class="card-dark" style="text-decoration:none" href="/how-to-buy"><h3 style="color:var(--blue)">How to Buy</h3><p class="hint">Pre-bids, live auctions, fees and payment.</p></a>
+      <a class="card-dark" style="text-decoration:none" href="/faq"><h3 style="color:var(--blue)">Common Questions</h3><p class="hint">Answers to frequent questions.</p></a>
+      <a class="card-dark" style="text-decoration:none" href="/transport"><h3 style="color:var(--blue)">Transport &amp; pickup</h3><p class="hint">Quotes, tracking and pickup PIN.</p></a>
+      <a class="card-dark" style="text-decoration:none" href="/sell-a-vehicle"><h3 style="color:var(--blue)">Selling</h3><p class="hint">Become a seller and list vehicles.</p></a>
+      <a class="card-dark" style="text-decoration:none" href="/contact"><h3 style="color:var(--blue)">Contact Member Services</h3><p class="hint">Open a support ticket.</p></a>
+    </div>
+  </div>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

@@ -1,0 +1,31 @@
+<%- include('../../partials/panel-start') %>
+<div class="m-head"><div><h1 class="m-title"><%= tab === "due" ? "Facturas no pagadas" : "Historial" %></h1><p class="lead">Gestione sus facturas y pagos. Entorno de demostración: no se procesa dinero real.</p></div></div>
+<% if(tab === 'due') { %><div class="kpis payment-summary">
+  <div class="kpi <%= totals.due ? 'warn' : '' %>"><div class="v"><%= eur(totals.due) %></div><div class="l">Importe adeudado</div></div>
+  <div class="kpi <%= totals.overdue ? 'warn' : '' %>"><div class="v"><%= eur(totals.overdue) %></div><div class="l">Atrasado</div></div>
+  <div class="kpi info"><div class="v"><%= eur(totals.in_review) %></div><div class="l">En revisión por Finanzas</div></div>
+  <div class="kpi ok"><div class="v"><%= eur(totals.paid) %></div><div class="l">Pagado (aprobado)</div></div>
+</div><% } else { %><nav class="history-views"><a href="/dashboard/payments?tab=history" class="<%= historyView==='invoices'?'selected':'' %>">◉ Vista de facturas</a><a href="/dashboard/payments?tab=history&view=transactions" class="<%= historyView==='transactions'?'selected':'' %>">○ Vista de transacciones</a></nav><% } %>
+<nav class="m-tabs" aria-label="Payments">
+  <a href="/dashboard/payments" class="<%= tab === 'due' ? 'on' : '' %>">Pagos adeudados <span><%= due.length %></span></a>
+  <a href="/dashboard/payments?tab=history" class="<%= tab === 'history' ? 'on' : '' %>">Historial de pago <span><%= payments.length %></span></a>
+</nav>
+<div class="table-actions"><button type="button" data-export-table>Exportar</button><button type="button" data-print>Imprimir</button><a class="btn btn-outline" href="/dashboard/invoices">Vista de facturas</a></div><div class="data-table" data-table><%- include('../../partials/table-tools', { count: tab === 'due' ? due.length : payments.length }) %><div class="widget m-tab-panel"><div class="w-bd w-flush">
+<% if (tab === 'due') { %>
+  <% if (!due.length) { %><div class="empty">No se encontraron archivos.</div><% } else { %>
+  <div class="table-wrap"><table class="tbl"><thead><tr><th>Lote / factura #</th><th>Descripción</th><th>Fecha de factura</th><th>Fecha de vencimiento</th><th class="num">Importe de la factura</th><th class="num">Pagado</th><th class="num">Saldo adeudado</th><th></th></tr></thead><tbody>
+  <% due.forEach(function (i) { %><tr><td><strong><%= i.invoice_number %></strong></td><td><%= i.kind === 'purchase' ? 'Vehicle purchase' : i.kind === 'membership' ? 'Membership' : 'Transport' %><%= i.lot_number ? ' · Lot #' + i.lot_number : '' %></td><td><%= date(i.issued_at || i.created_at) %></td><td class="<%= i.overdue ? 'txt-err' : '' %>"><%= date(i.due_at) %><%= i.overdue ? ' · overdue' : '' %></td><td class="num"><%= eur(i.total_cents) %></td><td class="num"><%= eur(i.paid_cents) %></td><td class="num"><strong><%= eur(i.total_cents - i.paid_cents) %></strong></td>
+    <td class="actions"><a class="btn btn-green btn-sm" href="<%= i.order_id ? '/dashboard/purchases/' + i.order_id : '/dashboard/membership' %>">Pagar factura</a><a class="btn btn-light btn-sm" href="/dashboard/invoices/<%= i.id %>.pdf" target="_blank" rel="noopener">PDF</a></td></tr><% }) %>
+  </tbody></table></div><% } %>
+<% } else if(historyView === 'invoices') { %>
+<div class="table-wrap"><table class="tbl"><thead><tr><th>Imagen</th><th>Fecha de factura</th><th>Lote / factura #</th><th>Descripción</th><th>Importe</th><th>Pagado</th><th>Estado</th><th></th></tr></thead><tbody>
+<% historyInvoices.forEach(function(i){ %><tr><td><svg class="invoice-icon ic"><use href="#i-car"/></svg></td><td><%= date(i.issued_at || i.created_at) %></td><td><%= i.invoice_number %></td><td><%= i.kind==='membership'?'MEMBRESÍA copart':i.kind==='purchase'?'COMPRA DE VEHÍCULO':'TRANSPORTE' %></td><td><%= eur(i.total_cents) %></td><td class="blue"><strong><%= eur(i.paid_cents) %></strong></td><td><%- badge(i.status) %></td><td><a href="/dashboard/invoices/<%= i.id %>.pdf" target="_blank" rel="noopener">Descargar PDF</a></td></tr><% }) %>
+<% if(!historyInvoices.length) { %><tr><td colspan="8" class="empty-cell">No se encontraron archivos.</td></tr><% } %></tbody></table></div>
+<% } else { %>
+  <% if (!payments.length) { %><div class="empty">No se encontraron archivos.</div><% } else { %>
+  <div class="table-wrap"><table class="tbl"><thead><tr><th>Fecha</th><th>Lote / factura #</th><th>Método</th><th>Descripción</th><th>Referencia</th><th class="num">Importe</th><th>Estado</th><th></th></tr></thead><tbody>
+  <% payments.forEach(function (p) { %><tr><td><%= dateTime(p.created_at) %></td><td><%= p.invoice_number %></td><td><%= p.method === 'bank_transfer' ? 'Bank transfer' : p.method === 'card_demo' ? 'Card (sandbox)' : cap(String(p.method).replace(/_/g, ' ')) %></td><td><%= cap(p.scope || 'all') %></td><td><code><%= p.reference || '—' %></code></td><td class="num"><%= eur(p.amount_cents) %></td><td><%- badge(p.status) %><% if (p.review_note) { %><br><span class="hint"><%= p.review_note %></span><% } %></td><td><% if (p.order_id) { %><a href="/dashboard/purchases/<%= p.order_id %>">Order ›</a><% } %></td></tr><% }) %>
+  </tbody></table></div><% } %>
+<% } %>
+</div></div>
+</div><%- include('../../partials/panel-end') %>

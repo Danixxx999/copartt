@@ -1,0 +1,54 @@
+<%- include('../partials/account-start') %>
+<h1><%= t('Gestión de títulos') %></h1>
+<nav class="acc-underline"><span class="on"><%= ht('Establecer preferencias', 'Set preferences') %></span></nav>
+<h2 class="acc-h2 big"><%= ht('Establezca preferencias para un envío más rápido de los documentos', 'Set preferences for faster document delivery') %></h2>
+<section class="acc-card">
+  <h3><%= ht('Preferencia de envío', 'Mailing preference') %></h3>
+  <p class="acc-muted"><%= ht('Gestione las direcciones a las que se envían los documentos (permiso de circulación, ficha técnica…). Cada dirección puede asociarse a sedes concretas.', 'Manage the addresses where vehicle documents are mailed. Each address can be linked to specific yards.') %></p>
+  <% if (!addresses.length) { %><div class="acc-info"><svg class="ic"><use href="#i-shield"/></svg> <%= ht('No tiene una dirección para títulos en el archivo.', 'You have no title address on file.') %></div><% } %>
+  <% addresses.forEach(function (a) { %><div class="acc-item"><div><strong><%= a.line1 %><%= a.line2 ? ', ' + a.line2 : '' %></strong><br><span class="acc-muted"><%= a.postal_code %> <%= a.city %>, <%= a.province %> · <%= regions[a.country] || a.country %> · <%= a.location_codes.length ? a.location_codes.join(', ') : ht('Todas las sedes', 'All yards') %></span></div><span class="acc-spacer"></span><% if (a.is_default) { %><span class="acc-tag"><%= t('Predeterminado') %></span><% } %><button class="link-btn danger" type="button" data-api="/api/v1/account/title-addresses/<%= a.id %>" data-method="DELETE" data-confirm="<%= ht('¿Eliminar esta dirección?', 'Remove this address?') %>">✕</button></div><% }) %>
+  <button class="acc-add" type="button" data-open-dialog="dlg-addr"><svg class="ic"><use href="#i-plus"/></svg> <%= ht('Nueva dirección', 'New address') %></button>
+  <hr>
+  <form class="acc-toggle-row" data-api="/api/v1/account/preferences" data-method="PATCH" data-autosave novalidate>
+    <div><h3><%= ht('Enviar automáticamente los títulos por correo', 'Automatically mail titles') %></h3><p class="acc-muted"><%= ht('Si la activa, enviaremos por correo los documentos de todos sus vehículos y los gastos de envío se añadirán a su factura.', 'When enabled, documents for all your vehicles are mailed and shipping fees are added to your invoice.') %></p></div>
+    <label class="switch"><input type="checkbox" name="auto_mail_titles" <%= prefs.auto_mail_titles ? 'checked' : '' %>><span></span><span class="sr-only"><%= ht('Enviar automáticamente', 'Auto mail') %></span></label>
+  </form>
+</section>
+<form class="acc-toggle-row acc-plain" data-api="/api/v1/account/preferences" data-method="PATCH" data-autosave novalidate>
+  <div><h3><%= ht('Preferencia opcional para compradores profesionales', 'Optional preference for professional buyers') %></h3><p><strong><%= ht('Informar compras a la autoridad aduanera:', 'Report purchases to customs:') %></strong> <span class="acc-muted"><%= ht('Cuando esté activado, incluiremos sus compras en el informe para aduanas de los vehículos que exporte.', 'When enabled, your purchases are included in the customs report for exported vehicles.') %></span></p></div>
+  <label class="switch"><input type="checkbox" name="customs_report" <%= prefs.customs_report ? 'checked' : '' %>><span></span><span class="sr-only">customs</span></label>
+</form>
+<h3 class="acc-h3"><%= ht('Preferencia de recogida del vehículo', 'Vehicle pickup preference') %></h3>
+<div class="acc-pickup">
+  <% var pk = { self: ht('Recogeré yo mismo el vehículo en la sede', 'I will collect the vehicle at the yard'), transport: ht('Contrataré el transporte de copart', 'I will book copart transport'), third_party: ht('Lo recogerá un tercero autorizado', 'An authorised third party will collect it') }; %>
+  <% if (!prefs.pickup_preference) { %><div class="acc-warn">ⓘ <%= ht('No ha seleccionado ninguna preferencia. Pulse Editar y elija una.', 'No preference selected. Press Edit and choose one.') %></div><% } else { %><div class="acc-info"><%= pk[prefs.pickup_preference] %></div><% } %>
+  <button class="btn btn-outline" type="button" data-open-dialog="dlg-pickup"><%= t('Editar') %></button>
+</div>
+<dialog id="dlg-pickup"><div class="dlg"><h2><%= ht('Preferencia de recogida', 'Pickup preference') %></h2><form data-api="/api/v1/account/preferences" data-method="PATCH" novalidate>
+  <% Object.keys(pk).forEach(function (k) { %><label class="check acc-radio"><input type="radio" name="pickup_preference" value="<%= k %>" <%= prefs.pickup_preference === k ? 'checked' : '' %> required> <%= pk[k] %></label><% }) %>
+  <% if (true) { %><p class="hint"><a href="/account/forms/pickup-authorization.pdf" target="_blank" rel="noopener"><%= ht('Formulario de autorización para terceros (PDF)', 'Third-party authorisation form (PDF)') %></a></p><% } %>
+  <div class="dlg-actions"><button class="btn btn-light" type="button" data-close><%= t('Cerrar') %></button><button class="btn btn-blue" type="submit"><%= t('Guardar') %></button></div></form></div></dialog>
+<dialog id="dlg-addr" class="dlg-dark"><div class="dlg dlg-wide"><h2><%= ht('¿A dónde le gustaría que enviemos sus títulos por correo?', 'Where should we mail your titles?') %></h2>
+  <form data-api="/api/v1/account/title-addresses" data-steps novalidate>
+    <ol class="acc-steps"><li class="on" data-step-dot="1"><b>1</b><span><%= ht('¿Adónde debemos enviar sus títulos por correo?', 'Where should we mail your titles?') %></span></li><li data-step-dot="2"><b>2</b><span><%= ht('¿Qué ubicaciones deben enviar los títulos aquí?', 'Which yards should mail titles here?') %></span></li></ol>
+    <div data-step="1">
+      <div class="acc-info"><%= ht('Los títulos solo pueden enviarse por correo dentro de', 'Titles can only be mailed within') %> <%= countryName(region) %>.</div>
+      <label class="check"><input type="checkbox" data-copy-address="<%= JSON.stringify({ line1: profile.mail_address || profile.address, city: profile.mail_city || profile.city, postal_code: profile.mail_postal_code || profile.postal_code }) %>"> <%= ht('Igual que la dirección postal', 'Same as mailing address') %></label>
+      <div class="form-grid">
+        <div class="form-row"><label for="ta1"><%= t('Línea 1 de dirección') %> *</label><input id="ta1" name="line1" required></div>
+        <div class="form-row"><label for="ta2"><%= t('Línea 2 de dirección') %></label><input id="ta2" name="line2"></div>
+        <div class="form-row"><label for="tac"><%= t('País') %> *</label><select id="tac" name="country"><% Object.keys(regions).forEach(function (c) { %><option value="<%= c %>" <%= c === region ? 'selected' : '' %>><%= regions[c] %></option><% }) %></select></div>
+        <div class="form-row"><label for="tap"><%= ht('Estado/Provincia', 'State/Province') %> *</label><input id="tap" name="province" required></div>
+        <div class="form-row"><label for="taci"><%= t('Ciudad') %> *</label><input id="taci" name="city" required></div>
+        <div class="form-row"><label for="tacp"><%= t('Código postal') %> *</label><input id="tacp" name="postal_code" required></div>
+      </div>
+      <label class="check"><input type="checkbox" name="is_default" checked> <%= ht('Establecido como predeterminado', 'Set as default') %></label>
+      <label class="check"><input type="checkbox" name="auto_mail" <%= prefs.auto_mail_titles !== false ? 'checked' : '' %>> <%= ht('Enviar automáticamente los títulos por correo', 'Automatically mail titles') %></label>
+    </div>
+    <div data-step="2" hidden>
+      <p class="acc-muted"><%= ht('Elija las sedes cuyos documentos se enviarán a esta dirección. Si no marca ninguna, se usará para todas.', 'Choose the yards whose documents go to this address. Leave empty for all yards.') %></p>
+      <div class="acc-checks"><% locations.forEach(function (l) { %><label class="check"><input type="checkbox" name="locations" value="<%= l.code %>" data-multi> <%= l.name %></label><% }) %><% if (!locations.length) { %><p class="acc-muted"><%= ht('No hay sedes en esta región.', 'No yards in this region.') %></p><% } %></div>
+    </div>
+    <div class="dlg-actions"><button class="btn btn-light" type="button" data-close>✕ <%= t('Cerrar') %></button><button class="btn btn-light" type="button" data-step-back hidden><%= t('Anterior') %></button><button class="btn btn-blue" type="button" data-step-next><%= t('Siguiente') %></button><button class="btn btn-blue" type="submit" hidden><%= t('Guardar') %></button></div>
+  </form></div></dialog>
+<%- include('../partials/account-end') %>

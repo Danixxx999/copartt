@@ -1,0 +1,7 @@
+<%- include('../../partials/panel-start') %>
+<h1>Auction Calendar</h1><p class="lead">Auctions where your vehicles are listed, and upcoming sales.</p>
+<div class="grid-2" style="align-items:start">
+  <section class="p-card"><h2>Your upcoming sales</h2><% if (!events.length) { %><div class="empty">None of your vehicles are scheduled.</div><% } else { %><table class="tbl"><tbody><% events.forEach(function (e) { %><tr><td><strong><%= e.name %></strong><br><span class="hint"><%= weekday(e.starts_at) %> <%= dateTime(e.starts_at) %></span></td><td class="num"><%= e.my_lots %> lot(s)</td><td><%- badge(e.status) %></td><td><a href="/auctions/<%= e.id %>/live">Room</a></td></tr><% }) %></tbody></table><% } %></section>
+  <section class="p-card"><h2>All upcoming auctions</h2><table class="tbl"><tbody><% all.forEach(function (e) { %><tr><td><%= e.name %></td><td><%= dateTime(e.starts_at) %></td><td><%- badge(e.status) %></td></tr><% }) %></tbody></table></section>
+</div>
+<%- include('../../partials/panel-end') %>

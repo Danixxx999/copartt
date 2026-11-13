@@ -1,0 +1,67 @@
+<%- include('../../partials/panel-start') %>
+<p class="hint"><a href="/dashboard/purchases">← My Purchases</a></p>
+<h1><%= o.year %> <%= o.make %> <%= o.model %> · <%= o.order_number %></h1>
+<p class="lead">Lot #<%= o.lot_number %> · <%= o.location_name %> · <%- badge(o.status) %></p>
+<div class="grid-2" style="align-items:start">
+  <div>
+    <% invoices.forEach(function (inv) { var outstanding = inv.total_cents - inv.paid_cents; var pend = inv.payments.filter(function (p) { return p.status === 'pending_review'; }); %>
+    <section class="p-card">
+      <h2 style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>Invoice <%= inv.invoice_number %> <span class="hint">(<%= inv.kind %>)</span></span><span><%- badge(inv.status) %> <a class="btn btn-light btn-sm" href="/dashboard/invoices/<%= inv.id %>.pdf" target="_blank" rel="noopener">PDF</a></span></h2>
+      <table class="tbl"><tbody><% inv.items.forEach(function (i) { %><tr><td><%= i.description %></td><td class="num"><%= eur(i.amount_cents) %></td><td class="num hint">VAT <%= Number(i.tax_rate) %>%</td><td class="num"><%= eur(i.amount_cents + i.tax_cents) %></td></tr><% }) %>
+        <tr><td colspan="3"><strong>Total</strong></td><td class="num"><strong><%= eur(inv.total_cents) %></strong></td></tr><tr><td colspan="3">Paid</td><td class="num"><%= eur(inv.paid_cents) %></td></tr><tr><td colspan="3"><strong>Balance due</strong> <span class="hint">(due <%= date(inv.due_at) %>)</span></td><td class="num"><strong><%= eur(outstanding) %></strong></td></tr></tbody></table>
+      <% if (inv.payments.length) { %><h3 style="margin-top:14px">Payments</h3><table class="tbl"><tbody><% inv.payments.forEach(function (p) { %><tr><td><%= p.method === 'card_demo' ? 'Card (sandbox)' : 'Bank transfer' %> · <%= p.scope %><br><span class="hint"><%= p.reference %><%= p.review_note ? ' · ' + p.review_note : '' %></span></td><td class="num"><%= eur(p.amount_cents) %></td><td><%- badge(p.status) %></td><td><% if (p.proof_id) { %><a href="/files/payment-proof/<%= p.proof_id %>" target="_blank" rel="noopener">Receipt</a><% } %></td></tr><% }) %></tbody></table><% } %>
+      <% if (['issued','partially_paid'].includes(inv.status) && o.status !== 'cancelled') { %>
+        <% if (inv.kind === 'purchase') { %>
+          <h3 style="margin-top:16px">Pay this invoice</h3>
+          <div class="alert alert-info">The <strong>vehicle</strong> must be paid by bank transfer to <strong><%= bank.beneficiary %></strong>, IBAN <code><%= bank.iban %></code>, BIC <%= bank.bic %>, reference <strong><%= inv.invoice_number %></strong>. Fees can be paid by card (sandbox). <em>Fictitious account – never send real money.</em></div>
+          <div class="grid-2">
+            <form data-api="/api/v1/invoices/<%= inv.id %>/payments/demo" novalidate class="p-card" style="margin:0">
+              <h3>Vehicle – bank transfer</h3><input type="hidden" name="method" value="bank_transfer"><input type="hidden" name="scope" value="vehicle">
+              <div class="form-row"><label for="ref-<%= inv.id %>">Transfer reference</label><input id="ref-<%= inv.id %>" name="reference" placeholder="e.g. TRF-0001"></div>
+              <div class="form-row"><label for="pr-<%= inv.id %>">Receipt (PDF/JPG/PNG)</label><input id="pr-<%= inv.id %>" type="file" name="proof" accept=".pdf,.jpg,.jpeg,.png,.webp" required></div>
+              <button class="btn btn-blue btn-block" type="submit">Submit transfer receipt</button>
+            </form>
+            <form data-api="/api/v1/invoices/<%= inv.id %>/payments/demo" novalidate class="p-card" style="margin:0">
+              <h3>Fees – card (sandbox)</h3><input type="hidden" name="method" value="card_demo"><input type="hidden" name="scope" value="fees">
+              <div class="form-row"><label for="cn-<%= inv.id %>">Test card number</label><input id="cn-<%= inv.id %>" name="card_number" value="4242 4242 4242 4242" autocomplete="off"></div>
+              <p class="hint">No real charge. Card data is not stored.</p>
+              <button class="btn btn-green btn-block" type="submit">Pay fees (sandbox)</button>
+            </form>
+          </div>
+        <% } else if (!pend.length) { %>
+          <form data-api="/api/v1/invoices/<%= inv.id %>/payments/demo" novalidate style="margin-top:14px"><input type="hidden" name="method" value="card_demo"><input type="hidden" name="scope" value="full"><div class="form-row"><label for="cn2-<%= inv.id %>">Test card number</label><input id="cn2-<%= inv.id %>" name="card_number" value="4242 4242 4242 4242" autocomplete="off"></div><button class="btn btn-green" type="submit">Pay <%= eur(outstanding) %> (sandbox)</button></form>
+        <% } %>
+      <% } %>
+    </section>
+    <% }) %>
+  </div>
+  <div>
+    <section class="p-card"><h2>Pickup</h2>
+      <% if (pass && pass.status === 'active') { %>
+        <p>Show this PIN at <strong><%= loc.name %></strong> (<%= loc.address %>, <%= loc.city %>) · <%= loc.pickup_hours %>.</p>
+        <div class="pin-box" aria-label="Pickup PIN"><%= pass.pin_code %></div>
+        <p class="hint" style="margin-top:8px">Personal and confidential. Staff validate it without seeing it in their system.</p>
+      <% } else if (pass && pass.status === 'used') { %><div class="alert alert-ok">Vehicle collected on <%= dateTime(pass.used_at) %>.</div>
+      <% } else if (pass) { %><div class="alert alert-warn">Pickup PIN <%= pass.status %>. <%= pass.status === 'revoked' ? 'Contact support or check your transport.' : '' %></div>
+      <% } else { %><p class="hint">Your pickup PIN appears here once the invoice is fully paid and approved by Finance.</p><% } %>
+    </section>
+    <section class="p-card"><h2>Transport</h2>
+      <% if (transport) { %>
+        <p><strong><%= transport.tracking_code %></strong> · <%- badge(transport.status) %><%= transport.carrier_name ? ' · ' + transport.carrier_name : '' %><%= transport.eta ? ' · ETA ' + date(transport.eta) : '' %></p>
+        <ul class="timeline"><% tEvents.forEach(function (e) { %><li><strong><%= label(e.status) %></strong> <span class="hint"><%= dateTime(e.created_at) %></span><br><%= e.note %></li><% }) %></ul>
+        <a href="/transport?tracking=<%= transport.tracking_code %>">Public tracking page ›</a>
+      <% } else if (!['completed','cancelled'].includes(o.status)) { %>
+        <% quotes.filter(function (q) { return q.status === 'quoted'; }).forEach(function (q) { %><div class="alert alert-info"><strong><%= cap(q.service) %></strong> to <%= q.destination_city %> (<%= q.destination_postal_code %>) · ~<%= q.distance_km %> km · <strong><%= eur(q.price_cents) %></strong> + VAT · valid until <%= date(q.expires_at) %> <button class="btn btn-green btn-sm" type="button" data-api="/api/v1/transport/quotes/<%= q.id %>/accept" data-confirm="Accept this transport quote? An invoice will be issued.">Accept</button></div><% }) %>
+        <form data-api="/api/v1/orders/<%= o.id %>/transport-quotes" novalidate>
+          <div class="form-grid"><div class="form-row"><label for="sv">Service</label><select id="sv" name="service"><option value="national">National</option><option value="express">Express (≤200 km)</option><option value="international">International</option></select></div>
+          <div class="form-row"><label for="cp">Postal code</label><input id="cp" name="postal_code" value="<%= user.postal_code || '' %>" inputmode="numeric" maxlength="5"></div></div>
+          <div class="form-row"><label for="ad">Address</label><input id="ad" name="address" value="<%= user.address || '' %>"></div>
+          <div class="form-row"><label for="ci">City</label><input id="ci" name="city" value="<%= user.city || '' %>"></div>
+          <button class="btn btn-blue" type="submit">Get transport quote</button>
+        </form>
+      <% } else { %><p class="hint">Not applicable.</p><% } %>
+    </section>
+    <section class="p-card"><h2>Order history</h2><ul class="timeline"><% history.forEach(function (h) { %><li><strong><%= label(h.to_status) %></strong> <span class="hint"><%= dateTime(h.created_at) %></span><br><span class="hint"><%= h.note %></span></li><% }) %></ul></section>
+  </div>
+</div>
+<%- include('../../partials/panel-end') %>

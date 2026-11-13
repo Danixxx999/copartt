@@ -1,0 +1,12 @@
+<% var c = typeof code !== 'undefined' ? code : 'ES'; %><svg class="flag" viewBox="0 0 24 16" width="24" height="16" aria-hidden="true"><%
+if (c === 'US') { %><rect width="24" height="16" fill="#b22234"/><% for (var i = 1; i < 13; i += 2) { %><rect y="<%= i * 16 / 13 %>" width="24" height="<%= 16 / 13 %>" fill="#fff"/><% } %><rect width="10" height="8.6" fill="#3c3b6e"/><%
+} else if (c === 'CA') { %><rect width="24" height="16" fill="#fff"/><rect width="6" height="16" fill="#d52b1e"/><rect x="18" width="6" height="16" fill="#d52b1e"/><path d="M12 3l1.2 2.6 1.6-.8-.6 3.4 1.8-1.2.4 1.2 1.6-.4-1.2 2 .8.8-3.6.6.2 2h-1.2l.2-2-3.6-.6.8-.8-1.2-2 1.6.4.4-1.2 1.8 1.2-.6-3.4 1.6.8z" fill="#d52b1e"/><%
+} else if (c === 'GB') { %><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3"/><path d="M0 0l24 16M24 0L0 16" stroke="#c8102e" stroke-width="1.2"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5"/><path d="M12 0v16M0 8h24" stroke="#c8102e" stroke-width="3"/><%
+} else if (c === 'IE') { %><rect width="8" height="16" fill="#169b62"/><rect x="8" width="8" height="16" fill="#fff"/><rect x="16" width="8" height="16" fill="#ff883e"/><%
+} else if (c === 'AE') { %><rect width="24" height="16" fill="#00732f"/><rect y="5.33" width="24" height="5.34" fill="#fff"/><rect y="10.67" width="24" height="5.33" fill="#000"/><rect width="6" height="16" fill="#ff0000"/><%
+} else if (c === 'BH') { %><rect width="24" height="16" fill="#ce1126"/><path d="M0 0h7l3 1.6-3 1.6 3 1.6-3 1.6 3 1.6-3 1.6 3 1.6-3 1.6 3 1.6-3 1.6H0z" fill="#fff"/><%
+} else if (c === 'OM') { %><rect width="24" height="16" fill="#db161b"/><rect x="7" width="17" height="5.33" fill="#fff"/><rect x="7" y="10.67" width="17" height="5.33" fill="#008000"/><%
+} else if (c === 'DE') { %><rect width="24" height="5.33" fill="#000"/><rect y="5.33" width="24" height="5.34" fill="#dd0000"/><rect y="10.67" width="24" height="5.33" fill="#ffce00"/><%
+} else if (c === 'FI') { %><rect width="24" height="16" fill="#fff"/><rect x="6.5" width="4" height="16" fill="#002f6c"/><rect y="6" width="24" height="4" fill="#002f6c"/><%
+} else if (c === 'BR') { %><rect width="24" height="16" fill="#009c3b"/><path d="M12 2l10 6-10 6L2 8z" fill="#ffdf00"/><circle cx="12" cy="8" r="3.4" fill="#002776"/><%
+} else { %><rect width="24" height="16" fill="#aa151b"/><rect y="4" width="24" height="8" fill="#f1bf00"/><% } %></svg>

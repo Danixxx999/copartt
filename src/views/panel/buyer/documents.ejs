@@ -1,0 +1,16 @@
+<%- include('../../partials/panel-start') %>
+<h1>Documents</h1><p class="lead">Verification status: <%- badge(user.verification_status) %>. Bidding requires approved documents (Basic/Premium).</p>
+<div class="grid-2" style="align-items:start">
+  <section class="p-card"><h2>Upload a document</h2>
+    <form data-api="/api/v1/documents" novalidate>
+      <div class="form-row"><label for="dt">Type</label><select id="dt" name="doc_type"><option value="id_card">National ID (DNI/NIE)</option><option value="passport">Passport</option><option value="driving_license">Driving licence</option><option value="business_license">Business licence</option><option value="proof_of_address">Proof of address</option></select></div>
+      <div class="form-row"><label for="df">File (PDF, JPG, PNG, WEBP · max 8 MB)</label><input id="df" type="file" name="file" accept=".pdf,.jpg,.jpeg,.png,.webp" required></div>
+      <button class="btn btn-blue" type="submit">Upload</button>
+      <p class="hint">Files are stored privately and only visible to you and authorised reviewers. Use fictitious documents in this demo.</p>
+    </form>
+  </section>
+  <section class="p-card"><h2>Your documents</h2><% if (!docs.length) { %><div class="empty">No documents uploaded.</div><% } else { %>
+    <table class="tbl"><tbody><% docs.forEach(function (d) { %><tr><td><strong><%= d.doc_type.replace(/_/g, ' ') %></strong><br><span class="hint"><%= d.original_name %> · <%= dateTime(d.created_at) %></span><% if (d.rejection_reason) { %><br><span class="hint" style="color:#991b1b">Reason: <%= d.rejection_reason %></span><% } %></td><td><%- badge(d.status) %></td><td><a href="/files/verification/<%= d.id %>" target="_blank" rel="noopener">View</a></td></tr><% }) %></tbody></table><% } %>
+  </section>
+</div>
+<%- include('../../partials/panel-end') %>

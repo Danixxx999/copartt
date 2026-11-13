@@ -1,0 +1,24 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="page-dark" style="padding:60px 5% 60px">
+  <section class="loc-hero">
+    <h1>Our Locations</h1><%- include('../partials/region-scope') %>
+    <p style="font-size:22px;margin:0">Find an copart Site Near You</p>
+    <form class="loc-search" method="get" role="search"><label class="sr-only" for="lq">Search by Postal Code, City, State</label><input id="lq" name="q" value="<%= q %>" placeholder="Search by Postal Code, City, State"><button class="btn btn-blue" type="submit">Search</button></form>
+  </section>
+  <div class="loc-list" aria-live="polite">
+    <% if (!locations.length) { %><div class="empty" style="grid-column:1/-1">No yards match “<%= q %>”. <a href="/locations" style="color:var(--blue)">Show all</a></div><% } %>
+    <% locations.forEach(function (l) { %><a class="loc-item" href="/locations/<%= l.code %>"><strong><%= l.name %></strong><span><%= l.address %></span><span><%= l.postal_code %> <%= l.city %> (<%= l.province %>)</span><span class="hint"><%= l.hours %> · <%= l.vehicles %> vehicles for sale</span></a><% }) %>
+  </div>
+  <h2 style="font-size:28px;font-weight:900">About copart Yards</h2>
+  <div class="underline-blue"></div>
+  <p>With <%= locations.length %> demo yards across Spain, copart likely has a site near you, or a short drive away. You can click on any of the locations above to see the exact address, opening hours, vehicles for sale, contact information and upcoming auction times.</p>
+  <div class="yard-cards" style="margin-top:30px">
+    <div class="yard-card"><svg class="ic"><use href="#i-search-sparkle"/></svg><h3>View Before You Bid &amp; Buy</h3><p>Visit any of our yards during normal business hours to view the vehicles before bidding on them. In case you can't come in person, copart offers multiple options to gather more information about the condition of the vehicle you are interested in (Photographic report, Vehicle file with its characteristics, Commercial Attention).</p><p>We recommend that you make an appointment in advance. Once you're at the yard, we will take you to the place where the vehicle is located.</p></div>
+    <div class="yard-card"><svg class="ic"><use href="#i-person"/></svg><h3>Helpful In-Person Support</h3><p>Our expert onsite team will be happy to help you with any questions you might have about bidding, documents, shipping, auctions, making payments and more.</p><p style="margin-top:40px"><a href="/contact" style="color:var(--blue);font-weight:700;text-decoration:none">Contact Member Services</a></p></div>
+    <div class="yard-card"><svg class="ic"><use href="#i-truck-big"/></svg><h3>Easy to Pick Up, or Ship Vehicles</h3><p>You can pick up your vehicles by hiring an external transport company, or you can use our transport service.</p><p>Once the auction has ended, you will receive a provisional budget by email, which you will have to accept within 5 working days. The budget is made taking into account the location of the vehicle and the address that appears in your file.</p><p><a href="/transport" style="color:#fff;text-decoration:none">+ Info about Transport</a></p></div>
+    <div class="yard-card"><svg class="ic"><use href="#i-wifi"/></svg><h3>Online Payments</h3><p>Make your payments comfortably from anywhere. You can pay all your invoices from your user area (Payments &gt;&gt; Payments due) by credit/debit card, except for vehicles, which must be paid by bank transfer.</p><p>Please remember! Once we receive the full payment (Vehicle + Fees) a PIN Code will be generated so that you can collect from our facilities.</p></div>
+  </div>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

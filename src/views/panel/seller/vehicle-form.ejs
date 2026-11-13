@@ -1,0 +1,58 @@
+<%- include('../../partials/panel-start') %>
+<% var admin = typeof adminMode !== 'undefined' && adminMode; var base = (typeof apiBase !== 'undefined' && apiBase) || '/api/v1/seller/vehicles'; var editable = !v || (admin ? v.status !== 'sold' : ['draft','rejected'].includes(v.status)); var val = function (k, d) { return v && v[k] !== null && v[k] !== undefined ? v[k] : (d === undefined ? '' : d); }; %>
+<p class="hint"><a href="<%= (typeof backHref !== 'undefined' && backHref) || '/seller/vehicles' %>">← <%= admin ? 'Vehicles & approvals' : 'My Vehicles' %></a></p>
+<h1><%= v ? 'Vehicle #' + v.id : (admin ? 'Add vehicle' : 'New vehicle') %> <% if (v) { %><%- badge(v.status) %><% } %></h1>
+<% if (v && v.rejection_reason) { %><div class="alert alert-err"><strong>Rejected:</strong> <%= v.rejection_reason %> — fix it and submit again.</div><% } %>
+<% if (v && !editable) { %><div class="alert alert-info">This vehicle is <%= label(v.status) %> and can no longer be edited.<% if (lot) { %> Lot <a href="/lot/<%= lot.lot_number %>">#<%= lot.lot_number %></a> · <%- badge(lot.status) %><% } %></div><% } %>
+<% if (admin) { %><div class="alert alert-info">Administrator mode: you create or edit this vehicle on behalf of a seller. Every change is recorded in the audit log.<% if (v && lot) { %> Current lot <a href="/lot/<%= lot.lot_number %>">#<%= lot.lot_number %></a> · <%- badge(lot.status) %><% } %></div>
+<% } else if (!user.seller || !user.seller.approved) { %><div class="alert alert-warn">Your seller account is pending approval.</div><% } %>
+<div class="grid-2" style="align-items:start;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)">
+  <section class="p-card"><h2>Vehicle data</h2>
+    <form data-api="<%= v ? base + '/' + v.id : base %>" data-method="<%= v ? 'PATCH' : 'POST' %>" novalidate>
+      <fieldset <%= editable ? '' : 'disabled' %> style="border:0;padding:0;margin:0">
+      <% if (admin && !v) { %><div class="form-row"><label for="v-seller">Seller *</label><select id="v-seller" name="seller_id" required><option value="">Select the seller</option><% sellers.forEach(function (s) { %><option value="<%= s.id %>"><%= s.company_name %> · <%= s.email %></option><% }) %></select><span class="hint">No seller yet? Create a user with the Seller role in Users.</span></div><% } %>
+      <div class="form-grid">
+        <div class="form-row"><label for="v-make">Make *</label><select id="v-make" name="make_id" data-make-select data-target="v-model" required><option value="">Select</option><% makes.forEach(function (m) { %><option value="<%= m.id %>" data-id="<%= m.id %>" <%= val('make_id') === m.id ? 'selected' : '' %>><%= m.name %></option><% }) %></select></div>
+        <div class="form-row"><label for="v-model">Model *</label><select id="v-model" name="model_id" data-placeholder="Select" data-selected="<%= val('model_id') %>" required><option value="">Select</option></select></div>
+        <div class="form-row"><label for="v-year">Year *</label><input id="v-year" name="year" type="number" min="1920" max="2100" value="<%= val('year', new Date().getFullYear() - 3) %>" required></div>
+        <div class="form-row"><label for="v-trim">Version / trim</label><input id="v-trim" name="trim" value="<%= val('trim') %>"></div>
+        <div class="form-row"><label for="v-vin">VIN * (fictitious)</label><input id="v-vin" name="vin" value="<%= val('vin') %>" maxlength="17" required style="text-transform:uppercase"></div>
+        <div class="form-row"><label for="v-type">Type *</label><select id="v-type" name="vehicle_type"><% types.forEach(function (x) { %><option value="<%= x.code %>" <%= val('type_code') === x.code ? 'selected' : '' %>><%= x.name %></option><% }) %></select></div>
+        <div class="form-row"><label for="v-cond">Condition *</label><select id="v-cond" name="condition"><option value="used" <%= val('condition')==='used'?'selected':'' %>>Used</option><option value="salvage" <%= val('condition')==='salvage'?'selected':'' %>>Salvage</option></select></div>
+        <div class="form-row"><label for="v-d1">Primary damage *</label><select id="v-d1" name="primary_damage"><% damages.forEach(function (x) { %><option value="<%= x.code %>" <%= val('damage1') === x.code ? 'selected' : '' %>><%= x.name %></option><% }) %></select></div>
+        <div class="form-row"><label for="v-d2">Secondary damage</label><select id="v-d2" name="secondary_damage"><option value="">None</option><% damages.forEach(function (x) { %><option value="<%= x.code %>" <%= val('damage2') === x.code ? 'selected' : '' %>><%= x.name %></option><% }) %></select></div>
+        <div class="form-row"><label for="v-loc">Yard *</label><select id="v-loc" name="location"><% locations.forEach(function (x) { %><option value="<%= x.code %>" <%= val('location_code') === x.code ? 'selected' : '' %>><%= x.name %></option><% }) %></select></div>
+        <div class="form-row"><label for="v-odo">Odometer (km) *</label><input id="v-odo" name="odometer_km" type="number" min="0" value="<%= val('odometer_km', 0) %>"></div>
+        <div class="form-row"><label for="v-fuel">Fuel</label><select id="v-fuel" name="fuel"><% ['petrol','diesel','hybrid','electric','lpg','other'].forEach(function (x) { %><option value="<%= x %>" <%= val('fuel')===x?'selected':'' %>><%= cap(x) %></option><% }) %></select></div>
+        <div class="form-row"><label for="v-tr">Transmission</label><select id="v-tr" name="transmission"><option value="manual" <%= val('transmission')==='manual'?'selected':'' %>>Manual</option><option value="automatic" <%= val('transmission')==='automatic'?'selected':'' %>>Automatic</option></select></div>
+        <div class="form-row"><label for="v-eng">Engine</label><input id="v-eng" name="engine" value="<%= val('engine') %>"></div>
+        <div class="form-row"><label for="v-col">Colour</label><input id="v-col" name="color" value="<%= val('color') %>"></div>
+        <div class="form-row"><label for="v-doc">Document type *</label><input id="v-doc" name="document_type" value="<%= val('document_type', 'Permiso de circulación') %>"></div>
+        <div class="form-row"><label for="v-hl">Highlights</label><input id="v-hl" name="highlights" value="<%= val('highlights') %>" placeholder="Run and Drive"></div>
+        <div class="form-row"><label for="v-ev">Estimated value (€)</label><input id="v-ev" name="estimated_value" type="number" min="0" value="<%= v && v.estimated_value_cents ? v.estimated_value_cents / 100 : '' %>"></div>
+      </div>
+      <div class="actions" style="margin:6px 0 12px"><label class="check"><input type="checkbox" name="has_keys" <%= !v || v.has_keys ? 'checked' : '' %>> Keys available</label><label class="check"><input type="checkbox" name="runs_drives" <%= !v || v.runs_drives ? 'checked' : '' %>> Runs &amp; drives</label></div>
+      <div class="form-row"><label for="v-desc">Description</label><textarea id="v-desc" name="description" rows="4"><%= val('description') %></textarea></div>
+      <% if (editable) { %><button class="btn btn-blue" type="submit"><%= v ? 'Save changes' : 'Save draft' %></button><% } %>
+      </fieldset>
+    </form>
+  </section>
+  <div>
+    <% if (v) { %>
+    <section class="p-card"><h2>Photos (<%= images.length %>/12)</h2>
+      <div class="img-grid"><% images.forEach(function (im) { %><figure><img src="<%= im.path %>" alt="Vehicle photo"><% if (editable) { %><button class="btn btn-red btn-xs" type="button" data-api="<%= base %>/<%= v.id %>/images/<%= im.id %>" data-method="DELETE" data-confirm="Delete this photo?">✕</button><% } %></figure><% }) %></div>
+      <% if (!images.length) { %><div class="empty">No photos yet. At least one is required.</div><% } %>
+      <% if (editable) { %><form data-api="<%= base %>/<%= v.id %>/images" novalidate style="margin-top:12px"><label for="imgs" class="lbl">Add photos (JPG, PNG, WEBP · max 6 MB each)</label><input id="imgs" type="file" name="images" accept=".jpg,.jpeg,.png,.webp" multiple required><button class="btn btn-light btn-sm" type="submit" style="margin-top:8px">Upload</button></form><% } %>
+    </section>
+    <section class="p-card"><h2>Documents</h2>
+      <% if (docs.length) { %><table class="tbl"><tbody><% docs.forEach(function (d) { %><tr><td><%= d.doc_type.replace('_', ' ') %></td><td><a href="/files/vehicle-doc/<%= d.id %>" target="_blank" rel="noopener"><%= d.original_name %></a></td></tr><% }) %></tbody></table><% } else { %><p class="hint">No documents.</p><% } %>
+      <form data-api="<%= base %>/<%= v.id %>/documents" novalidate style="margin-top:10px"><div class="form-grid"><div class="form-row"><label for="vd-t">Type</label><select id="vd-t" name="doc_type"><option value="registration">Registration</option><option value="technical_sheet">Technical sheet</option><option value="insurance_report">Insurance report</option><option value="ownership">Ownership</option><option value="other">Other</option></select></div><div class="form-row"><label for="vd-f">File</label><input id="vd-f" type="file" name="file" accept=".pdf,.jpg,.jpeg,.png,.webp" required></div></div><button class="btn btn-light btn-sm" type="submit">Upload document</button></form>
+    </section>
+    <% if (admin) { %><section class="p-card"><h2>Publish in an auction</h2><p class="hint">Assign the vehicle to a scheduled auction with starting bid, reserve and optional Buy It Now. It appears instantly in the public inventory.</p>
+      <div class="actions"><a class="btn btn-green" href="/admin/vehicles/<%= v.id %>">Approve &amp; publish ›</a><button class="btn btn-light" type="button" data-api="/api/v1/admin/vehicles/<%= v.id %>/featured" data-body='{"featured":<%= v.featured ? 'false' : 'true' %>}'><%= v.featured ? 'Remove from featured' : 'Feature on home page' %></button></div></section>
+    <% } else if (editable) { %><section class="p-card"><h2>Publish</h2><p class="hint">Submit for approval. An administrator checks the data and assigns the vehicle to an auction with a starting bid and reserve.</p>
+      <div class="actions"><button class="btn btn-green" type="button" data-api="<%= base %>/<%= v.id %>/submit" data-confirm="Submit this vehicle for approval?">Submit for approval</button><button class="btn btn-red" type="button" data-api="<%= base %>/<%= v.id %>" data-method="DELETE" data-confirm="Delete this draft permanently?">Delete draft</button></div></section><% } %>
+    <% } else { %><section class="p-card"><h2>Next steps</h2><ol class="hint"><li>Save the draft.</li><li>Upload photos and documents.</li><li>Submit for approval.</li></ol></section><% } %>
+  </div>
+</div>
+<%- include('../../partials/panel-end') %>

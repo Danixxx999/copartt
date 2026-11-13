@@ -1,0 +1,7 @@
+<%- include('../../partials/panel-start') %>
+<h1>Vehicle Alerts</h1><p class="lead">Alerts linked to your account or email. <a href="/vehicle-alerts">Create a new alert</a>.</p>
+<div class="p-card"><% if (!items.length) { %><div class="empty">No alerts yet.</div><% } else { %>
+<table class="tbl"><thead><tr><th>Vehicle</th><th>Years</th><th>Type</th><th>Frequency</th><th class="num">Matches</th><th>Last sent</th><th>Status</th><th></th></tr></thead><tbody>
+<% items.forEach(function (a) { %><tr><td><strong><%= a.make %> <%= a.model || '(any model)' %></strong></td><td><%= a.year_from %>–<%= a.year_to %></td><td><%= a.type_name || 'All' %></td><td><%= cap(a.frequency) %></td><td class="num"><%= a.matches %></td><td><%= a.last_sent_at ? dateTime(a.last_sent_at) : '—' %></td><td><%- badge(a.status) %></td><td class="actions"><a class="btn btn-light btn-sm" href="/vehicle-alerts/manage/<%= a.manage_token %>">Manage</a><% if (a.status === 'active') { %><button class="btn btn-red btn-sm" type="button" data-api="/api/v1/alerts/<%= a.manage_token %>/cancel" data-confirm="Cancel this alert?">Cancel</button><% } %></td></tr><% }) %>
+</tbody></table><% } %></div>
+<%- include('../../partials/panel-end') %>

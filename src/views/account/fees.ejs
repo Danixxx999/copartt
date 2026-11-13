@@ -1,0 +1,19 @@
+<%- include('../partials/account-start') %>
+<h1><%= t('Cuotas de Miembro') %></h1>
+<p class="acc-muted"><%= ht('Las tarifas dependen de la ubicación del vehículo, no de la del miembro. Valores de demostración del proyecto académico, no son tarifas reales.', 'Fees depend on the vehicle location, not the member location. Academic demo values, not real tariffs.') %></p>
+<form method="get" class="acc-inline"><label for="fl"><%= ht('Ubicación del vehículo', 'Vehicle location') %></label><select id="fl" name="loc" data-autosubmit><% countries.forEach(function (c) { %><option value="<%= c %>" <%= c === loc ? 'selected' : '' %>><%= ht('Ubicaciones en', 'Locations in') %> <%= regions[c] || c %></option><% }) %></select></form>
+<h2 class="acc-h2 big"><%= ht('Tarifas de comprador copart', 'copart buyer fees') %> · <%= regions[loc] || loc %></h2>
+<p class="acc-muted"><%= ht('Se cobran por cada vehículo comprado en una venta. Los compradores particulares y los profesionales con licencia registrada tienen tarifas distintas: elija su tipo para ver el desglose.', 'Charged for every vehicle bought. Private buyers and licensed professionals have different fees: choose your type to see the breakdown.') %></p>
+<h3 class="acc-h3"><%= ht('Desglose de tarifas', 'Fee breakdown') %></h3>
+<% [['unlicensed', ht('No licenciado', 'Unlicensed'), ht('Elija esta opción si oferta como consumidor o si su licencia profesional registrada está incompleta.', 'Choose this if you bid as a consumer or your registered licence is incomplete.'), 0], ['licensed', ht('Licenciado', 'Licensed'), ht('Elija esta opción si su licencia profesional registrada está activa y completa.', 'Choose this if your registered professional licence is active and complete.'), 20]].forEach(function (k) { %>
+<details class="acc-card acc-fee">
+  <summary><div><strong><%= k[1] %></strong><p><%= k[2] %></p></div><span aria-hidden="true">›</span></summary>
+  <table class="tbl"><thead><tr><th><%= ht('Precio de venta', 'Sale price') %></th><th class="num"><%= ht('Tarifa de comprador', 'Buyer fee') %></th><th class="num"><%= ht('Gestión', 'Admin fee') %></th><th class="num">IVA <%= taxRate %>%</th><th class="num"><%= ht('Total tarifas', 'Total fees') %></th></tr></thead><tbody>
+  <% examples.forEach(function (e) { var buyer = Math.round(e.buyer * (100 - k[3]) / 100); var tax = Math.round((buyer + e.admin) * taxRate / 100); %><tr><td><%= eur(e.price) %></td><td class="num"><%= eur(buyer) %></td><td class="num"><%= eur(e.admin) %></td><td class="num"><%= eur(tax) %></td><td class="num"><strong><%= eur(buyer + e.admin + tax) %></strong></td></tr><% }) %>
+  </tbody></table>
+  <p class="acc-muted"><%= ht('Tarifa de comprador', 'Buyer fee') %>: <%= fee.percent %>% (<%= ht('mínimo', 'minimum') %> <%= eur(fee.min_cents) %>)<%= k[3] ? ' · ' + ht('descuento profesional', 'professional discount') + ' ' + k[3] + '%' : '' %>. <a href="/fee-calculator"><%= ht('Calculadora de tarifas', 'Fee calculator') %> ›</a></p>
+</details>
+<% }) %>
+<h3 class="acc-h3"><%= ht('Cuotas de membresía', 'Membership fees') %></h3>
+<div class="acc-list"><% plans.forEach(function (p) { %><div class="acc-item"><strong><%= p.name %></strong><span class="acc-muted"><%= p.description %></span><span class="acc-spacer"></span><strong><%= p.price_cents ? eur(p.price_cents) + ' / ' + ht('año', 'year') : ht('Gratis', 'Free') %></strong><% if (user.plan && user.plan.code === p.code) { %><span class="acc-tag"><%= ht('Su plan', 'Your plan') %></span><% } %></div><% }) %></div>
+<%- include('../partials/account-end') %>

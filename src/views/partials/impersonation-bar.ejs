@@ -1,0 +1,7 @@
+<% if (typeof impersonator !== 'undefined' && impersonator && user) { %>
+<div class="imp-bar" role="alert">
+  <svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg>
+  <span>You are signed in as <strong><%= user.name %></strong> (<%= user.email %>) · started by administrator <%= impersonator.email %>. Every action is recorded in the audit log.</span>
+  <button type="button" class="btn btn-sm btn-dark" data-api="/api/v1/auth/impersonation/stop">Return to my account</button>
+</div>
+<% } %>

@@ -1,0 +1,7 @@
+<%- include('../../partials/panel-start') %>
+<h1>Saved Searches</h1><p class="lead">Save any search from the results page with “Save this search”.</p>
+<div class="p-card"><% if (!items.length) { %><div class="empty">No saved searches. <a href="/vehicle-finder">Open the Vehicle Finder</a>.</div><% } else { %>
+<table class="tbl"><thead><tr><th>Name</th><th>Filters</th><th>Saved</th><th></th></tr></thead><tbody>
+<% items.forEach(function (s) { %><tr><td><strong><%= s.name %></strong></td><td><code style="font-size:12px"><%= s.query || '(all vehicles)' %></code></td><td><%= date(s.created_at) %></td><td class="actions"><a class="btn btn-blue btn-sm" href="/vehicles?<%= s.query %>">Run</a><button class="btn btn-light btn-sm" type="button" data-api="/api/v1/saved-searches/<%= s.id %>" data-method="DELETE" data-confirm="Delete this saved search?">Delete</button></td></tr><% }) %>
+</tbody></table><% } %></div>
+<%- include('../../partials/panel-end') %>

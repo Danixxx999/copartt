@@ -1,0 +1,80 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<% var f2 = facets.featured; var yearNow = new Date().getFullYear(); %>
+<main id="main" class="page-dark vehicle-finder-page">
+  <div class="page-head vf-head"><h1 class="page-title"><%= t('Buscador de vehículos') %></h1><a class="vf-all" href="/vehicles"><%= ht('Ver todos los vehículos', 'View all vehicles') %> ›</a></div>
+  <a class="vf-promo" href="/vehicles?seller_type=rental,fleet,leasing"><span class="vf-promo-a"><%= ht('VEHÍCULOS DE FLOTAS DE EMPRESA', 'COMPANY FLEET VEHICLES') %></span><span class="vf-star">★</span><span><%= ht('MANTENIMIENTO DOCUMENTADO', 'DOCUMENTED SERVICE') %></span><span class="vf-star">★</span><span class="vf-promo-c"><%= ht('RECOGIDA EN SEDE', 'YARD PICKUP') %></span><b><%= t('Ver Inventario').toUpperCase() %></b></a>
+  <div class="finder-grid">
+    <section class="finder-card" aria-labelledby="vf-h">
+      <div class="hd" id="vf-h"><%= t('Buscador de vehículos') %></div>
+      <form action="/vehicles" method="get" id="vf-form">
+        <div class="f-row"><span><%= ht('Condición', 'Condition') %></span><div class="seg" role="radiogroup" aria-label="<%= ht('Condición', 'Condition') %>">
+          <input type="radio" id="c-all" name="condition" value="" checked><label for="c-all"><%= ht('Todas', 'All') %></label>
+          <input type="radio" id="c-used" name="condition" value="used"><label for="c-used"><%= ht('Usado', 'Used') %></label>
+          <input type="radio" id="c-salv" name="condition" value="salvage"><label for="c-salv"><%= ht('Salvamento', 'Salvage') %></label></div></div>
+        <div class="f-row"><label for="vf-type"><%= ht('Tipos', 'Types') %></label><select id="vf-type" name="type"><option value=""><%= ht('Todos los tipos', 'All types') %></option><% types.forEach(function (t2) { %><option value="<%= t2.code %>" <%= t2.code === 'automobile' ? 'selected' : '' %>><%= t2.name.toUpperCase() %></option><% }) %></select></div>
+        <div class="f-row"><span><%= ht('Odómetro', 'Odometer') %></span>
+          <div class="odo-range" data-odo-range>
+            <div class="odo-labels"><span><b data-odo-out="min">0</b> km</span><span><b data-odo-out="max">250.000+</b> km</span></div>
+            <div class="odo-track"><span class="odo-fill" data-odo-fill></span>
+              <input type="range" name="odo_min" min="0" max="250000" step="5000" value="0" aria-label="<%= ht('Kilometraje mínimo', 'Minimum mileage') %>" data-odo="min">
+              <input type="range" name="odo_max" min="0" max="250000" step="5000" value="250000" aria-label="<%= ht('Kilometraje máximo', 'Maximum mileage') %>" data-odo="max"></div>
+          </div></div>
+        <div class="f-row"><span><%= ht('Año', 'Year') %></span><div class="range-row"><select name="year_from" aria-label="<%= ht('Año desde', 'Year from') %>"><% for (var y = 1990; y <= yearNow + 1; y++) { %><option value="<%= y %>" <%= y === 2010 ? 'selected' : '' %>><%= y %></option><% } %></select><span><%= ht('hasta', 'to') %></span><select name="year_to" aria-label="<%= ht('Año hasta', 'Year to') %>"><% for (var y2 = yearNow + 1; y2 >= 1990; y2--) { %><option value="<%= y2 %>"><%= y2 %></option><% } %></select></div></div>
+        <div class="f-row"><label for="vf-dmg"><%= ht('Tipo de daño', 'Damage type') %></label><select id="vf-dmg" name="damage"><option value=""><%= ht('Todos los tipos de daño', 'All damage types') %></option><% facets.damages.forEach(function (d) { %><option value="<%= d.code %>"><%= d.name %></option><% }) %></select></div>
+        <div class="f-row"><label for="vf-make"><%= ht('Marca', 'Make') %></label><select id="vf-make" name="make" data-make-select data-target="vf-model"><option value=""><%= ht('Todas las marcas', 'All makes') %></option><% makes.forEach(function (m) { %><option value="<%= m.slug %>" data-id="<%= m.id %>"><%= m.name %></option><% }) %></select></div>
+        <div class="f-row"><label for="vf-model"><%= ht('Modelo', 'Model') %></label><select id="vf-model" name="model" data-placeholder="<%= ht('Todos los modelos', 'All models') %>" disabled><option value=""><%= ht('Todos los modelos', 'All models') %></option></select></div>
+        <div class="f-row vf-where"><span><%= t('Locales') %></span><div data-where>
+          <label class="radio"><input type="radio" name="where_mode" value="yard" checked> <%= ht('Locales', 'Yards') %></label>
+          <label class="radio"><input type="radio" name="where_mode" value="province"> <%= ht('Estado/Provincia', 'State/Province') %></label>
+          <label class="radio"><input type="radio" name="where_mode" value="zip"> <%= ht('Código postal', 'Postal code') %></label>
+          <select name="location" data-where-field="yard" aria-label="<%= ht('Sede', 'Yard') %>"><option value=""><%= ht('Todas las sedes', 'All locations') %></option><% locations.forEach(function (l) { %><option value="<%= l.code %>"><%= l.name %></option><% }) %></select>
+          <select name="province" data-where-field="province" aria-label="<%= ht('Provincia', 'Province') %>" hidden disabled><option value=""><%= ht('Todas las provincias', 'All provinces') %></option><% f2.provinces.forEach(function (p) { %><option value="<%= p.name %>"><%= p.name %> (<%= p.count %>)</option><% }) %></select>
+          <input name="zip" data-where-field="zip" inputmode="numeric" maxlength="10" placeholder="<%= ht('Código postal (ej. 28)', 'Postal code (e.g. 28)') %>" aria-label="<%= ht('Código postal', 'Postal code') %>" hidden disabled>
+        </div></div>
+        <div class="or-sep">OR</div>
+        <div class="f-row"><label for="vf-lot"><%= ht('VIN/Lote #', 'VIN/Lot #') %></label><input id="vf-lot" name="q" maxlength="17" placeholder="<%= ht('Búsqueda por VIN o número de lote', 'Search by VIN or lot number') %>" data-vin-or-lot></div>
+        <div class="f-row"><span></span><div><button class="btn btn-green" type="submit"><%= ht('Buscar', 'Search') %></button></div></div>
+      </form>
+    </section>
+    <section>
+      <h2 class="center vf-cond-title"><%= ht('Seleccione la condición de su vehículo', 'Select your vehicle condition') %></h2>
+      <p class="center vf-cond-sub"><%= ht('¿Busca una condición concreta? Elija una categoría y verá solo esos resultados.', 'Looking for a specific condition? Pick a category to see only those results.') %></p>
+      <div class="cond-boxes">
+        <a class="cond-box on" href="/vehicles"><svg class="ic"><use href="#i-car-search"/></svg><%= ht('Todos los vehículos', 'All vehicles') %></a>
+        <a class="cond-box" href="/vehicles?condition=salvage"><svg class="ic"><use href="#i-tow"/></svg><%= t('Vehículos de salvamento') %></a>
+        <a class="cond-box" href="/vehicles?condition=used"><svg class="ic"><use href="#i-car-front"/></svg><%= t('Vehículos usados') %></a>
+      </div>
+      <h3 class="vf-sub"><%= ht('Todos los vehículos usados y de salvamento', 'All used and salvage vehicles') %></h3>
+      <p class="vf-copy"><%= ht('Use el buscador de la izquierda o entre directamente en una de las categorías de abajo. Cada semana se incorporan lotes nuevos a las subastas, así que vuelva a consultar a menudo y guarde sus búsquedas favoritas.', 'Use the finder on the left or jump straight into one of the categories below. New lots join the auctions every week, so check back often and save your favourite searches.') %></p>
+      <div class="tabs tabs-dark vf-tabs" data-tabs>
+        <div class="tab-list" role="tablist">
+          <button role="tab" aria-selected="true" data-tab="vf-feat"><%= ht('Artículos destacados', 'Featured items') %></button><button role="tab" aria-selected="false" data-tab="vf-types"><%= ht('Tipos de vehículo', 'Vehicle types') %></button><button role="tab" aria-selected="false" data-tab="vf-makes"><%= ht('Marcas', 'Makes') %></button><button role="tab" aria-selected="false" data-tab="vf-dmg"><%= ht('Daños', 'Damage') %></button><button role="tab" aria-selected="false" data-tab="vf-doc"><%= ht('Tipo de título', 'Title type') %></button><button role="tab" aria-selected="false" data-tab="vf-prov"><%= ht('Provincias', 'Provinces') %></button><button role="tab" aria-selected="false" data-tab="vf-city"><%= ht('Ciudades populares', 'Popular cities') %></button>
+        </div>
+        <div class="tab-panel" id="vf-feat" role="tabpanel"><ul class="link-cols">
+          <% [[ht('Vehículos destacados','Featured vehicles'),'featured=1',f2.featured],[ht('Vehículos eléctricos','Electric vehicles'),'fuel=electric',f2.electric],[ht('Vehículos híbridos','Hybrid vehicles'),'fuel=hybrid',f2.hybrid],[ht('Cómprelo ahora (Buy It Now)','Buy It Now'),'buy_now=1',f2.buy_now],[ht('Arranca y se conduce','Run and drive'),'runs=1',f2.runs],[ht('Con llaves','Keys available'),'keys=1',f2.keys],[ht('Venta pura (sin reserva)','Pure sale (no reserve)'),'pure_sale=1',f2.pure_sale],[ht('Flota / Arrendamiento','Fleet / Lease'),'seller_type=rental,fleet,leasing',f2.fleet],[ht('Bajo kilometraje','Low mileage'),'odo_max=50000',f2.low_mileage],[ht('Automáticos','Automatic'),'transmission=automatic',f2.automatic],[ht('Robos recuperados','Recovered thefts'),'damage=theft',f2.theft],[ht('Artículos nuevos','New items'),'sort=newest',f2.recent],[ht('Vehículos comerciales','Commercial vehicles'),'type=commercial',null],[ht('Motocicletas','Motorcycles'),'type=motorcycle',null]].forEach(function (x) { %><li><a href="/vehicles?<%= x[1] %>"><%= x[0] %></a><% if (x[2] !== null) { %> <span>(<%= x[2] %>)</span><% } %></li><% }) %></ul></div>
+        <div class="tab-panel" id="vf-types" role="tabpanel" hidden><ul class="link-cols"><% facets.types.forEach(function (t2) { %><li><a href="/vehicles?type=<%= t2.code %>"><%= t2.name %></a> <span>(<%= t2.count %>)</span></li><% }) %></ul></div>
+        <div class="tab-panel" id="vf-makes" role="tabpanel" hidden><ul class="link-cols"><% facets.makes.forEach(function (m) { %><li><a href="/vehicles?make=<%= m.slug %>"><%= m.name %></a> <span>(<%= m.count %>)</span></li><% }) %></ul></div>
+        <div class="tab-panel" id="vf-dmg" role="tabpanel" hidden><ul class="link-cols"><% facets.damages.forEach(function (d) { %><li><a href="/vehicles?damage=<%= d.code %>"><%= d.name %></a> <span>(<%= d.count %>)</span></li><% }) %></ul></div>
+        <div class="tab-panel" id="vf-doc" role="tabpanel" hidden><ul class="link-cols"><% f2.docs.forEach(function (d) { %><li><a href="/vehicles?doc=<%= encodeURIComponent(d.name) %>"><%= d.name %></a> <span>(<%= d.count %>)</span></li><% }) %><% if (!f2.docs.length) { %><li class="muted"><%= ht('Sin lotes en esta región.', 'No lots in this region.') %></li><% } %></ul></div>
+        <div class="tab-panel" id="vf-prov" role="tabpanel" hidden><ul class="link-cols"><% f2.provinces.forEach(function (p) { %><li><a href="/vehicles?province=<%= encodeURIComponent(p.name) %>"><%= p.name %></a> <span>(<%= p.count %>)</span></li><% }) %><% if (!f2.provinces.length) { %><li class="muted"><%= ht('Sin lotes en esta región.', 'No lots in this region.') %></li><% } %></ul></div>
+        <div class="tab-panel" id="vf-city" role="tabpanel" hidden><ul class="link-cols"><% facets.locations.forEach(function (l) { %><li><a href="/vehicles?location=<%= l.code %>"><%= l.city %></a> <span>(<%= l.count %>)</span></li><% }) %></ul></div>
+      </div>
+      <section class="vf-tips" aria-labelledby="vf-tips-h">
+        <div>
+          <h2 id="vf-tips-h"><%= ht('Consejos de búsqueda para las subastas de copart', 'Search tips for copart auctions') %></h2>
+          <p><%= ht('Tres formas de sacar más partido al buscador:', 'Three ways to get more out of the finder:') %></p>
+          <ol>
+            <li><a href="/watchList"><%= ht('Añada vehículos a su lista de favoritos', 'Add vehicles to your watchlist') %></a> <%= ht('para seguir su precio y su fecha de venta.', 'to follow their price and sale date.') %></li>
+            <li><a href="/savedsearch"><%= ht('Guarde sus búsquedas', 'Save your searches') %></a> <%= ht('y repítalas con un clic.', 'and repeat them in one click.') %></li>
+            <li><a href="/vehicle-alerts"><%= ht('Cree alertas de vehículos', 'Create vehicle alerts') %></a> <%= ht('y reciba un aviso cuando entre un lote que encaje.', 'and get notified when a matching lot arrives.') %></li>
+          </ol>
+          <a class="btn btn-green btn-lg" href="/vehicles"><%= ht('Ver todos los vehículos usados y de salvamento', 'View all used and salvage vehicles') %></a>
+        </div>
+        <img src="/img/copart/demo-suv.jpg" alt="<%= t('Imagen ilustrativa') %>" loading="lazy">
+      </section>
+    </section>
+  </div>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

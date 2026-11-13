@@ -1,0 +1,57 @@
+/* ───────── Acceso: login y registro (fondo negro, cabecera simple) ───────── */
+.auth-body { background: #000; color: #e5e7eb; font-family: Inter, var(--font), sans-serif; }
+.auth-hdr { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 28px; background: #000; border-bottom: 1px solid #1c2028; }
+.auth-logo .logo img, .auth-logo .logo svg { width: 130px; height: auto; }
+.auth-hdr-right { display: flex; align-items: center; gap: 28px; font-size: 15px; }
+.auth-hdr-right > a { color: #e5e7eb; text-decoration: none; } .auth-hdr-right > a:hover { color: #fff; }
+.auth-hdr-right .auth-switch { color: var(--blue); font-weight: 700; }
+.auth-lang { position: relative; } .auth-lang > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #e5e7eb; }
+.auth-lang > summary::-webkit-details-marker { display: none; }
+.auth-lang-pop { position: absolute; right: 0; top: calc(100% + 10px); background: #0b0f16; border: 1px solid #262b35; border-radius: 8px; padding: 6px; min-width: 190px; z-index: 50; }
+.auth-lang-pop a { display: block; padding: 8px 10px; color: #e5e7eb; text-decoration: none; border-radius: 6px; font-size: 14px; } .auth-lang-pop a:hover, .auth-lang-pop a.on { background: #1a2130; color: var(--blue); }
+.auth-progress { height: 3px; background: #11151c; } .auth-progress span { display: block; height: 100%; background: var(--blue); }
+.auth-split { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); min-height: calc(100vh - 80px); }
+.auth-art { position: relative; overflow: hidden; background: linear-gradient(135deg, #f4f7fb, #dfe7f1); }
+.auth-art img { width: 100%; height: 100%; object-fit: cover; opacity: .18; filter: grayscale(1) brightness(1.6); }
+.auth-art::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(#9aa7b8 1.2px, transparent 1.3px); background-size: 14px 14px; opacity: .35; -webkit-mask: radial-gradient(circle at 80% 15%, #000 0 22%, transparent 45%), radial-gradient(circle at 5% 90%, #000 0 18%, transparent 40%); mask: radial-gradient(circle at 80% 15%, #000 0 22%, transparent 45%), radial-gradient(circle at 5% 90%, #000 0 18%, transparent 40%); }
+.auth-panel { display: flex; flex-direction: column; justify-content: center; padding: 40px 18%; }
+.auth-panel h1, .auth-join h1 { font-size: 40px; font-weight: 800; color: #e5e7eb; text-align: center; margin: 0 0 30px; letter-spacing: -.01em; }
+.auth-form .form-row { margin-bottom: 16px; } .auth-form label { display: block; font-size: 14px; color: #d1d5db; margin-bottom: 6px; }
+.auth-form input:not([type=checkbox]):not([type=radio]), .auth-form select { width: 100%; background: #070b12; color: #f3f4f6; border: 1px solid #2a3140; border-radius: 6px; padding: 12px 12px; font-size: 15px; min-height: 46px; }
+.auth-form input:focus, .auth-form select:focus { outline: 0; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(106,168,255,.25); }
+.auth-form .pw-wrap { position: relative; } .auth-form .pw-wrap button { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: 0; color: #cbd5e1; cursor: pointer; }
+.auth-row { display: flex; justify-content: space-between; align-items: center; margin: 4px 0 22px; font-size: 14px; } .auth-row a { color: var(--blue); font-weight: 600; text-decoration: none; }
+.auth-row .check { margin: 0; color: #d1d5db; display: flex; gap: 8px; align-items: center; }
+.auth-btn { width: 100%; background: var(--blue); color: #0b1220; font-size: 17px; font-weight: 700; padding: 14px; border-radius: 6px; }
+.auth-btn:hover { filter: brightness(1.06); }
+.auth-foot { text-align: center; color: #9ca3af; font-size: 14.5px; margin: 22px 0 0; } .auth-foot a { color: var(--blue); font-weight: 700; text-decoration: none; }
+.auth-demo { margin-top: 26px; border: 1px dashed #2a3140; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #9ca3af; }
+.auth-demo summary { cursor: pointer; color: #cbd5e1; } .auth-demo ul { padding-left: 18px; line-height: 1.8; margin: 6px 0 0; }
+.auth-join { max-width: 420px; margin: 80px auto 60px; padding: 0 16px; }
+.auth-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.auth-phone { display: grid; grid-template-columns: 110px 1fr; } .auth-phone select { border-radius: 6px 0 0 6px !important; border-right: 0 !important; } .auth-phone input { border-radius: 0 6px 6px 0 !important; }
+.auth-business { margin: 2px 0 14px; color: #d1d5db; font-size: 14px; display: flex; gap: 8px; align-items: center; }
+.auth-terms { font-size: 13px; color: #9ca3af; line-height: 1.6; margin: 6px 0 18px; } .auth-terms a { color: var(--blue); font-weight: 600; text-decoration: none; }
+.auth-reg .reg-steps { margin-top: 0; }
+@media (max-width: 900px) {
+  .auth-split { grid-template-columns: 1fr; } .auth-art { display: none; } .auth-panel { padding: 40px 18px; }
+  .auth-hdr { padding: 14px 16px; } .auth-hdr-right { gap: 14px; font-size: 14px; } .auth-hdr-right > a:first-child { display: none; }
+  .auth-panel h1, .auth-join h1 { font-size: 30px; } .auth-join { margin-top: 40px; }
+}
+
+/* ───────── Cabecera de visitante: Iniciar sesión → Miembro / Vendedor ───────── */
+.signin-menu { position: relative; } .signin-menu > summary { list-style: none; cursor: pointer; } .signin-menu > summary::-webkit-details-marker { display: none; }
+.signin-pop { position: absolute; right: 0; top: calc(100% + 8px); background: #000; padding: 8px; border-radius: 4px; display: grid; gap: 8px; min-width: 120px; z-index: 70; box-shadow: 0 10px 24px rgba(0,0,0,.35); }
+.signin-pop a { display: block; text-align: center; background: var(--blue); color: #0b1220; font-weight: 700; font-size: 13.5px; padding: 6px 14px; border-radius: 4px; text-decoration: none; }
+.signin-pop a:hover { filter: brightness(1.08); }
+
+/* ───────── Portada: Síganos ───────── */
+.home-follow { background: #000; padding: 40px 16px 56px; text-align: center; }
+.home-follow h2 { color: var(--blue); font-size: 34px; font-weight: 800; margin: 0 0 26px; }
+.social-row { list-style: none; display: flex; justify-content: center; gap: 22px; padding: 0; margin: 0; }
+.social-row a, .social-row span { width: 48px; height: 48px; border: 2px solid #fff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; }
+.social-row span { opacity: .7; cursor: help; } .social-row a:hover { background: #fff; color: #000; } .social-row .ic { width: 24px; height: 24px; }
+.theme-light .home-follow { background: #f4f8fc; } .theme-light .social-row a, .theme-light .social-row span { border-color: #111; color: #111; }
+/* Referencia: botón "Iniciar sesión" azul claro y texto oscuro en la franja azul de registro */
+.visitor-portal.theme-dark .hdr-right .btn-signin { background: var(--blue); color: #0b1220; }
+.visitor-portal.theme-dark .cta-band p { color: #0b1220; font-weight: 500; }

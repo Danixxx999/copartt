@@ -1,0 +1,17 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="page-dark">
+  <div class="wrap-narrow content-body">
+    <h1 class="page-title">How to Buy</h1>
+    <h2>1. Become a member</h2><p>Register as an individual or business, choose <a href="/membership">Guest, Basic or Premium</a> and upload your identity documents. Only Basic and Premium members with approved documents can bid. Basic members can bid up to 5.000€ per vehicle; Premium members up to 30 vehicles per auction with a combined limit of 300.000€ (editable demo rules).</p>
+    <h2>2. Find vehicles</h2><p>Use the <a href="/vehicle-finder">Vehicle Finder</a>, save searches and create <a href="/vehicle-alerts">alerts</a>. Each lot shows damage, odometer, documents, location and an estimated cost.</p>
+    <h2>3. Bid</h2><p><strong>Pre-bid:</strong> before the sale, set your maximum. <strong>Live:</strong> in the <a href="/auctions">auction room</a> each lot is open for a short countdown; any bid in the final seconds extends it. The highest maximum wins; ties go to whoever reached that amount first. If the reserve is not met, the seller can accept or reject the bid.</p>
+    <h2>4. Fees (demo values)</h2>
+    <ul><li>Buyer fee: <%= fee.percent %>% of the hammer price (minimum <%= eur(fee.min_cents) %>)</li><li>Administration fee: <%= eur(adminFee) %></li><li>VAT on fees: 21%</li></ul>
+    <p>Try the <a href="/fee-calculator">Fee Calculator</a>. These are not real tariffs.</p>
+    <h2>5. Pay</h2><p>The vehicle amount must be paid by <strong>bank transfer</strong> (upload the receipt from your dashboard; Finance validates it). Fees can be paid by card in the sandbox. No real money is processed.</p>
+    <h2>6. Collect or ship</h2><p>When the invoice is fully paid you get a <strong>pickup PIN</strong>. Show it at the yard during pickup hours. Or request <a href="/transport">transport</a> from your purchase page.</p>
+  </div>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

@@ -1,0 +1,22 @@
+<details class="lang-switch lr-switch">
+  <summary aria-label="<%= t('lang_title') %> / <%= t('region_title') %>"><svg class="ic ic-lg" aria-hidden="true"><use href="#i-globe"/></svg><span class="country"><%= regionName %></span><span class="sep">|</span><span><%= langs[lang].label %></span><svg class="ic ic-xs" aria-hidden="true"><use href="#i-chev"/></svg></summary>
+  <div class="lr-pop" role="dialog" aria-label="<%= t('lang_title') %>">
+    <h2><%= t('lang_title') %></h2>
+    <p class="lr-q"><%= t('can_read') %></p>
+    <p class="lr-text"><%= t('lang_blurb') %></p>
+    <form class="lr-lang" method="get" action="<%= path %>">
+      <% Object.keys(query || {}).forEach(function (k) { if (k !== 'lang' && typeof query[k] === 'string') { %><input type="hidden" name="<%= k %>" value="<%= query[k] %>"><% } }) %>
+      <label class="sr-only" for="lr-lang-sel"><%= t('lang_title') %></label>
+      <select id="lr-lang-sel" name="lang"><% Object.keys(langs).forEach(function (l) { %><option value="<%= l %>" lang="<%= langs[l].html %>" <%= l === lang ? 'selected' : '' %>><%= langs[l].label %></option><% }) %></select>
+      <button class="btn btn-brown" type="submit"><%= t('yes') %></button>
+    </form>
+    <h2><%= t('region_title') %></h2>
+    <p class="lr-text"><%= t('region_blurb', { region: regionName, country: countryName(region) }) %></p>
+    <details class="lr-region">
+      <summary><%- include('flag', { code: region }) %><span><%= regionName %></span><span class="lr-caret" aria-hidden="true">⇕</span></summary>
+      <div class="lr-grid"><% Object.keys(regions).forEach(function (c) { %><a href="?<%= qsWith({ region: c, page: null, country: null }) %>" class="<%= c === region ? 'on' : '' %>" <%- c === region ? 'aria-current="true"' : '' %>><%- include('flag', { code: c }) %><span><%= regions[c] %></span></a><% }) %></div>
+    </details>
+    <a class="lr-more" href="/how-to-buy"><%= t('intl_info') %></a>
+    <% if (typeof isMemberPortal !== 'undefined' && !isMemberPortal && typeof colorTheme !== 'undefined') { %><a class="lr-more" href="?<%= qsWith({ theme: colorTheme === 'light' ? 'dark' : 'light' }) %>"><%= colorTheme === 'light' ? ht('Apariencia oscura', 'Dark appearance') : ht('Apariencia clara', 'Light appearance') %></a><% } %>
+  </div>
+</details>

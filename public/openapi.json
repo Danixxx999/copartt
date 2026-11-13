@@ -1,0 +1,4567 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "copart API (réplica académica)",
+    "version": "1.0.0",
+    "description": "API REST de la plataforma de subastas. Las mutaciones requieren la cabecera X-CSRF-Token con el valor de la cookie ap_csrf. Errores: {error, code, fields}. Tiempo real por Socket.IO en /socket.io (join, sync, bid → lot:update, lot:closed, event:update, notification)."
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "session": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "ap_sid"
+      },
+      "csrf": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-CSRF-Token"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Crear cuenta (paso 1)",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "account_type": {
+                    "type": "string",
+                    "description": "individual|business"
+                  },
+                  "first_name": {
+                    "type": "string",
+                    "description": "string"
+                  },
+                  "last_name": {
+                    "type": "string",
+                    "description": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "email"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "description": "digits"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "string(min 10)"
+                  },
+                  "terms": {
+                    "type": "string",
+                    "description": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Iniciar sesión (modo buyer/seller). Fija cookie HttpOnly ap_sid",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "string"
+                  },
+                  "account_type": {
+                    "type": "string",
+                    "description": "buyer|seller"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Cerrar sesión",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Usuario actual con roles, permisos y plan",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Solicitar enlace de restablecimiento",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "email"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Restablecer contraseña con token",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/change-password": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Cambiar contraseña",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "current_password": {
+                    "type": "string",
+                    "description": "string"
+                  },
+                  "new_password": {
+                    "type": "string",
+                    "description": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/memberships/choose": {
+      "post": {
+        "tags": [
+          "Memberships"
+        ],
+        "summary": "Elegir plan (crea factura si es de pago)",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "plan": {
+                    "type": "string",
+                    "description": "guest|basic|premium"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents": {
+      "post": {
+        "tags": [
+          "Documents"
+        ],
+        "summary": "Subir documento de verificación (multipart: doc_type, file)",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/profile": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Actualizar perfil",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/makes": {
+      "get": {
+        "tags": [
+          "Catalog"
+        ],
+        "summary": "Marcas con modelos",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        }
+      }
+    },
+    "/makes/{id}/models": {
+      "get": {
+        "tags": [
+          "Catalog"
+        ],
+        "summary": "Modelos de una marca",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        }
+      }
+    },
+    "/vehicle-types": {
+      "get": {
+        "tags": [
+          "Catalog"
+        ],
+        "summary": "Tipos de vehículo",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        }
+      }
+    },
+    "/damage-types": {
+      "get": {
+        "tags": [
+          "Catalog"
+        ],
+        "summary": "Tipos de daño",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        }
+      }
+    },
+    "/locations": {
+      "get": {
+        "tags": [
+          "Locations"
+        ],
+        "summary": "Sedes",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        }
+      }
+    },
+    "/lots": {
+      "get": {
+        "tags": [
+          "Lots"
+        ],
+        "summary": "Búsqueda paginada. Query: q, make, model, type, condition, year_from, year_to, odo_min, odo_max, location, damage, featured, status(open|closed|all), sort, page, per_page",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        }
+      }
+    },
+    "/lots/{lotNumber}": {
+      "get": {
+        "tags": [
+          "Lots"
+        ],
+        "summary": "Ficha del lote + historial de pujas (VIN mascarado)",
+        "parameters": [
+          {
+            "name": "lotNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        }
+      }
+    },
+    "/auctions": {
+      "get": {
+        "tags": [
+          "Auctions"
+        ],
+        "summary": "Eventos de subasta",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        }
+      }
+    },
+    "/fees/estimate": {
+      "get": {
+        "tags": [
+          "Invoices"
+        ],
+        "summary": "Calculadora de costes (?amount=)",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        }
+      }
+    },
+    "/lots/{id}/bids": {
+      "post": {
+        "tags": [
+          "Bids"
+        ],
+        "summary": "Prepuja o puja en vivo (máximo/proxy). Cabecera opcional Idempotency-Key",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "amount": {
+                    "type": "string",
+                    "description": "number (EUR)"
+                  },
+                  "idempotency_key": {
+                    "type": "string",
+                    "description": "string"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "description": "prebid|live"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/watchlist/{lotId}": {
+      "post": {
+        "tags": [
+          "Watchlist"
+        ],
+        "summary": "Alternar favorito",
+        "parameters": [
+          {
+            "name": "lotId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/watchlist": {
+      "get": {
+        "tags": [
+          "Watchlist"
+        ],
+        "summary": "Favoritos",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/saved-searches": {
+      "post": {
+        "tags": [
+          "SavedSearches"
+        ],
+        "summary": "Guardar búsqueda",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "string"
+                  },
+                  "query": {
+                    "type": "string",
+                    "description": "querystring"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/saved-searches/{id}": {
+      "delete": {
+        "tags": [
+          "SavedSearches"
+        ],
+        "summary": "Eliminar",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/alerts": {
+      "post": {
+        "tags": [
+          "Alerts"
+        ],
+        "summary": "Crear alerta de vehículo",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        }
+      }
+    },
+    "/alerts/{token}": {
+      "patch": {
+        "tags": [
+          "Alerts"
+        ],
+        "summary": "Editar alerta",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        }
+      }
+    },
+    "/alerts/{token}/cancel": {
+      "post": {
+        "tags": [
+          "Alerts"
+        ],
+        "summary": "Cancelar alerta",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        }
+      }
+    },
+    "/support/tickets": {
+      "post": {
+        "tags": [
+          "Support"
+        ],
+        "summary": "Formulario de contacto",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        }
+      }
+    },
+    "/notifications": {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Notificaciones",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/notifications/read-all": {
+      "post": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Marcar leídas",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/invoices/{id}/payments/demo": {
+      "post": {
+        "tags": [
+          "Payments"
+        ],
+        "summary": "Pago demo: bank_transfer (multipart con proof) o card_demo (tarjeta 4242…)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "method": {
+                    "type": "string",
+                    "description": "bank_transfer|card_demo"
+                  },
+                  "scope": {
+                    "type": "string",
+                    "description": "vehicle|fees|full"
+                  },
+                  "reference": {
+                    "type": "string",
+                    "description": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payments/{id}/review": {
+      "post": {
+        "tags": [
+          "Payments"
+        ],
+        "summary": "Finanzas aprueba/rechaza (permiso finance.review)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "approve": {
+                    "type": "string",
+                    "description": "boolean"
+                  },
+                  "note": {
+                    "type": "string",
+                    "description": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/{id}/cancel": {
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Cancelar orden impagada (finance.review)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "description": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transport/estimate": {
+      "post": {
+        "tags": [
+          "Transport"
+        ],
+        "summary": "Presupuesto público",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        }
+      }
+    },
+    "/orders/{id}/transport-quotes": {
+      "post": {
+        "tags": [
+          "Transport"
+        ],
+        "summary": "Presupuesto para una compra",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/transport/quotes/{id}/accept": {
+      "post": {
+        "tags": [
+          "Transport"
+        ],
+        "summary": "Aceptar → orden de transporte + factura",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/transport-orders/{id}": {
+      "post": {
+        "tags": [
+          "Transport"
+        ],
+        "summary": "Cambiar estado (logistics.manage)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/pickup-passes/validate": {
+      "post": {
+        "tags": [
+          "Pickup"
+        ],
+        "summary": "Validar PIN de retiro (pickup.validate)",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "order_number": {
+                    "type": "string",
+                    "description": "string"
+                  },
+                  "pin": {
+                    "type": "string",
+                    "description": "6 digits"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/seller/apply": {
+      "post": {
+        "tags": [
+          "Seller"
+        ],
+        "summary": "Solicitar cuenta de vendedor",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/seller/vehicles": {
+      "post": {
+        "tags": [
+          "Seller"
+        ],
+        "summary": "Crear borrador",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/seller/vehicles/{id}": {
+      "patch": {
+        "tags": [
+          "Seller"
+        ],
+        "summary": "Editar borrador",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Seller"
+        ],
+        "summary": "Eliminar borrador",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/seller/vehicles/{id}/submit": {
+      "post": {
+        "tags": [
+          "Seller"
+        ],
+        "summary": "Enviar a aprobación",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/seller/vehicles/{id}/images": {
+      "post": {
+        "tags": [
+          "Seller"
+        ],
+        "summary": "Subir fotos (multipart images[])",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/seller/vehicles/{id}/images/{imageId}": {
+      "delete": {
+        "tags": [
+          "Seller"
+        ],
+        "summary": "Borrar foto",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "imageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/seller/vehicles/{id}/documents": {
+      "post": {
+        "tags": [
+          "Seller"
+        ],
+        "summary": "Subir documento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/seller/lots/{id}/decision": {
+      "post": {
+        "tags": [
+          "Seller"
+        ],
+        "summary": "Aceptar/rechazar puja bajo reserva",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "accept": {
+                    "type": "string",
+                    "description": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/users/{id}": {
+      "patch": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Estado, roles, plan, verificación (users.manage)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Borrar usuario sin historial (si tiene pujas/compras → 409, suspender)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/users": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Crear usuario",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/documents/{id}/review": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Revisar documento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/sellers/{id}/approve": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Aprobar vendedor",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/vehicles/{id}/review": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Aprobar (crea lote en subasta) o rechazar",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/vehicles/{id}/withdraw": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Retirar vehículo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/catalog/{kind}": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Crear marca/modelo/tipo/daño",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/catalog/{kind}/{id}": {
+      "delete": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Eliminar elemento del catálogo",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/locations": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Crear sede",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/locations/{id}": {
+      "patch": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Editar sede",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/events": {
+      "post": {
+        "tags": [
+          "Auctions"
+        ],
+        "summary": "Programar subasta",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/events/{id}": {
+      "patch": {
+        "tags": [
+          "Auctions"
+        ],
+        "summary": "Editar subasta",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/events/{id}/start": {
+      "post": {
+        "tags": [
+          "Auctions"
+        ],
+        "summary": "Iniciar ahora",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/events/{id}/cancel": {
+      "post": {
+        "tags": [
+          "Auctions"
+        ],
+        "summary": "Cancelar",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/lots/{id}": {
+      "patch": {
+        "tags": [
+          "Auctions"
+        ],
+        "summary": "Precio de salida/reserva",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/lots/{id}/cancel": {
+      "post": {
+        "tags": [
+          "Auctions"
+        ],
+        "summary": "Cancelar lote",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/plans/{id}": {
+      "patch": {
+        "tags": [
+          "Memberships"
+        ],
+        "summary": "Reglas y límites del plan",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/settings/{key}": {
+      "patch": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Editar ajuste (JSON)",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/pages/{slug}": {
+      "patch": {
+        "tags": [
+          "Content"
+        ],
+        "summary": "Editar página",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Content"
+        ],
+        "summary": "Borrar página (no legales)",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/banners/{id}": {
+      "patch": {
+        "tags": [
+          "Content"
+        ],
+        "summary": "Editar banner",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Content"
+        ],
+        "summary": "Borrar banner",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/tickets/{id}": {
+      "patch": {
+        "tags": [
+          "Support"
+        ],
+        "summary": "Responder ticket",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/alerts/digest": {
+      "post": {
+        "tags": [
+          "Alerts"
+        ],
+        "summary": "Enviar resumen de alertas",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/reports/{name}.csv": {
+      "get": {
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Exportar CSV: sales, invoices, payments, bids, users, inventory, transport",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/lots/{id}/buy-now": {
+      "post": {
+        "tags": [
+          "Bids"
+        ],
+        "summary": "Buy It Now: compra inmediata a precio fijo antes de la subasta (bloqueo de fila, un único comprador)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/lots/{id}/counter-response": {
+      "post": {
+        "tags": [
+          "Bids"
+        ],
+        "summary": "El mejor postor acepta o rechaza la contraoferta del vendedor",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "accept": {
+                    "type": "string",
+                    "description": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/seller/lots/{id}/counter": {
+      "post": {
+        "tags": [
+          "Seller"
+        ],
+        "summary": "Contraoferta al mejor postor (entre la puja y la reserva)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "amount": {
+                    "type": "string",
+                    "description": "number (EUR)"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/users/{id}/impersonate": {
+      "post": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Entrar como otro usuario (users.impersonate, auditado, 2 h máx.)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/auth/impersonation/stop": {
+      "post": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Volver a la cuenta del administrador",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/users/{id}/profile": {
+      "patch": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Editar email y datos personales/empresa",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/users/{id}/password": {
+      "post": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Fijar contraseña y cerrar sesiones",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "description": "string(min 10)"
+                  },
+                  "revoke_sessions": {
+                    "type": "string",
+                    "description": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/users/{id}/sessions/revoke": {
+      "post": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Cerrar todas las sesiones del usuario",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/users/{id}/message": {
+      "post": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Mensaje (notificación + email demo)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/roles": {
+      "post": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Crear rol personalizado con permisos (roles.manage)",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "string"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "string"
+                  },
+                  "permissions": {
+                    "type": "string",
+                    "description": "string[]"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/roles/{id}": {
+      "patch": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Editar nombre y permisos de un rol",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Borrar rol personalizado sin usuarios",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/vehicles": {
+      "post": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Crear vehículo en nombre de un vendedor (seller_id + datos)",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/vehicles/{id}": {
+      "patch": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Editar cualquier vehículo no vendido",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/vehicles/{id}/images": {
+      "post": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Subir fotos (multipart images[])",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/vehicles/{id}/images/{imageId}": {
+      "delete": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Borrar foto",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "imageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/vehicles/{id}/documents": {
+      "post": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Subir documento del vehículo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/vehicles/{id}/featured": {
+      "post": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Destacar en la home",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "featured": {
+                    "type": "string",
+                    "description": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/pages": {
+      "post": {
+        "tags": [
+          "Content"
+        ],
+        "summary": "Crear página CMS (/page/slug)",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/banners": {
+      "post": {
+        "tags": [
+          "Content"
+        ],
+        "summary": "Crear banner (top / home)",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    }
+  }
+}

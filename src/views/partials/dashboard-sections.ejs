@@ -1,0 +1,21 @@
+<%
+ var current = groups.current;
+ var offerGroups = [['open','Artículos abiertos',current],['outbid','Se ha superado su oferta',current.filter(l=>!l.leading)],['leading','Ganador',current.filter(l=>l.leading)],['won','Ganado',groups.won],['lost','Perdido',groups.lost]];
+ var localDay=d=>new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Madrid'}).format(new Date(d));
+ var todayKey=localDay(new Date());var tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);var tomorrowKey=localDay(tomorrow);
+ var endWeek=new Date(todayKey+'T12:00:00Z');endWeek.setUTCDate(endWeek.getUTCDate()+(7-endWeek.getUTCDay())%7);var endKey=endWeek.toISOString().slice(0,10);
+ var watchGroups=[['today','Hoy',watch.filter(l=>localDay(l.auction_date)===todayKey)],['tomorrow','Mañana',watch.filter(l=>localDay(l.auction_date)===tomorrowKey)],['week','Esta semana',watch.filter(l=>localDay(l.auction_date)>=todayKey&&localDay(l.auction_date)<=endKey)],['later','Más tarde',watch.filter(l=>localDay(l.auction_date)>endKey)]];
+ var orderLots=purchases.filter(o=>o.status!=='cancelled');
+ var paymentRows=dueInvoices.map(i=>({id:i.id,href:'/dashboard/invoices/'+i.id+'.pdf',title:i.invoice_number,detail:'Saldo pendiente',amount:Number(i.total_cents)-Number(i.paid_cents)}));
+ var deliveryRows=orderLots.filter(o=>['paid','ready_for_pickup','in_transport'].includes(o.status)).map(o=>({id:o.id,href:'/dashboard/purchases/'+o.id,title:o.year+' '+o.make+' '+o.model,detail:o.location_name,amount:null}));
+ var titleRows=orderLots.filter(o=>['paid','ready_for_pickup','in_transport','collected','delivered'].includes(o.status)).map(o=>({id:o.id,href:'/dashboard/purchases/'+o.id,title:o.year+' '+o.make+' '+o.model,detail:'Documentación y recogida',amount:null}));
+ var lotRow=l=>({id:l.id,href:'/lot/'+l.lot_number,title:lotTitle(l),detail:l.location_name+' · '+dateTime(l.auction_date),image:l.image,amount:l.current_bid_cents||l.starting_bid_cents});
+ var sections=[{id:'offers',title:'Ofertas',href:'/dashboard/bids',groups:offerGroups.map(g=>[g[0],g[1],g[2].map(lotRow)]),sort:true},{id:'favorites',title:'Lista de favoritos',href:'/dashboard/watchlist',groups:watchGroups.map(g=>[g[0],g[1],g[2].map(lotRow)])},{id:'logistics',title:'Pagos y logística',href:'/dashboard/purchases',groups:[['pay','Realizar un pago',paymentRows],['delivery','Programe la entrega',deliveryRows],['titles','Obtener títulos',titleRows]]}];
+%>
+<% sections.forEach(s=>{var active=s.groups.find(g=>g[0]===query[s.id])||s.groups[0];var rows=active[2].slice();if(query.sort==='lot_number')rows.sort((a,b)=>a.id-b.id); %>
+<section class="dashboard-section" id="<%= s.id %>">
+ <header><h2><%= s.title %></h2><a href="<%= s.href %>">VER TODO</a></header>
+ <div class="dashboard-section-controls"><nav aria-label="<%= s.title %>"><% s.groups.forEach(g=>{var change={};change[s.id]=g[0]; %><a class="<%= active[0]===g[0]?'on':'' %>" aria-current="<%= active[0]===g[0]?'true':'false' %>" href="?<%= qsWith(change) %>#<%= s.id %>"><%= g[1] %> (<%= g[2].length %>)</a><% }) %></nav>
+ <% if(s.sort){ %><form method="get" action="/dashboard#offers"><input type="hidden" name="offers" value="<%= active[0] %>"><label class="sr-only" for="dash-sort">Ordenar ofertas</label><select id="dash-sort" name="sort" data-autosubmit><option value="auction_date">Ordenar por: Fecha de la subasta</option><option value="lot_number" <%= query.sort==='lot_number'?'selected':'' %>>Ordenar por: Número de lote</option></select></form><% } %></div>
+ <% if(!rows.length){ %><div class="dashboard-section-empty"><p>No hay artículos en este momento</p><a href="/vehicle-finder">⊕ Buscar vehículos</a></div><% }else{ %><div class="dashboard-section-items"><% rows.slice(0,6).forEach(r=>{ %><a href="<%= r.href %>"><% if(r.image){ %><img src="<%= displayImage(r.image) %>" alt=""><% } %><div><strong><%= r.title %></strong><span><%= r.detail %></span></div><% if(r.amount!==null){ %><b><%= eur(r.amount) %></b><% } %></a><% }) %><% if(rows.length>6){ %><a href="<%= s.href %>">Ver los <%= rows.length %> artículos</a><% } %></div><% } %>
+</section><% }) %>

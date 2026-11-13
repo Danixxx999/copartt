@@ -1,0 +1,37 @@
+<%- include('../../partials/panel-start') %>
+<h1><%= t('Payment Gateways') %></h1>
+<p class="lead"><%= ht('Aquí ve qué pasarela cobra las tarjetas y depósitos. Hoy funciona el modo demostración (sin dinero real). Para cobrar de verdad, siga los 4 pasos de abajo.', 'This shows which gateway charges cards and deposits. Demo mode is active today (no real money). To charge for real, follow the 4 steps below.') %></p>
+<div class="kpis">
+  <div class="kpi info"><div class="v"><%= providers.find(function (p) { return p.code === active; }).name %></div><div class="l"><%= ht('Pasarela activa para tarjetas', 'Active card gateway') %></div></div>
+  <div class="kpi"><div class="v"><%= stats.cards %></div><div class="l"><%= ht('Tarjetas guardadas (solo últimos 4)', 'Saved cards (last 4 only)') %></div></div>
+  <div class="kpi ok"><div class="v"><%= eur(stats.deposits_total) %></div><div class="l"><%= stats.deposits %> <%= ht('depósitos activos', 'active deposits') %></div></div>
+  <a class="kpi <%= stats.refunds ? 'warn' : '' %>" href="/finance/balances"><div class="v"><%= stats.refunds %></div><div class="l"><%= ht('Reembolsos por revisar', 'Refunds to review') %></div></a>
+  <div class="kpi ok"><div class="v"><%= eur(stats.collected) %></div><div class="l"><%= ht('Cobrado (aprobado)', 'Collected (approved)') %> · <%= stats.card_payments %> <%= ht('tarjeta', 'card') %> / <%= stats.transfers %> <%= ht('transferencia', 'transfer') %></div></div>
+</div>
+<section class="p-card"><h2><%= ht('Proveedores', 'Providers') %></h2>
+  <div class="table-wrap"><table class="tbl"><thead><tr><th><%= ht('Proveedor', 'Provider') %></th><th><%= ht('Estado', 'Status') %></th><th><%= ht('Variables en .env', '.env variables') %></th><th><%= ht('Notas', 'Notes') %></th></tr></thead><tbody>
+  <% providers.forEach(function (p) { %><tr>
+    <td><strong><%= p.name %></strong><br><code class="hint"><%= p.code %></code><% if (p.active) { %> <span class="badge badge-green"><%= ht('ACTIVO', 'ACTIVE') %></span><% } else if (p.requested) { %> <span class="badge badge-amber"><%= ht('solicitado, no disponible', 'requested, unavailable') %></span><% } %></td>
+    <td><% if (!p.implemented) { %><span class="badge badge-gray"><%= ht('Adaptador pendiente', 'Adapter pending') %></span><% } else if (p.code === 'bank_transfer') { %><span class="badge badge-green"><%= ht('Integrado', 'Integrated') %></span><% } else { %><span class="badge badge-blue"><%= ht('Implementado', 'Implemented') %></span><% } %>
+      <% if (p.env.length) { %><br><span class="hint"><%= p.configured ? ht('Claves configuradas', 'Keys configured') : ht('Faltan', 'Missing') + ': ' + p.missing.length %></span><% } %></td>
+    <td><% if (!p.env.length) { %>—<% } else { p.env.forEach(function (k) { %><code><%= k %></code> <%- p.missing.includes(k) ? '<span class="badge badge-red">✕</span>' : '<span class="badge badge-green">✓</span>' %><br><% }) } %></td>
+    <td class="hint"><%= p.notes %></td></tr><% }) %>
+  </tbody></table></div>
+  <p class="hint"><%= ht('Por seguridad, esta página nunca muestra los valores de las claves, solo si existen.', 'For security, this page never shows key values, only whether they exist.') %></p>
+</section>
+<div class="grid-2" style="align-items:start">
+  <section class="p-card"><h2><%= ht('Cómo activar cobros reales', 'How to enable real payments') %></h2>
+    <ol class="steps-list">
+      <li><%= ht('Cree una cuenta de comercio con el proveedor (por ejemplo Wompi en Colombia o Stripe) y obtenga las claves de prueba y de producción.', 'Open a merchant account with the provider (e.g. Wompi in Colombia or Stripe) and get test and live keys.') %></li>
+      <li><%= ht('Escriba las claves en el archivo .env del servidor (nunca en el código ni en Git) y añada PAYMENT_PROVIDER=', 'Put the keys in the server .env file (never in code or Git) and add PAYMENT_PROVIDER=') %><code>wompi</code>.</li>
+      <li><%= ht('Programe el adaptador en src/services/payments.js con las mismas funciones que el proveedor demo (tokenizeCard, charge, refund) y su webhook de confirmación.', 'Write the adapter in src/services/payments.js with the same functions as the demo provider (tokenizeCard, charge, refund) and its confirmation webhook.') %></li>
+      <li><%= ht('Cambie el formulario de tarjeta por el widget del proveedor: el número de tarjeta no debe pasar por este servidor (normativa PCI). Pruebe en modo sandbox antes de usar claves reales.', 'Replace the card form with the provider widget: card numbers must not pass through this server (PCI rules). Test in sandbox before using live keys.') %></li>
+    </ol>
+    <p class="hint"><%= ht('Mientras falte cualquiera de estos pasos, el sistema sigue en modo demostración automáticamente.', 'While any step is missing, the system stays in demo mode automatically.') %></p>
+  </section>
+  <section class="p-card"><h2><%= ht('Transferencia bancaria', 'Bank transfer') %></h2>
+    <p class="hint"><%= ht('Datos mostrados a los compradores para pagar vehículos. Se editan en', 'Details shown to buyers to pay for vehicles. Edit them in') %> <a href="/admin/settings"><%= t('Settings') %></a> › <code>bank_details</code>.</p>
+    <% if (bank) { %><table class="tbl"><tbody><% Object.keys(bank).forEach(function (k) { %><tr><td class="hint"><%= k %></td><td><%= bank[k] %></td></tr><% }) %></tbody></table><% } %>
+  </section>
+</div>
+<%- include('../../partials/panel-end') %>

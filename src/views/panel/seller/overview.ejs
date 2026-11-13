@@ -1,0 +1,15 @@
+<%- include('../../partials/panel-start') %>
+<h1><%= user.seller ? user.seller.company_name : 'Seller' %></h1>
+<p class="lead">Seller portal · <%- badge(user.seller && user.seller.approved ? 'approved' : 'pending') %> <% if (!(user.seller && user.seller.approved)) { %>Your account is awaiting approval by an administrator; you can't create vehicles yet.<% } %></p>
+<div class="kpis">
+  <a class="kpi" href="/seller/vehicles?status=draft"><div class="v"><%= stats.drafts %></div><div class="l">Drafts</div></a>
+  <a class="kpi warn" href="/seller/vehicles?status=pending_approval"><div class="v"><%= stats.pending %></div><div class="l">Pending approval</div></a>
+  <a class="kpi info" href="/seller/vehicles?status=approved"><div class="v"><%= stats.listed %></div><div class="l">Listed</div></a>
+  <a class="kpi" href="/seller/vehicles?status=rejected"><div class="v"><%= stats.rejected %></div><div class="l">Rejected</div></a>
+  <a class="kpi ok" href="/seller/sales"><div class="v"><%= revenue.n %> · <%= eur(revenue.total, { decimals: false }) %></div><div class="l">Sold (hammer total)</div></a>
+</div>
+<% if (approvals.length) { %><section class="p-card" style="border-left:4px solid var(--amber)"><h2>Action needed: bids below reserve</h2><table class="tbl"><tbody><% approvals.forEach(function (l) { %><tr><td>Lot #<%= l.lot_number %> · <%= l.year %> <%= l.make %> <%= l.model %></td><td class="num">Highest bid <strong><%= eur(l.current_bid_cents) %></strong> · reserve <%= eur(l.reserve_cents) %></td><td class="actions"><button class="btn btn-green btn-sm" type="button" data-api="/api/v1/seller/lots/<%= l.id %>/decision" data-body='{"accept":true}' data-confirm="Accept <%= eur(l.current_bid_cents) %>? The buyer will be invoiced.">Accept</button><button class="btn btn-red btn-sm" type="button" data-api="/api/v1/seller/lots/<%= l.id %>/decision" data-body='{"accept":false}' data-confirm="Reject the bid?">Reject</button></td></tr><% }) %></tbody></table></section><% } %>
+<section class="p-card"><h2 style="display:flex;justify-content:space-between">Your vehicles in upcoming auctions <a class="btn btn-blue btn-sm" href="/seller/vehicles/new">+ New vehicle</a></h2>
+  <% if (!upcoming.length) { %><div class="empty">No listed vehicles.</div><% } else { %><table class="tbl"><thead><tr><th>Lot</th><th>Vehicle</th><th>Auction</th><th class="num">Bids</th><th class="num">Current</th><th>Status</th></tr></thead><tbody><% upcoming.forEach(function (l) { %><tr><td><a href="/lot/<%= l.lot_number %>">#<%= l.lot_number %></a></td><td><%= lotTitle(l) %></td><td><%= dateTime(l.auction_date) %></td><td class="num"><%= l.bid_count %></td><td class="num"><%= eur(l.current_bid_cents || l.starting_bid_cents) %></td><td><%- badge(l.status) %></td></tr><% }) %></tbody></table><% } %>
+</section>
+<%- include('../../partials/panel-end') %>

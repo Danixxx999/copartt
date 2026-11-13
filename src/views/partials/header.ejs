@@ -1,0 +1,77 @@
+<%- include('impersonation-bar') %>
+<header class="site-header" id="top">
+  <div class="hdr-main">
+    <a href="/" class="hdr-logo" aria-label="copart home"><%- include('logo',{inverted:referenceLayout && !isMemberPortal && colorTheme==='light'}) %><% if (isMemberPortal) { %><span class="portal-caption"><%= t('member_portal') %></span><% } %></a>
+    <form class="hdr-search" action="/vehicles" method="get" role="search">
+      <svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>
+      <input type="search" name="q" value="<%= query && query.q ? query.q : '' %>" placeholder="<%= t('search_placeholder') %>" aria-label="<%= t('search_placeholder') %>">
+      <button class="btn btn-brown" type="submit"><%= t('search_inventory') %></button>
+    </form>
+    <div class="hdr-right">
+      <%- include('lang-region') %>
+      <% if (user) { %><a class="hdr-bell" href="/dashboard/notifications" aria-label="<%= t('Mensajes') %><%= unread ? ' (' + unread + ')' : '' %>"><svg class="ic ic-lg" aria-hidden="true"><use href="#i-bell"/></svg><% if (unread) { %><span class="bell-dot" aria-hidden="true"></span><% } %></a><% } %>
+      <% if (user) { %>
+        <details class="user-menu acct-menu">
+          <summary class="btn btn-light"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg> <span class="hi"><%= user.first_name.toUpperCase() %></span><svg class="ic ic-xs" aria-hidden="true"><use href="#i-chev"/></svg><% if (unread) { %><span class="dot-count" aria-label="<%= unread %> unread notifications"><%= unread %></span><% } %></summary>
+          <div class="acct-backdrop" data-close-drawer aria-hidden="true"></div>
+          <div class="acct-drawer" role="dialog" aria-label="<%= t('Mi cuenta') %>">
+            <div class="acct-drawer-hd"><strong><%= t('Mi cuenta') %></strong><button type="button" data-close-drawer aria-label="<%= t('Cerrar') %>">✕</button></div>
+            <div class="acct-drawer-bd">
+              <h3><%= t('Configuración de la cuenta') %></h3>
+              <a href="/account/personal-information"><%= t('Información personal') %><b>›</b></a>
+              <a href="/account/payment-methods"><%= t('Método de pago y depósitos') %><b>›</b></a>
+              <a href="/account/title-management"><%= t('Gestión de títulos') %><b>›</b></a>
+              <a href="/account/documents-forms"><%= t('Documentos y formularios') %><b>›</b></a>
+              <a href="/account/access-keys"><%= t('Administrar claves de acceso') %><b>›</b></a>
+              <hr>
+              <h3><%= t('Centro de preferencias') %></h3>
+              <a href="/account/preferences/location-language"><%= t('Ubicación e idioma') %><b>›</b></a>
+              <a href="/account/preferences/buyer-interests"><%= t('Intereses del comprador') %><b>›</b></a>
+              <a href="/account/preferences/communication"><%= t('Preferencias de comunicación') %><b>›</b></a>
+              <hr>
+              <a class="acct-big" href="/account/notifications"><%= t('Notificaciones') %><% if (unread) { %> <span class="dot-count"><%= unread %></span><% } %><b>›</b></a>
+              <hr>
+              <a class="acct-big" href="/account/member-fees"><%= t('Cuota de Miembros') %><b>›</b></a>
+              <% if (user.is('seller') || homeFor(user) !== '/dashboard') { %><hr><h3><%= t('Paneles') %></h3>
+                <% if (user.is('buyer')) { %><a href="/dashboard"><%= t('Tablero del miembro') %><b>›</b></a><% } %>
+                <% if (user.is('seller')) { %><a href="/seller"><%= t('Portal del vendedor') %><b>›</b></a><% } %>
+                <% if (homeFor(user) === '/admin') { %><a href="/admin"><%= t('Administración') %><b>›</b></a><% } %>
+                <% if (user.has('finance.review')) { %><a href="/finance"><%= t('Finanzas') %><b>›</b></a><% } %>
+                <% if (user.has('logistics.manage')) { %><a href="/ops"><%= t('Logística') %><b>›</b></a><% } %>
+              <% } %>
+              <hr>
+              <form method="post" action="/logout" class="acct-logout"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button type="submit"><%= t('sign_out') %></button></form>
+            </div>
+          </div>
+        </details>
+      <% } else { %>
+        <a class="btn btn-brown" href="/register"><%= t('register') %></a>
+        <details class="signin-menu"><summary class="btn btn-light btn-signin"><%= t('sign_in') %></summary>
+          <div class="signin-pop"><a href="/login"><%= ht('Miembro', 'Member') %></a><a href="/login?type=seller"><%= ht('Vendedor', 'Seller') %></a></div></details>
+      <% } %>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Menu"><svg class="ic ic-lg"><use href="#i-menu"/></svg></button>
+    </div>
+  </div>
+  <form class="mobile-search" action="/vehicles" method="get" role="search"><label class="sr-only" for="m-q"><%= t('search_placeholder') %></label><input id="m-q" type="search" name="q" placeholder="<%= t('search_placeholder') %>"><button class="btn btn-brown btn-sm" type="submit"><svg class="ic"><use href="#i-search"/></svg><span class="sr-only"><%= t('search_inventory') %></span></button></form>
+  <nav class="hdr-nav" id="main-nav" aria-label="Main">
+    <ul>
+      <% if (isMemberPortal) { %>
+      <%- include('member-menu') %>
+      <% } else if(referenceLayout) { %><%- include('public-menu') %>
+      <% } else { %>
+      <li><a href="/" class="<%= path === '/' ? 'active' : '' %>"><%= t('home') %></a></li>
+      <li><a href="/how-it-works" class="<%= path === '/how-it-works' ? 'active' : '' %>"><%= t('how_it_works') %></a></li>
+      <li class="has-drop"><button type="button" class="<%= ['/vehicle-finder','/vehicle-alerts','/vehicles'].includes(path) ? 'active' : '' %>" aria-expanded="false"><%= t('find_vehicle') %> <svg class="ic ic-xs"><use href="#i-chev"/></svg></button>
+        <ul class="drop"><li><a href="/vehicle-finder"><%= t('vehicle_finder') %></a></li><li><a href="/vehicle-alerts"><%= t('vehicle_alerts') %></a></li></ul></li>
+      <li class="has-drop"><button type="button" class="<%= path.startsWith('/auctions') ? 'active' : '' %>" aria-expanded="false"><%= t('auctions') %> <svg class="ic ic-xs"><use href="#i-chev"/></svg></button>
+        <ul class="drop"><li><a href="/auctions/calendar"><%= t('auctions_calendar') %></a></li><li><a href="/auctions"><%= t('join_auctions') %></a></li></ul></li>
+      <li><a href="/locations" class="<%= path.startsWith('/locations') ? 'active' : '' %>"><%= t('locations') %></a></li>
+      <li class="has-drop"><button type="button" class="<%= ['/transport','/sell-a-vehicle','/how-to-buy','/faq','/videos','/contact'].includes(path) ? 'active' : '' %>" aria-expanded="false"><%= t('services_support') %> <svg class="ic ic-xs"><use href="#i-chev"/></svg></button>
+        <ul class="drop"><li><a href="/transport"><%= t('transport') %></a></li><li><a href="/sell-a-vehicle"><%= t('sell_vehicle') %></a></li><li class="sep" role="separator"></li><li><a href="/how-to-buy"><%= t('how_to_buy') %></a></li><li><a href="/faq"><%= t('common_questions') %></a></li><li><a href="/videos"><%= t('videos') %></a></li><li><a href="/contact"><%= t('contact_us') %></a></li></ul></li>
+      <li><a href="/help" class="nav-help <%= path === '/help' ? 'active' : '' %>"><%= t('help_center') %></a></li>
+      <% } %>
+    </ul>
+  </nav>
+  <%- include('announcement-banners') %>
+  <% if (banner && !referenceLayout) { %><div class="schedule-band"><%= banner.text %><% if (banner.link_url) { %>&nbsp; <a href="<%= banner.link_url %>"><%= banner.link_text %></a> <%= t('for_details') %><% } %></div><% } %>
+</header>

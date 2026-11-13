@@ -1,0 +1,18 @@
+<%- include('../../partials/panel-start') %>
+<h1>Membership</h1>
+<p class="lead">Current plan: <strong><%= user.plan ? user.plan.name : 'none' %></strong><% if (user.plan && user.plan.subscription_ends_at) { %> · renews <%= date(user.plan.subscription_ends_at) %><% } %>.</p>
+<% if (!elig.ok) { %><div class="alert alert-warn"><%= elig.reason %></div><% } %>
+<% if (pendingInvoice) { %>
+<section class="p-card"><h2>Pending membership payment · <%= pendingInvoice.invoice_number %></h2>
+  <p>Total <strong><%= eur(pendingInvoice.total_cents) %></strong> (VAT included). Sandbox only – use the test card <code>4242 4242 4242 4242</code>.</p>
+  <form data-api="/api/v1/invoices/<%= pendingInvoice.id %>/payments/demo" class="inline-form" novalidate><input type="hidden" name="method" value="card_demo"><input type="hidden" name="scope" value="full"><label class="sr-only" for="mcn">Card</label><input id="mcn" name="card_number" value="4242 4242 4242 4242" style="width:240px"><button class="btn btn-green" type="submit">Pay (sandbox)</button></form>
+</section><% } %>
+<section class="p-card"><h2>Change plan</h2>
+  <div class="grid-3"><% plans.forEach(function (p) { var cur = user.plan && user.plan.code === p.code; %>
+    <div class="p-card" style="margin:0;<%= cur ? 'border:2px solid var(--blue)' : '' %>"><h3><%= p.name %> <span class="hint"><%= p.price_cents ? eur(p.price_cents) + '/year + VAT' : 'Free' %></span></h3><p class="hint"><%= p.description %></p>
+      <ul style="font-size:13px;padding-left:18px"><li><%= p.can_bid ? 'Can bid' : 'Cannot bid' %></li><% if (p.max_bid_cents) { %><li>Max <%= eur(p.max_bid_cents) %> per vehicle</li><% } %><% if (p.max_lots_per_event) { %><li>Up to <%= p.max_lots_per_event %> vehicles per auction</li><% } %><% if (p.max_total_cents) { %><li>Combined <%= eur(p.max_total_cents) %> per auction</li><% } %></ul>
+      <button class="btn <%= cur ? 'btn-light' : 'btn-blue' %> btn-block" type="button" <%= cur ? 'disabled' : '' %> data-api="/api/v1/memberships/choose" data-body='{"plan":"<%= p.code %>"}' data-confirm="Switch to <%= p.name %>?"><%= cur ? 'Current plan' : 'Choose ' + p.name %></button></div>
+  <% }) %></div>
+</section>
+<section class="p-card"><h2>History</h2><table class="tbl"><thead><tr><th>Plan</th><th>Status</th><th>Start</th><th>End</th></tr></thead><tbody><% subs.forEach(function (s) { %><tr><td><%= s.name %></td><td><%- badge(s.status) %></td><td><%= s.starts_at ? date(s.starts_at) : '—' %></td><td><%= s.ends_at ? date(s.ends_at) : '—' %></td></tr><% }) %></tbody></table></section>
+<%- include('../../partials/panel-end') %>

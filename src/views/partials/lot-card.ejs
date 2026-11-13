@@ -1,0 +1,14 @@
+<% var isW = (typeof watched !== 'undefined' && watched && watched.has) ? watched.has(l.id) : false; %>
+<article class="lot-card">
+  <a class="lot-card-img" href="/lot/<%= l.lot_number %>"><img src="<%= displayImage(l.image) %>" alt="<%= lotTitle(l) %><%= isDemoImage(l.image) ? ' — ' + t('Imagen ilustrativa') : '' %>" loading="lazy" width="600" height="450"><% if (isDemoImage(l.image) && displayImage(l.image) !== l.image) { %><span class="illustration-label"><%= t('Imagen ilustrativa') %></span><% } %><% if (l.status === 'live') { %><span class="live-tag"><%= t('EN VIVO') %></span><% } else if (l.status === 'prebidding' && l.buy_now_cents && (l.current_bid_cents || 0) < l.buy_now_cents) { %><span class="bin-tag">Buy It Now <%= eur(l.buy_now_cents) %></span><% } %></a>
+  <div class="lot-card-body">
+    <h3><a href="/lot/<%= l.lot_number %>"><%= lotTitle(l) %></a></h3>
+    <a class="lot-num" href="/lot/<%= l.lot_number %>"><%= t('Número de lote') %> <%= l.lot_number %></a>
+    <p class="meta"><%= t('Oferta actual') %>: <% if (l.current_bid_cents) { %><%= eur(l.current_bid_cents) %><% } else { %><a class="start-bidding" href="/lot/<%= l.lot_number %>"><%= t('Iniciar la oferta') %> ›</a><% } %></p>
+    <p class="meta"><%= t('Locales') %>: <%= l.location_name || l.location_city %><% if (l.location_country && l.location_country !== 'ES') { %> <%- include('flag', { code: l.location_country }) %><% } %></p>
+    <div class="lot-card-actions">
+      <a class="btn btn-blue btn-pill btn-sm" href="/lot/<%= l.lot_number %>"><%= t('Ver Detalles') %></a>
+      <button type="button" class="watch-btn<%= isW ? ' on' : '' %>" data-watch="<%= l.id %>" aria-pressed="<%= isW %>"><svg class="ic"><use href="#i-star"/></svg> <%= t('Mirar') %></button>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,37 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main">
+  <section class="tr-hero">
+    <h1>National and International Transport</h1>
+    <div class="tr-steps"><div>Request your transport</div><span aria-hidden="true">→</span><div>Make the payment</div><span aria-hidden="true">→</span><div>Receive your vehicle wherever you want!</div></div>
+    <p class="big">We would like to remind you that by hiring our transport service within the first 5 days after the purchase of your vehicle at the auction, you can benefit from important advantages:</p>
+    <ul class="tr-checks"><li><svg class="ic"><use href="#i-check"/></svg> NO storage charges</li><li><svg class="ic"><use href="#i-check"/></svg> No intermediaries</li><li><svg class="ic"><use href="#i-check"/></svg> Simple, easy and safe process</li></ul>
+    <p style="font-style:italic;font-weight:700;font-size:14px">*We offer additional Express Service (delivery in 3 days and up to 200 km from the original lot).</p>
+  </section>
+  <section class="page-dark">
+    <div class="wrap grid-2">
+      <div class="card-dark">
+        <div class="card-head-blue">Get a transport estimate</div>
+        <form data-api="/api/v1/transport/estimate" novalidate id="estimate-form">
+          <div class="form-row"><label for="t-loc">Origin yard</label><select id="t-loc" name="location"><% locations.forEach(function (l) { %><option value="<%= l.code %>"><%= l.name %></option><% }) %></select></div>
+          <div class="form-row"><label for="t-cp">Destination postal code</label><input id="t-cp" name="postal_code" inputmode="numeric" maxlength="5" placeholder="e.g. 46001" required></div>
+          <div class="form-row"><label for="t-svc">Service</label><select id="t-svc" name="service"><option value="national">National</option><option value="express">Express (≤ 200 km, 3 days)</option><option value="international">International</option></select></div>
+          <button class="btn btn-blue btn-block" type="submit">Calculate</button>
+          <p class="hint" style="margin-top:8px">Demo estimate based on distance. To book transport for a vehicle you won, open it in <a href="/dashboard/purchases" style="color:var(--blue)">My Purchases</a>.</p>
+        </form>
+        <% if (user && myOrders.length) { %><h3 style="margin-top:18px;font-size:15px">Your purchases awaiting delivery</h3><ul class="history"><% myOrders.forEach(function (o) { %><li><a href="/dashboard/purchases/<%= o.id %>" style="color:var(--blue)"><%= o.order_number %></a><span><%- badge(o.status) %></span></li><% }) %></ul><% } %>
+      </div>
+      <div class="card-dark">
+        <div class="card-head-blue">Track your shipment</div>
+        <form method="get" class="inline-form" style="width:100%"><label class="sr-only" for="trk">Tracking code</label><input id="trk" name="tracking" value="<%= trackingQuery %>" placeholder="TR-XXXXXXXX" style="flex:1"><button class="btn btn-blue" type="submit">Track</button></form>
+        <% if (trackingQuery && !tracking) { %><div class="alert alert-err" style="margin-top:14px">No shipment found with that code.</div><% } %>
+        <% if (tracking) { %>
+          <p style="margin-top:14px"><strong><%= tracking.tracking_code %></strong> · <%- badge(tracking.status) %> · <%= cap(tracking.service) %> to <%= tracking.destination_city %><% if (tracking.eta) { %> · ETA <%= date(tracking.eta) %><% } %><% if (tracking.carrier_name) { %> · Carrier: <%= tracking.carrier_name %><% } %></p>
+          <ul class="history"><% events.forEach(function (e) { %><li><span><%= label(e.status) %><%= e.note ? ' – ' + e.note : '' %></span><span><%= dateTime(e.created_at) %></span></li><% }) %></ul>
+        <% } %>
+      </div>
+    </div>
+  </section>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

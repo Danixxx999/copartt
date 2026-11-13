@@ -1,0 +1,29 @@
+<%- include('../../partials/panel-start') %>
+<h1><%= ht('Inicio de sesión social', 'Social sign-in') %></h1>
+<p class="lead"><%= ht('Permita que los miembros entren con Google, Microsoft o Apple. Hoy están desactivados: para activar uno, cree sus credenciales, póngalas en el archivo .env del servidor y reinícielo. La contraseña del proveedor nunca pasa por este sistema.', 'Let members sign in with Google, Microsoft or Apple. They are off today: to enable one, create its credentials, put them in the server .env file and restart. The provider password never passes through this system.') %></p>
+<div class="kpis">
+  <div class="kpi info"><div class="v"><%= providers.filter(function (p) { return p.configured; }).length %></div><div class="l"><%= ht('Proveedores activos', 'Active providers') %></div></div>
+  <div class="kpi"><div class="v"><%= linked.n %></div><div class="l"><%= ht('Cuentas vinculadas', 'Linked accounts') %></div></div>
+  <div class="kpi"><div class="v"><%= linked.users %></div><div class="l"><%= ht('Usuarios con login social', 'Users using social login') %></div></div>
+</div>
+<section class="p-card"><h2><%= ht('Proveedores', 'Providers') %></h2>
+  <div class="table-wrap"><table class="tbl"><thead><tr><th><%= ht('Proveedor', 'Provider') %></th><th><%= ht('Estado', 'Status') %></th><th><%= ht('Variables en .env', '.env variables') %></th><th>URI</th></tr></thead><tbody>
+  <% providers.forEach(function (p) { %><tr>
+    <td><strong><%= p.name %></strong></td>
+    <td><% if (!p.implemented) { %><span class="badge badge-gray"><%= ht('Adaptador pendiente', 'Adapter pending') %></span><% } else if (p.configured) { %><span class="badge badge-green"><%= ht('ACTIVO', 'ACTIVE') %></span><% } else { %><span class="badge badge-amber"><%= ht('Sin configurar', 'Not configured') %></span><% } %></td>
+    <td><% p.env.forEach(function (k) { %><code><%= k %></code> <%- p.missing.indexOf(k) >= 0 ? '<span class="badge badge-red">✕</span>' : '<span class="badge badge-green">✓</span>' %><br><% }) %></td>
+    <td><% if (p.implemented) { %><code class="hint"><%= p.redirectUri %></code><button class="btn btn-light btn-xs" type="button" data-copy="<%= p.redirectUri %>" style="margin-left:6px"><%= ht('Copiar', 'Copy') %></button><% } else { %>—<% } %></td>
+  </tr><% }) %>
+  </tbody></table></div>
+  <p class="hint"><%= ht('Por seguridad, esta página nunca muestra el valor de las claves, solo si existen.', 'For security, this page never shows key values, only whether they exist.') %></p>
+</section>
+<section class="p-card"><h2><%= ht('Cómo activar Google (ejemplo)', 'How to enable Google (example)') %></h2>
+  <ol class="steps-list">
+    <li><%= ht('Entre en', 'Go to') %> <code>console.cloud.google.com</code> → APIs &amp; Services → Credentials → <em>Create credentials</em> → <em>OAuth client ID</em> (<%= ht('tipo: aplicación web', 'type: web application') %>).</li>
+    <li><%= ht('En "Authorized redirect URIs" pegue', 'In "Authorized redirect URIs" paste') %>: <code><%= providers.find(function (p) { return p.code === 'google'; }).redirectUri %></code></li>
+    <li><%= ht('Copie el Client ID y el Client Secret al archivo', 'Copy the Client ID and Client Secret into') %> <code>.env</code>: <code>GOOGLE_CLIENT_ID=…</code> <%= ht('y', 'and') %> <code>GOOGLE_CLIENT_SECRET=…</code></li>
+    <li><%= ht('Si el sitio no está en localhost, defina también', 'If the site is not on localhost, also set') %> <code>OAUTH_BASE_URL=https://su-dominio</code>. <%= ht('Reinicie el servidor.', 'Restart the server.') %></li>
+  </ol>
+  <p class="hint"><%= ht('Microsoft es igual desde entra.microsoft.com. Mientras falte cualquier clave, el botón aparece desactivado automáticamente.', 'Microsoft is the same from entra.microsoft.com. While any key is missing, the button stays disabled automatically.') %></p>
+</section>
+<%- include('../../partials/panel-end') %>

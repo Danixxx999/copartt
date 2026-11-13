@@ -1,0 +1,18 @@
+<%- include('../../partials/panel-start') %>
+<h1>Memberships &amp; bidding limits</h1><p class="lead">Business rules applied by the server on every bid. Leave a limit empty for “no limit”.</p>
+<div class="grid-3"><% plans.forEach(function (p) { %>
+  <section class="p-card"><h2><%= p.name %> <span class="hint">(<%= p.members %> active)</span></h2>
+    <form data-api="/api/v1/admin/plans/<%= p.id %>" data-method="PATCH" data-confirm="Update <%= p.name %> rules? Applies to new bids immediately." novalidate>
+      <div class="form-row"><label for="n<%= p.id %>">Name</label><input id="n<%= p.id %>" name="name" value="<%= p.name %>"></div>
+      <div class="form-row"><label for="pr<%= p.id %>">Price per year (€, excl. VAT)</label><input id="pr<%= p.id %>" name="price" type="number" step="0.01" min="0" value="<%= p.price_cents / 100 %>"></div>
+      <div class="form-row"><label for="mb<%= p.id %>">Max bid per vehicle (€)</label><input id="mb<%= p.id %>" name="max_bid" type="number" min="0" value="<%= p.max_bid_cents ? p.max_bid_cents / 100 : '' %>"></div>
+      <div class="form-row"><label for="mt<%= p.id %>">Combined limit per auction (€)</label><input id="mt<%= p.id %>" name="max_total" type="number" min="0" value="<%= p.max_total_cents ? p.max_total_cents / 100 : '' %>"></div>
+      <div class="form-row"><label for="ml<%= p.id %>">Max vehicles per auction</label><input id="ml<%= p.id %>" name="max_lots_per_event" type="number" min="0" value="<%= p.max_lots_per_event || '' %>"></div>
+      <div class="form-row"><label for="d<%= p.id %>">Description</label><textarea id="d<%= p.id %>" name="description" rows="2"><%= p.description %></textarea></div>
+      <div class="actions" style="margin-bottom:10px"><label class="check"><input type="checkbox" name="can_bid" <%= p.can_bid ? 'checked' : '' %>> Can bid</label><label class="check"><input type="checkbox" name="requires_documents" <%= p.requires_documents ? 'checked' : '' %>> Requires documents</label><label class="check"><input type="checkbox" name="active" <%= p.active ? 'checked' : '' %>> Active</label></div>
+      <button class="btn btn-blue" type="submit">Save</button>
+    </form>
+  </section>
+<% }) %></div>
+<section class="p-card"><h2>Bid increment table</h2><p class="hint">Edit in <a href="/admin/settings">Settings › bid_increments</a>.</p><table class="tbl"><thead><tr><th>Price up to</th><th>Increment</th></tr></thead><tbody><% increments.forEach(function (r) { %><tr><td><%= r.up_to_cents ? eur(r.up_to_cents) : 'Above' %></td><td><%= eur(r.increment_cents) %></td></tr><% }) %></tbody></table></section>
+<%- include('../../partials/panel-end') %>

@@ -1,0 +1,9 @@
+<%- include('../../partials/panel-start') %>
+<h1>Statements</h1><p class="lead">Settlement proposal (academic): hammer price minus a demo seller commission of <%= commission * 100 %>%. Payout happens once the buyer's payment is confirmed.</p>
+<% var tot = 0, net = 0; %>
+<div class="p-card"><% if (!rows.length) { %><div class="empty">No sales yet.</div><% } else { %>
+<table class="tbl"><thead><tr><th>Order</th><th>Lot</th><th>Vehicle</th><th>Date</th><th class="num">Hammer</th><th class="num">Commission</th><th class="num">Net</th><th>Buyer payment</th><th>Payout</th></tr></thead><tbody>
+<% rows.forEach(function (o) { var c = Math.round(o.hammer_cents * commission); var paid = ['paid','ready_for_pickup','in_transport','completed'].includes(o.status); if (o.status !== 'cancelled') { tot += o.hammer_cents; net += o.hammer_cents - c; } %><tr><td><%= o.order_number %></td><td>#<%= o.lot_number %></td><td><%= o.year %> <%= o.make %> <%= o.model %></td><td><%= date(o.created_at) %></td><td class="num"><%= eur(o.hammer_cents) %></td><td class="num">-<%= eur(c) %></td><td class="num"><strong><%= eur(o.hammer_cents - c) %></strong></td><td><%- badge(o.status) %></td><td><%- paid ? '<span class="badge badge-green">Released</span>' : o.status === 'cancelled' ? '<span class="badge badge-gray">Void</span>' : '<span class="badge badge-amber">On hold</span>' %></td></tr><% }) %>
+<tr><td colspan="4"><strong>Total</strong></td><td class="num"><strong><%= eur(tot) %></strong></td><td></td><td class="num"><strong><%= eur(net) %></strong></td><td colspan="2"></td></tr>
+</tbody></table><% } %></div>
+<%- include('../../partials/panel-end') %>

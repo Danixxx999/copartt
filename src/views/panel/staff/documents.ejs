@@ -1,0 +1,9 @@
+<%- include('../../partials/panel-start') %>
+<h1>Document review</h1><p class="lead">Identity and business documents. Approving enables bidding for Basic/Premium members.</p>
+<div class="filters-bar"><% ['pending','approved','rejected','all'].forEach(function (s) { %><a class="chip <%= status === s ? 'on' : '' %>" href="?status=<%= s %>"><%= cap(s) %></a><% }) %></div>
+<div class="p-card"><% if (!rows.length) { %><div class="empty">No documents in this state.</div><% } else { %>
+<div class="table-wrap"><table class="tbl"><thead><tr><th>Uploaded</th><th>User</th><th>Type</th><th>File</th><th>Status</th><th></th></tr></thead><tbody>
+<% rows.forEach(function (d) { %><tr><td class="hint"><%= dateTime(d.created_at) %></td><td><a href="/admin/users/<%= d.user_id %>"><%= d.first_name %> <%= d.last_name %></a><br><span class="hint"><%= d.email %> · <%= d.account_type %></span></td><td><%= d.doc_type.replace(/_/g,' ') %></td><td><a href="/files/verification/<%= d.id %>" target="_blank" rel="noopener"><%= d.original_name %></a><br><span class="hint"><%= Math.round(d.size_bytes / 1024) %> KB · <%= d.mime %></span></td><td><%- badge(d.status) %><% if (d.rejection_reason) { %><br><span class="hint"><%= d.rejection_reason %></span><% } %></td>
+<td class="actions"><% if (d.status === 'pending') { %><button class="btn btn-green btn-sm" type="button" data-api="/api/v1/admin/documents/<%= d.id %>/review" data-body='{"approve":true}' data-confirm="Approve this document?">Approve</button><button class="btn btn-red btn-sm" type="button" data-api="/api/v1/admin/documents/<%= d.id %>/review" data-body='{"approve":false}' data-prompt="Reason for rejection (sent to the user):">Reject</button><% } %></td></tr><% }) %>
+</tbody></table></div><% } %></div>
+<%- include('../../partials/panel-end') %>

@@ -1,0 +1,41 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" style="background:#000;color:#fff">
+  <section class="alerts-hero"><h1>VEHICLE ALERTS</h1><div class="phone" aria-hidden="true"></div><div class="env" aria-hidden="true"></div></section>
+  <div class="alerts-grid">
+    <div>
+      <% if (alert) { %>
+        <h2>Manage your alert</h2>
+        <p>Status: <%- badge(alert.status) %> · <%= alert.matches %> matching vehicle(s) so far · created <%= date(alert.created_at) %>.</p>
+        <% if (alert.status === 'active') { %><button class="btn btn-red" type="button" data-api="/api/v1/alerts/<%= alert.manage_token %>/cancel" data-confirm="Cancel this alert? You will stop receiving emails.">Cancel alert</button><% } %>
+        <h3>Current matches</h3>
+        <% if (!matches.length) { %><p class="muted">No vehicles match yet. We'll email you when one arrives.</p><% } else { %><ul class="history"><% matches.forEach(function (l) { %><li><a href="/lot/<%= l.lot_number %>" style="color:var(--blue)"><%= lotTitle(l) %> · Lot #<%= l.lot_number %></a><span><%- badge(l.status) %></span></li><% }) %></ul><% } %>
+        <p style="margin-top:20px"><a href="/vehicle-alerts" style="color:var(--blue)">Create another alert ›</a></p>
+      <% } else { %>
+        <h2>Get Notified with Vehicle Alerts</h2>
+        <h3>We'll Email You When Your Preferred Vehicles Become Available</h3>
+        <p>Are you looking for a particular vehicle? Set up a Vehicle Alert and get notified when inventory that matches your search criteria gets listed on copart. See how it works below.</p>
+        <h3>How Do I Set up Vehicle Alerts?</h3>
+        <p>Simply fill out the form on this page and click “Sign Up” to create a Vehicle Alert. You can also create multiple alerts by completing this form for as many vehicles as you want to be notified about.</p>
+        <h3>How Do I View My Alerts?</h3>
+        <p>Alerts will be sent to your individual email based on the selected frequency. Not a Member? <a href="/register" style="color:var(--blue);font-weight:700">Register for copart Membership.</a> Members can also see their alerts in the dashboard.</p>
+        <h3>Can I Cancel Vehicle Alerts?</h3>
+        <p>Select any of the links under “Manage Alerts” in the Vehicle Alert email to cancel or adjust how often we send them to you. (Demo: emails are stored in the Admin › Demo mailbox.)</p>
+      <% } %>
+    </div>
+    <form class="alert-form" data-api="/api/v1/alerts<%= alert ? '/' + alert.manage_token : '' %>" data-method="<%= alert ? 'PATCH' : 'POST' %>" novalidate style="display:grid;gap:14px" <%= alert && alert.status !== 'active' ? 'hidden' : '' %>>
+      <div class="f-row"><label for="a-type">Type</label><select id="a-type" name="vehicle_type"><option value="">All types</option><% types.forEach(function (x) { %><option value="<%= x.code %>" <%= (alert ? alert.type_code === x.code : x.code === 'automobile') ? 'selected' : '' %>><%= x.name %></option><% }) %></select></div>
+      <div class="f-row"><span>Year</span><div class="range-row" style="grid-template-columns:110px auto 110px;justify-content:start"><select name="year_from" aria-label="Year from"><% for (var y = new Date().getFullYear() + 1; y >= 1990; y--) { %><option <%= (alert ? alert.year_from : 2016) === y ? 'selected' : '' %>><%= y %></option><% } %></select><span>To</span><select name="year_to" aria-label="Year to"><% for (var y2 = new Date().getFullYear() + 1; y2 >= 1990; y2--) { %><option <%= (alert ? alert.year_to : new Date().getFullYear() + 1) === y2 ? 'selected' : '' %>><%= y2 %></option><% } %></select></div></div>
+      <div class="f-row"><label for="a-make"><span class="req">*</span>Make</label><select id="a-make" name="make_id" data-make-select data-target="a-model" required><option value="">Select Make</option><% makes.forEach(function (m) { %><option value="<%= m.id %>" data-id="<%= m.id %>" <%= alert && alert.make_id === m.id ? 'selected' : '' %>><%= m.name %></option><% }) %></select></div>
+      <div class="f-row"><label for="a-model"><span class="req">*</span>Model</label><select id="a-model" name="model_id" data-placeholder="Select Model" data-selected="<%= alert ? alert.model_id || '' : '' %>" required><option value="">Select Model</option></select></div>
+      <div class="f-row"><label for="a-freq">Frequency</label><select id="a-freq" name="frequency"><% [['daily','Daily'],['weekly','Weekly'],['instant','Instant']].forEach(function (f) { %><option value="<%= f[0] %>" <%= alert && alert.frequency === f[0] ? 'selected' : '' %>><%= f[1] %></option><% }) %></select></div>
+      <div class="f-row"><label for="a-fn"><span class="req">*</span>First Name</label><input id="a-fn" name="first_name" value="<%= alert ? alert.first_name : (user ? user.first_name : '') %>" required autocomplete="given-name"></div>
+      <div class="f-row"><label for="a-ln"><span class="req">*</span>Last Name</label><input id="a-ln" name="last_name" value="<%= alert ? alert.last_name : (user ? user.last_name : '') %>" required autocomplete="family-name"></div>
+      <div class="f-row"><label for="a-em"><span class="req">*</span>Email</label><input id="a-em" name="email" type="email" value="<%= alert ? alert.email : (user ? user.email : '') %>" required autocomplete="email"></div>
+      <% if (!alert) { %><div class="f-row"><span></span><label class="check" style="font-size:12.5px;text-align:justify"><input type="checkbox" name="consent" required> <span>Yes, I consent to copart (fictitious company) sending me Vehicle Alert e-mails, as well as e-mails about discount campaigns, price reductions and new developments, and copart using the data I provide for that purpose. I may cancel the sending of the newsletter at any time, using the link in the emails. Thereafter the e-mail newsletters shall be discontinued without delay.</span></label></div><% } %>
+      <div class="f-row"><span></span><div style="text-align:right"><button class="btn btn-blue" type="submit"><%= alert ? 'Save changes' : 'Sign Up' %></button></div></div>
+    </form>
+  </div>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

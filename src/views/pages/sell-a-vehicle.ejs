@@ -1,0 +1,28 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="page-dark">
+  <div class="wrap grid-2" style="align-items:start">
+    <div>
+      <h1 class="page-title">Sell a Vehicle</h1>
+      <p>Insurance companies, dealerships, rental fleets, leasing companies and individuals can sell vehicles through copart's online auctions.</p>
+      <ol style="line-height:1.9"><li>Apply for a seller account (approved by our team).</li><li>Create the vehicle as a draft: data, damage, photos and documents.</li><li>Submit it for approval; an administrator assigns it to an auction with a starting bid and reserve.</li><li>Follow bids live, accept or reject bids below reserve, and see your sales statements.</li></ol>
+      <p class="hint">The seller portal is an <strong>academic proposal</strong>: no real screens of the reference platform were available.</p>
+    </div>
+    <div class="card-dark">
+      <div class="card-head-blue">Seller application</div>
+      <% if (!user) { %>
+        <p>Sign in or create an account first.</p><a class="btn btn-blue" href="/login?next=/sell-a-vehicle">Sign In</a> <a class="btn btn-brown" href="/register">Register</a>
+      <% } else if (user.seller) { %>
+        <p>Your seller account <strong><%= user.seller.company_name %></strong> is <%- badge(user.seller.approved ? 'approved' : 'pending') %>.</p><a class="btn btn-blue" href="/seller">Go to seller portal</a>
+      <% } else { %>
+        <form data-api="/api/v1/seller/apply" novalidate>
+          <div class="form-row"><label for="s-co">Company / trade name</label><input id="s-co" name="company_name" value="<%= user.company_name || '' %>" required></div>
+          <div class="form-row"><label for="s-ty">Seller type</label><select id="s-ty" name="seller_type"><option value="insurance">Insurance company</option><option value="dealer">Dealership</option><option value="rental">Rental fleet</option><option value="fleet">Corporate fleet</option><option value="leasing">Leasing company</option><option value="individual">Individual</option></select></div>
+          <button class="btn btn-blue btn-block" type="submit">Apply to sell</button>
+        </form>
+      <% } %>
+    </div>
+  </div>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

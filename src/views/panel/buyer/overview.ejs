@@ -1,0 +1,60 @@
+<%- include('../../partials/panel-start') %>
+<%
+  var dueAll = dueInvoices.reduce(function (n, i) { return n + Number(i.total_cents) - Number(i.paid_cents); }, 0);
+  var dueLate = dueInvoices.filter(function (i) { return i.due_at && new Date(i.due_at) < new Date(); }).reduce(function (n, i) { return n + Number(i.total_cents) - Number(i.paid_cents); }, 0);
+  var wd = new Intl.DateTimeFormat(htmlLang, { weekday: 'short', timeZone: 'UTC' });
+  var hm = new Intl.DateTimeFormat(htmlLang, { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Madrid' });
+  var dash = function (cents) { var s = eur(cents); return s; };
+  var memberNo = String(user.id).padStart(6, '0');
+%>
+<div class="dashboard-greeting">
+  <a class="support-link" href="/contact"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> <%= t('Chatear ahora') %></a>
+  <h1><%= t('Hola') %>, <%= user.name.toUpperCase() %></h1>
+  <p><%= t('Número de miembro') %>: <span data-copy-src><%= memberNo %></span> <button type="button" class="copy-btn" data-copy="<%= memberNo %>" aria-label="<%= t('Copiar número de miembro') %>" title="<%= t('Copiar número de miembro') %>"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg></button></p>
+  <p><%= t('Miembro') %> <%= user.plan ? user.plan.name.toLowerCase() : t('invitado') %><% if (user.plan && user.plan.subscription_ends_at) { %> &nbsp;|&nbsp; <%= t('Se renueva automáticamente el') %> <%= date(user.plan.subscription_ends_at) %><% } %>
+    &nbsp; <a href="/dashboard/membership"><%= user.plan && user.plan.code === 'premium' ? t('Gestionar membresía') : t('Actualizar a Premium') %></a></p>
+</div>
+<% if (counter.length) { %><div class="alert alert-info"><a href="/dashboard/bids?tab=counter"><%= t('Tiene contraofertas por revisar') %> (<%= counter.length %>)</a></div><% } %>
+<div class="dashboard-scroll"><div class="dashboard-columns">
+  <section class="dash-card finance-card" aria-labelledby="dc-fin"><header><h2 id="dc-fin"><%= t('Finanzas') %> <small>(EUR)</small></h2><a href="/dashboard/payments"><%= t('VER TODO') %></a></header>
+    <div class="finance-line"><span><%= t('Atrasado') %></span><strong class="<%= dueLate ? 'txt-err' : '' %>"><%= dash(dueLate) %></strong></div>
+    <div class="finance-line"><span><%= t('Total adeudado') %></span><strong><%= dash(dueAll) %></strong></div>
+    <hr>
+    <div class="finance-line"><a href="/dashboard/payments?tab=history"><%= t('Fondos no asignados') %></a><strong><%= dash(0) %></strong></div>
+    <div class="finance-line"><span><%= t('Poder adquisitivo disponible') %></span><strong><%= bp.available === null ? t('Sin límite') : dash(bp.available) %></strong></div>
+    <div class="finance-line finance-deposits"><span><%= t('Depósitos') %> <%= dash(bp.deposits || 0) %></span><a href="/account/payment-methods?tab=deposit"><%= t('Gestionar depósitos') %></a></div>
+    <hr>
+    <p><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg> <a href="/dashboard/membership"><%= t('Calificación de Precios Preferencial') %></a></p>
+  </section>
+  <section class="dash-card title-card" aria-labelledby="dc-tit"><header><h2 id="dc-tit"><%= t('Centro de Títulos') %></h2></header>
+    <div class="title-empty"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg>
+      <% if (stats.titles) { %><p><%= stats.titles %> <%= t('lote(s) ganado(s) pendiente(s) de documentación') %></p><a href="/dashboard/purchases"><%= t('Ver títulos y recogidas') %></a><% } else { %><p><%= t('Sin elementos de acción') %></p><% } %>
+    </div>
+  </section>
+  <section class="dash-card auctions-card" aria-labelledby="dc-auc"><header><h2 id="dc-auc"><%= t('Subastas') %></h2><a href="/auctions"><%= t('VER TODO') %></a></header>
+    <div class="auction-pills">
+      <a href="?<%= qsWith({ scope: 'yours' }) %>" class="<%= week.scope === 'yours' ? 'on' : '' %>"><%= t('Sus ubicaciones') %> (<%= week.yoursCount %>)</a>
+      <a href="?<%= qsWith({ scope: null }) %>" class="<%= week.scope === 'national' ? 'on' : '' %>"><%= t('Subastas nacionales') %> (<%= week.nationalCount %>)</a>
+      <a href="/auctions/calendar"><svg class="ic" aria-hidden="true"><use href="#i-gear"/></svg> <%= t('Personalizar') %></a>
+    </div>
+    <div class="week-strip" role="tablist" aria-label="<%= t('Calendario de subastas') %>"><% week.days.forEach(function (d) { var dt = new Date(d + 'T12:00:00Z'); var on = d === week.day; %>
+      <a role="tab" aria-selected="<%= on %>" href="?<%= qsWith({ day: d }) %>" class="<%= on ? 'on' : '' %> <%= d === week.today ? 'is-today' : '' %>"><span><%= wd.format(dt) %></span><b class="<%= on ? 'today' : '' %>"><%= dt.getUTCDate() %></b><% if (week.counts[d]) { %><i class="dot" aria-label="<%= week.counts[d] %>"></i><% } %></a><% }) %></div>
+    <div class="dashboard-events"><% if (!week.events.length) { %><p class="muted"><%= t('No hay subastas este día.') %></p><% } week.events.forEach(function (e) { %>
+      <article><time><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg> <%= hm.format(new Date(e.starts_at)) %></time>
+        <div><% if (e.status === 'live') { %><span class="live-tag">● <%= t('EN VIVO') %></span><% } %><p><%= e.name %></p></div>
+        <a href="<%= e.status === 'live' ? '/auctions/' + e.id + '/live' : '/vehicles?event=' + e.id %>"><%= e.status === 'live' ? t('Únase Ahora') : t('Listado de Venta') %></a></article><% }) %></div>
+  </section>
+  <section class="dash-card tasks-card" aria-labelledby="dc-task"><header><h2 id="dc-task"><%= t('Lista de tareas') %></h2></header>
+    <a class="task-box" href="<%= !elig.ok ? (elig.code === 'NOT_VERIFIED' ? '/dashboard/documents' : '/dashboard/membership') : '/dashboard/profile' %>"><h3><%= t('Cuenta') %></h3><p><%= elig.ok ? t('Su cuenta está lista para ofertar.') : elig.reason %></p></a>
+    <a class="task-box" href="/dashboard/payments"><h3><%= t('Facturas pendientes') %></h3><p><%= navCounts.due %></p></a>
+    <a class="task-box" href="/dashboard/bids"><h3><%= t('Ofertas actuales') %></h3><p><%= navCounts.current %> · <%= t('Lotes ganados') %>: <%= navCounts.won %></p></a>
+    <% if (navCounts.counter) { %><a class="task-box" href="/dashboard/bids?tab=counter"><h3><%= t('Contraofertas por responder') %></h3><p><%= navCounts.counter %></p></a><% } %>
+  </section>
+</div></div>
+<section class="dashboard-recent"><h2><%= t('Vistos recientemente') %></h2><% if (!viewed.length) { %><p><%= t('Los vehículos que consulte aparecerán aquí.') %> <a href="/vehicle-finder"><%= t('Buscar vehículos') %></a></p><% } %><div class="recent-grid"><% viewed.forEach(function (l) { %><article class="recent-lot"><a href="/lot/<%= l.lot_number %>"><img src="<%= displayImage(l.image) %>" alt="<%= lotTitle(l) %>"></a><div><h3><a href="/lot/<%= l.lot_number %>"><%= lotTitle(l) %></a></h3><p><%= t('Lote') %> #<%= l.lot_number %> · <%= l.location_name %> · <%= l.reserve_met ? t('Venta pura') : t('Oferta mínima') %></p><p><%= l.current_bid_cents ? t('Oferta actual') : t('Precio inicial') %>: <%= eur(l.current_bid_cents || l.starting_bid_cents) %></p><hr>
+<% if (elig.ok && ['prebidding','live'].includes(l.status)) { %><form class="recent-bid" data-api="/api/v1/lots/<%= l.id %>/bids" data-idempotent data-refresh-bid data-confirm="<%= t('Su oferta máxima') %>: <%= lotTitle(l) %>?"><input type="hidden" name="kind" value="<%= l.status === 'live' ? 'live' : 'prebid' %>"><% if (l.my_max) { %><label for="recent-bid-<%= l.id %>"><%= t('Su oferta máxima') %> <span class="hint">(<%= eur(l.my_max) %>)</span></label><div class="bid-stepper"><span>€</span><input id="recent-bid-<%= l.id %>" name="amount" type="number" min="<%= l.min_next_cents / 100 %>" step="<%= l.increment_cents / 100 %>" value="<%= Math.max(l.min_next_cents, l.my_max + l.increment_cents) / 100 %>" data-min-bid required><button type="button" data-bid-step="-1" aria-label="−">−</button><button type="button" data-bid-step="1" aria-label="+">+</button></div><% } else { %><label for="recent-bid-<%= l.id %>"><%= t('Oferta inicial') %> <span class="info-dot" title="<%= t('La oferta que se registra ahora. Debe ser al menos la oferta mínima.') %>">ⓘ</span></label><div class="bid-stepper"><span>€</span><input id="recent-bid-<%= l.id %>" name="amount" type="number" min="<%= l.min_next_cents / 100 %>" step="<%= l.increment_cents / 100 %>" value="<%= l.min_next_cents / 100 %>" data-min-bid required><button type="button" data-bid-step="-1" aria-label="−">−</button><button type="button" data-bid-step="1" aria-label="+">+</button></div>
+<label for="recent-max-<%= l.id %>"><%= t('Oferta máxima') %> <span class="info-dot" title="<%= t('Opcional. El sistema ofertará por usted automáticamente hasta este importe.') %>">ⓘ</span></label><div class="bid-stepper"><span>€</span><input id="recent-max-<%= l.id %>" name="max_amount" type="number" min="0" step="<%= l.increment_cents / 100 %>" value="0" data-min-bid><button type="button" data-bid-step="-1" aria-label="−">−</button><button type="button" data-bid-step="1" aria-label="+">+</button></div><% } %><a class="increment-guide" href="/how-to-buy"><%= t('Guía de incrementos de la oferta') %></a><button class="btn btn-blue btn-block" type="submit"><%= t('Ofertar ahora') %></button></form><% } else { %><a class="btn btn-blue btn-block" href="/lot/<%= l.lot_number %>"><%= ['prebidding','live'].includes(l.status) ? t('Ver requisitos para ofertar') : t('Ver lote') %></a><% } %>
+</div></article><% }) %></div></section>
+<% if (welcome) { %><dialog class="profile-dialog" data-profile-dialog="ap-profile-<%= user.id %>"><button type="button" class="dialog-close" data-close-dialog aria-label="Cerrar">×</button><div class="success">✓ Tu proceso de registro está completo.</div><h2>Ayúdanos a mejorar tu experiencia</h2><p>Selecciona la opción que mejor te describe a ti o tu negocio. Esto no afecta tu capacidad de compra.</p><form><h3>¿Qué te describe mejor?</h3><% ['Compro para uso personal.','Vendo piezas usadas y chatarra.','Vendo vehículos reparables nuevos y usados.','Tengo otro negocio.'].forEach(function(v){ %><label class="choice"><input type="radio" name="purpose" value="<%= v %>" required><%= v %></label><% }) %><label><input type="checkbox" name="exporter"> Exporto/importo vehículos.</label><p class="hint">Estas preferencias se guardan en este navegador.</p><div class="dialog-actions"><button type="submit" class="btn btn-blue btn-lg">Guardar</button></div></form></dialog><% } %>
+<%- include('../../partials/dashboard-sections') %>
+<%- include('../../partials/panel-end') %>

@@ -1,0 +1,8 @@
+<%- include('../../partials/panel-start') %>
+<h1>Settings</h1><p class="lead">Fees, taxes, increments, auction timing, transport rates and bank data (all demo values). Values are JSON. Changes are audited and applied immediately.</p>
+<div class="alert alert-warn">Fee and tax values are academic examples, not real tariffs.</div>
+<% rows.forEach(function (s) { %><section class="p-card"><h2><code><%= s.key %></code></h2><p class="hint"><%= s.description %> · updated <%= dateTime(s.updated_at) %></p>
+  <form data-api="/api/v1/admin/settings/<%= s.key %>" data-method="PATCH" data-confirm="Save setting <%= s.key %>?" novalidate><label class="sr-only" for="v-<%= s.key %>">Value</label><textarea id="v-<%= s.key %>" name="value" rows="<%= Math.min(8, JSON.stringify(s.value, null, 2).split('\n').length) %>" style="font-family:monospace;font-size:13px"><%= JSON.stringify(s.value, null, 2) %></textarea><button class="btn btn-blue btn-sm" type="submit" style="margin-top:8px">Save</button></form>
+</section><% }) %>
+<section class="p-card"><h2>Vehicle alert digests</h2><p class="hint">In production this would run on a schedule. Here you can trigger it manually; emails go to the Demo mailbox.</p><div class="actions"><button class="btn btn-light" type="button" data-api="/api/v1/admin/alerts/digest" data-body='{"frequency":"daily"}'>Send daily digest</button><button class="btn btn-light" type="button" data-api="/api/v1/admin/alerts/digest" data-body='{"frequency":"weekly"}'>Send weekly digest</button></div></section>
+<%- include('../../partials/panel-end') %>

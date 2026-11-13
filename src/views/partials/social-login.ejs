@@ -1,0 +1,13 @@
+<% var provs = [['google', 'Google'], ['microsoft', 'Microsoft'], ['apple', 'Apple']];
+   var on = (socialEnabled || []).map(function (p) { return p.code; });
+   var any = on.length; var nx = typeof socialNext !== 'undefined' && socialNext ? '?next=' + encodeURIComponent(socialNext) : ''; %>
+<div class="social-btns">
+  <% provs.forEach(function (p) { var active = on.indexOf(p[0]) >= 0; %>
+    <% if (active) { %>
+      <a class="social-btn" href="/auth/oauth/<%= p[0] %>/start<%= nx %>"><svg class="ic" aria-hidden="true"><use href="#i-soc-<%= p[0] === 'microsoft' ? 'ms' : p[0] %>"/></svg><%= ht('Continuar con', 'Continue with') %> <%= p[1] %></a>
+    <% } else { %>
+      <span class="social-btn" aria-disabled="true" title="<%= ht('El dueño debe configurarlo en Administración › Inicio de sesión social', 'The owner must configure it in Administration › Social sign-in') %>"><svg class="ic" aria-hidden="true"><use href="#i-soc-<%= p[0] === 'microsoft' ? 'ms' : p[0] %>"/></svg><%= ht('Continuar con', 'Continue with') %> <%= p[1] %></span>
+    <% } %>
+  <% }) %>
+</div>
+<% if (!any) { %><p class="social-note"><%= ht('El inicio de sesión con Google/Microsoft/Apple se activa desde Administración › Inicio de sesión social.', 'Google/Microsoft/Apple sign-in is enabled from Administration › Social sign-in.') %></p><% } %>

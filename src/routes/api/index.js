@@ -1,0 +1,12 @@
+'use strict';
+const express = require('express');
+const router = express.Router();
+router.use(require('./auth'));
+router.use(require('./public'));
+router.use(require('./buyer'));
+router.use(require('./seller'));
+router.use(require('./staff'));
+router.use(require('./owner'));
+router.use(require('./account'));
+router.get('/', (req, res) => res.redirect('/api/docs'));
+module.exports = router;

@@ -1,0 +1,15 @@
+<%- include('../partials/account-start') %>
+<% var it = prefs.interest_types || [], im = prefs.interest_makes || []; %>
+<h1><%= t('Intereses del comprador') %></h1>
+<p class="acc-lead"><%= ht('Cuéntenos qué busca y le mostraremos subastas y alertas más útiles. No afecta a su capacidad de compra.', 'Tell us what you are looking for and we will show you more useful auctions and alerts. It does not affect your buying power.') %></p>
+<form data-api="/api/v1/account/preferences" data-method="PATCH" novalidate>
+  <input type="hidden" name="_lists" value="interest_types"><input type="hidden" name="_lists" value="interest_makes">
+  <section class="acc-card"><h3><%= ht('¿Qué le describe mejor?', 'What describes you best?') %></h3>
+    <% [['personal', ht('Compro para uso personal', 'I buy for personal use')], ['parts', ht('Vendo piezas usadas y chatarra', 'I sell used parts and scrap')], ['repair', ht('Reparo y revendo vehículos', 'I repair and resell vehicles')], ['dealer', ht('Soy concesionario o compraventa', 'I am a dealer')], ['export', ht('Exporto vehículos', 'I export vehicles')], ['other', ht('Otro negocio', 'Other business')]].forEach(function (o) { %><label class="check acc-radio"><input type="radio" name="buyer_profile" value="<%= o[0] %>" <%= prefs.buyer_profile === o[0] ? 'checked' : '' %>> <%= o[1] %></label><% }) %>
+  </section>
+  <section class="acc-card"><h3><%= ht('Tipos de vehículo', 'Vehicle types') %></h3><div class="acc-checks"><% types.forEach(function (x) { %><label class="check"><input type="checkbox" name="interest_types" value="<%= x.code %>" data-multi <%= it.includes(x.code) ? 'checked' : '' %>> <%= x.name %></label><% }) %></div></section>
+  <section class="acc-card"><h3><%= ht('Marcas', 'Makes') %></h3><div class="acc-checks cols4"><% makes.forEach(function (x) { %><label class="check"><input type="checkbox" name="interest_makes" value="<%= x.slug %>" data-multi <%= im.includes(x.slug) ? 'checked' : '' %>> <%= x.name %></label><% }) %></div></section>
+  <button class="btn btn-blue" type="submit"><%= t('Guardar') %></button>
+  <% if (it.length || im.length) { %><a class="acc-link" href="/vehicles?<%= it[0] ? 'type=' + it[0] : '' %><%= im[0] ? (it[0] ? '&' : '') + 'make=' + im[0] : '' %>"><%= ht('Ver vehículos que encajan', 'See matching vehicles') %> ›</a><% } %>
+</form>
+<%- include('../partials/account-end') %>

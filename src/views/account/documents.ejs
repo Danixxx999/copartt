@@ -1,0 +1,26 @@
+<%- include('../partials/account-start') %>
+<h1><%= t('Documentos y formularios') %></h1>
+<nav class="acc-pills"><a href="?tab=documents" class="<%= tab === 'documents' ? 'on' : '' %>"><%= t('Documentos') %></a><a href="?tab=forms" class="<%= tab === 'forms' ? 'on' : '' %>"><%= t('Formularios') %></a></nav>
+<% var DOCN = { id_card: ht('Documento de identidad', 'ID card'), passport: ht('Pasaporte', 'Passport'), driving_license: ht('Permiso de conducir', 'Driving licence'), business_license: ht('Licencia de empresa', 'Business licence'), proof_of_address: ht('Justificante de domicilio', 'Proof of address') }; %>
+<% if (tab === 'documents') { var active = docs.find(function (d) { return d.status === 'approved'; }) || docs[0]; %>
+  <h2 class="acc-h2 big"><%= ht('Suba su identificación', 'Upload your identification') %></h2>
+  <p class="acc-muted"><%= ht('Si necesita ayuda, escríbanos desde', 'If you need help, write to us from') %> <a href="/contact"><%= t('Contáctenos') %></a>.</p>
+  <section class="acc-card acc-row-card">
+    <div><strong><%= ht('Foto de identidad', 'Identity photo') %></strong> <% if (active) { %><%- badge(active.status) %><% } else { %><span class="acc-muted"><%= ht('Sin documento', 'No document') %></span><% } %></div>
+    <button class="btn btn-blue" type="button" data-open-dialog="dlg-doc"><%= active ? ht('Reescanear documento', 'Rescan document') : ht('Subir documento', 'Upload document') %></button>
+  </section>
+  <button class="acc-add" type="button" data-open-dialog="dlg-doc"><svg class="ic"><use href="#i-plus"/></svg> <%= ht('Subir nuevo documento', 'Upload new document') %></button>
+  <div class="acc-headrow"><h2 class="acc-h2 big"><%= ht('Añadido anteriormente', 'Previously added') %></h2>
+    <form method="get"><input type="hidden" name="tab" value="documents"><label class="sr-only" for="ds">Orden</label><select id="ds" name="sort" data-autosubmit><option value="default"><%= ht('Por defecto', 'Default') %></option><option value="oldest" <%= sort === 'oldest' ? 'selected' : '' %>><%= ht('Más antiguos primero', 'Oldest first') %></option></select></form></div>
+  <% if (!docs.length) { %><div class="acc-empty"><%= ht('Aún no ha subido documentos.', 'No documents uploaded yet.') %></div><% } %>
+  <% docs.forEach(function (d) { %><section class="acc-card"><strong><%= DOCN[d.doc_type] || d.doc_type %></strong> <%- badge(d.status) %><p class="acc-muted"><%= ht('Subido el', 'Uploaded on') %>: <%= date(d.created_at) %><br>******<%= String(d.id).padStart(4, '0').slice(-4) %><% if (d.rejection_reason) { %><br><span class="txt-err"><%= d.rejection_reason %></span><% } %></p><a href="/files/verification/<%= d.id %>" target="_blank" rel="noopener"><%= ht('Ver archivo', 'View file') %></a></section><% }) %>
+  <dialog id="dlg-doc"><div class="dlg"><h2><%= ht('Subir documento', 'Upload document') %></h2><form data-api="/api/v1/documents" novalidate>
+    <div class="form-row"><label for="dt"><%= ht('Tipo', 'Type') %></label><select id="dt" name="doc_type"><% Object.keys(DOCN).forEach(function (k) { %><option value="<%= k %>"><%= DOCN[k] %></option><% }) %></select></div>
+    <div class="form-row"><label for="df"><%= ht('Archivo (PDF, JPG, PNG · máx. 8 MB)', 'File (PDF, JPG, PNG · max 8 MB)') %></label><input id="df" type="file" name="file" accept=".pdf,.jpg,.jpeg,.png,.webp" required></div>
+    <div class="dlg-actions"><button class="btn btn-light" type="button" data-close><%= t('Cerrar') %></button><button class="btn btn-blue" type="submit"><%= ht('Subir', 'Upload') %></button></div></form></div></dialog>
+<% } else { %>
+  <h2 class="acc-h2 big"><%= ht('Formularios descargables', 'Downloadable forms') %></h2>
+  <p class="acc-muted"><%= ht('Se generan en PDF con sus datos. Imprímalos, fírmelos y súbalos en la pestaña Documentos o entréguelos en la sede.', 'Generated as PDF with your details. Print, sign and upload them in Documents or hand them in at the yard.') %></p>
+  <div class="acc-list"><% forms.forEach(function (f) { %><div class="acc-item"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg><div><strong><%= f.name %></strong><br><span class="acc-muted"><%= f.desc %></span></div><span class="acc-spacer"></span><a class="btn btn-blue btn-sm" href="/account/forms/<%= f.code %>.pdf" target="_blank" rel="noopener"><%= ht('Descargar PDF', 'Download PDF') %></a></div><% }) %></div>
+<% } %>
+<%- include('../partials/account-end') %>

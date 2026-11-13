@@ -1,0 +1,6 @@
+<%- include('../../partials/panel-start') %>
+<h1>Notifications</h1>
+<p class="lead"><button class="btn btn-light btn-sm" type="button" data-api="/api/v1/notifications/read-all">Mark all as read</button></p>
+<div class="p-card"><% if (!items.length) { %><div class="empty">No notifications.</div><% } else { %>
+<table class="tbl"><tbody><% items.forEach(function (n) { %><tr style="<%= n.read_at ? '' : 'font-weight:700' %>"><td><% if (!n.read_at) { %><span class="badge badge-blue">New</span><% } %></td><td><a href="<%= n.link %>"><%= n.title %></a><br><span class="hint" style="font-weight:400"><%= n.body %></span></td><td class="nowrap hint"><%= dateTime(n.created_at) %></td></tr><% }) %></tbody></table><% } %></div>
+<%- include('../../partials/panel-end') %>

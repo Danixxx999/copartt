@@ -1,0 +1,61 @@
+<%- include('../../partials/panel-start') %>
+<% var todo = [[k.pending_vehicles, '/admin/vehicles', 'car', ht('vehículos por aprobar', 'vehicles to approve')], [k.pending_docs, '/admin/documents', 'file', ht('documentos por revisar', 'documents to review')], [k.pending_payments, '/finance', 'receipt', ht('pagos por validar', 'payments to validate')], [k.pending_sellers, '/admin/sellers', 'briefcase', ht('solicitudes de vendedor', 'seller applications')], [k.tickets, '/admin/support', 'inbox', ht('tickets abiertos', 'open tickets')]].filter(function (x) { return x[0] > 0 && user.isAdminArea; }); %>
+<section class="own-hero">
+  <div>
+    <p class="own-kicker"><%= t('Administration') %> · <%= dateTime(new Date()) %></p>
+    <h1><%= ht('Hola', 'Hello') %>, <%= user.first_name %> 👋</h1>
+    <p><%= todo.length ? ht('Tiene', 'You have') + ' ' + todo.reduce(function (n, x) { return n + x[0]; }, 0) + ' ' + ht('tareas pendientes. Empiece por las de abajo.', 'pending tasks. Start with the ones below.') : ht('Todo al día. No hay tareas pendientes.', 'All caught up. No pending tasks.') %></p>
+  </div>
+  <div class="own-hero-stats">
+    <a href="/vehicles"><strong><%= k.open_lots %></strong><span><%= ht('lotes abiertos', 'open lots') %></span></a>
+    <a href="/admin/bids" class="<%= k.live_lots ? 'live' : '' %>"><strong><%= k.live_lots %></strong><span><%= ht('en vivo ahora', 'live now') %></span></a>
+    <a href="/admin/reports"><strong><%= eur(k.gmv) %></strong><span><%= ht('ventas totales', 'total sales') %></span></a>
+  </div>
+</section>
+
+<% if (todo.length) { %><section class="own-todo" aria-label="<%= ht('Tareas pendientes', 'Pending tasks') %>"><% todo.forEach(function (x) { %><a href="<%= x[1] %>"><svg class="ic" aria-hidden="true"><use href="#i-<%= x[2] %>"/></svg><strong><%= x[0] %></strong><span><%= x[3] %></span><b>›</b></a><% }) %></section><% } %>
+
+<h2 class="own-h2"><%= t('Quick actions') %></h2>
+<section class="quick-grid" aria-label="<%= t('Quick actions') %>">
+  <% [['/admin/users', 'user', ht('Crear o gestionar usuarios', 'Create or manage users'), 'users.manage'],
+      ['/admin/vehicles/new', 'plus', ht('Publicar un vehículo', 'List a vehicle'), 'vehicles.approve'],
+      ['/admin/auctions', 'gavel', ht('Programar o iniciar subastas', 'Schedule or start auctions'), 'auctions.manage'],
+      ['/admin/documents', 'file', ht('Revisar documentos', 'Review documents'), 'documents.review'],
+      ['/finance', 'receipt', ht('Validar pagos', 'Validate payments'), 'finance.review'],
+      ['/admin/payments', 'wallet', ht('Pasarelas de pago', 'Payment gateways'), 'settings.manage'],
+      ['/admin/announcements', 'bell', ht('Anuncios y publicidad', 'Announcements & ads'), 'content.manage'],
+      ['/admin/content', 'edit', ht('Páginas y banners', 'Pages and banners'), 'content.manage'],
+      ['/admin/roles', 'shield', ht('Roles y permisos', 'Roles and permissions'), 'roles.manage'],
+      ['/admin/reports', 'chart', ht('Informes y CSV', 'Reports and CSV'), 'reports.view'],
+      ['/', 'globe', ht('Ver el sitio público', 'View public site'), null]].filter(function (q) { return !q[3] || user.has(q[3]); }).forEach(function (q) { %>
+    <a class="quick-card" href="<%= q[0] %>"><svg class="ic ic-lg" aria-hidden="true"><use href="#i-<%= q[1] %>"/></svg><span><%= q[2] %></span></a>
+  <% }) %>
+</section>
+
+<h2 class="own-h2"><%= ht('Indicadores', 'Key figures') %></h2>
+<div class="own-kpis">
+  <% [['/admin/users', 'users', k.users, ht('Usuarios', 'Users'), '+' + k.new_users + ' ' + ht('esta semana', 'this week'), 'blue'],
+      ['/vehicles', 'car', k.open_lots, ht('Lotes abiertos', 'Open lots'), k.live_lots + ' ' + ht('en vivo', 'live'), 'blue'],
+      ['/admin/bids', 'pulse', k.bids_24h, ht('Pujas (24 h)', 'Bids (24h)'), ht('actividad reciente', 'recent activity'), 'violet'],
+      ['/admin/reports', 'chart', eur(k.gmv), ht('Ventas (martillo)', 'Sales (hammer)'), ht('pedidos no cancelados', 'non-cancelled orders'), 'green'],
+      ['/finance/balances', 'wallet', eur(k.receivable), ht('Por cobrar', 'Receivable'), ht('facturas abiertas', 'open invoices'), k.receivable ? 'amber' : 'green'],
+      ['/admin/support', 'inbox', k.tickets, ht('Tickets abiertos', 'Open tickets'), ht('soporte', 'support'), k.tickets ? 'amber' : 'green']].forEach(function (c) { %>
+    <a class="own-kpi tone-<%= c[5] %>" href="<%= c[0] %>"><span class="own-ico"><svg class="ic" aria-hidden="true"><use href="#i-<%= c[1] %>"/></svg></span><div><strong><%= c[2] %></strong><span><%= c[3] %></span><small><%= c[4] %></small></div></a>
+  <% }) %>
+</div>
+
+<div class="grid-2" style="align-items:start">
+  <section class="p-card"><h2><%= ht('Ventas – últimos 14 días', 'Sales – last 14 days') %></h2>
+    <% var max = Math.max.apply(null, salesByDay.map(function (d) { return Number(d.total); }).concat([1])); %>
+    <div class="bar-chart" role="img" aria-label="<%= ht('Gráfico de ventas diarias', 'Daily sales chart') %>"><% salesByDay.forEach(function (d) { %><div class="b" style="height:<%= Math.max(2, Number(d.total) / max * 100) %>%" title="<%= d.day %>: <%= eur(d.total) %> (<%= d.n %>)"><span><%= d.day %></span></div><% }) %></div>
+    <p class="hint" style="margin-top:28px"><%= ht('Pedidos por estado', 'Orders by status') %>: <% ordersByStatus.forEach(function (s) { %><%- badge(s.status) %> <%= s.n %> &nbsp;<% }) %></p>
+  </section>
+  <section class="p-card"><h2 style="display:flex;justify-content:space-between"><%= ht('Próximas subastas', 'Upcoming auctions') %> <a class="btn btn-light btn-sm" href="/admin/auctions"><%= ht('Gestionar', 'Manage') %></a></h2>
+    <% if (!events.length) { %><div class="empty"><%= ht('No hay subastas programadas.', 'No auctions scheduled.') %></div><% } %>
+    <table class="tbl"><tbody><% events.forEach(function (e) { %><tr><td><strong><%= e.name %></strong><br><span class="hint"><%= dateTime(e.starts_at) %> · <%= e.lots %> <%= ht('lotes', 'lots') %></span></td><td><%- badge(e.status) %></td><td class="actions"><a class="btn btn-light btn-sm" href="/auctions/<%= e.id %>/live"><%= ht('Sala', 'Room') %></a><% if (e.status === 'scheduled') { %><button class="btn btn-green btn-sm" type="button" data-api="/api/v1/admin/events/<%= e.id %>/start" data-confirm="<%= ht('¿Iniciar ahora', 'Start now') %> &quot;<%= e.name %>&quot;?"><%= ht('Iniciar ahora', 'Start now') %></button><% } %></td></tr><% }) %></tbody></table>
+  </section>
+</div>
+<section class="p-card"><h2 style="display:flex;justify-content:space-between"><%= ht('Actividad reciente', 'Recent activity') %> <a class="btn btn-light btn-sm" href="/admin/audit"><%= t('Audit Log') %></a></h2>
+  <table class="tbl"><tbody><% audit.forEach(function (a) { %><tr><td class="hint nowrap"><%= dateTime(a.created_at) %></td><td><code><%= a.action %></code></td><td><%= a.entity %> #<%= a.entity_id || '—' %></td><td><%= a.email || ht('sistema', 'system') %></td></tr><% }) %></tbody></table>
+</section>
+<%- include('../../partials/panel-end') %>

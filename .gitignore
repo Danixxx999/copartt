@@ -1,0 +1,14 @@
+node_modules/
+.tools/
+.env
+.env.*
+!.env.example
+storage/uploads/*
+!storage/uploads/.gitkeep
+storage/private/*
+!storage/private/.gitkeep
+test-results/
+playwright-report/
+*.log
+.DS_Store
+docs/reference-pdfs/

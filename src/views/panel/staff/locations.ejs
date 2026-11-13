@@ -1,0 +1,17 @@
+<%- include('../../partials/panel-start') %>
+<% var e = edit || {}; %>
+<h1>Yards</h1><p class="lead">Locations where vehicles are stored, inspected and collected.</p>
+<div class="grid-2" style="align-items:start;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)">
+  <section class="p-card"><table class="tbl"><thead><tr><th>Code</th><th>Name</th><th>City</th><th class="num">Vehicles</th><th>Status</th><th></th></tr></thead><tbody>
+  <% rows.forEach(function (l) { %><tr><td><%= l.code %></td><td><a href="/locations/<%= l.code %>"><%= l.name %></a></td><td><%= l.city %></td><td class="num"><%= l.vehicles %></td><td><%- badge(l.active ? 'active' : 'closed') %></td><td><a class="btn btn-light btn-sm" href="?edit=<%= l.id %>">Edit</a></td></tr><% }) %></tbody></table></section>
+  <section class="p-card"><h2><%= edit ? 'Edit ' + e.name : 'New yard' %></h2>
+    <form data-api="/api/v1/admin/locations<%= edit ? '/' + e.id : '' %>" data-method="<%= edit ? 'PATCH' : 'POST' %>" novalidate>
+      <div class="form-grid">
+        <% [['code','Code (3 letters)'],['name','Name'],['address','Address'],['city','City'],['province','Province'],['postal_code','Postal code'],['phone','Phone'],['email','Email'],['hours','Office hours'],['pickup_hours','Pickup hours'],['lat','Latitude'],['lng','Longitude']].forEach(function (f) { %><div class="form-row"><label for="l-<%= f[0] %>"><%= f[1] %></label><input id="l-<%= f[0] %>" name="<%= f[0] %>" value="<%= e[f[0]] !== undefined && e[f[0]] !== null ? e[f[0]] : '' %>"></div><% }) %>
+      </div>
+      <div class="form-row"><label for="l-d">Description</label><textarea id="l-d" name="description" rows="2"><%= e.description || '' %></textarea></div>
+      <label class="check" style="margin-bottom:10px"><input type="checkbox" name="active" <%= !edit || e.active ? 'checked' : '' %>> Active</label>
+      <div class="actions"><button class="btn btn-blue" type="submit"><%= edit ? 'Save' : 'Create yard' %></button><% if (edit) { %><a class="btn btn-light" href="/admin/locations">New instead</a><% } %></div>
+    </form></section>
+</div>
+<%- include('../../partials/panel-end') %>

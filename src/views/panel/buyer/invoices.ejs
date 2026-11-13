@@ -1,0 +1,11 @@
+<%- include('../../partials/panel-start') %>
+<h1>Invoices &amp; Payments</h1><p class="lead">All your invoices (purchases, membership and transport) and payment history.</p>
+<section class="p-card"><h2>Invoices</h2><% if (!invoices.length) { %><div class="empty">No invoices.</div><% } else { %>
+<div class="table-wrap"><table class="tbl"><thead><tr><th>Number</th><th>Type</th><th>Order</th><th>Issued</th><th>Due</th><th class="num">Total</th><th class="num">Outstanding</th><th>Status</th><th></th></tr></thead><tbody>
+<% invoices.forEach(function (i) { %><tr><td><strong><%= i.invoice_number %></strong></td><td><%= cap(i.kind) %></td><td><% if (i.order_id) { %><a href="/dashboard/purchases/<%= i.order_id %>"><%= i.order_number %></a><% } else { %>—<% } %></td><td><%= date(i.issued_at) %></td><td><%= date(i.due_at) %></td><td class="num"><%= eur(i.total_cents) %></td><td class="num"><%= eur(i.total_cents - i.paid_cents) %></td><td><%- badge(i.status) %></td><td class="actions"><a class="btn btn-light btn-sm" href="/dashboard/invoices/<%= i.id %>.pdf" target="_blank" rel="noopener">PDF</a><% if (i.order_id && ['issued','partially_paid'].includes(i.status)) { %><a class="btn btn-blue btn-sm" href="/dashboard/purchases/<%= i.order_id %>">Pay</a><% } else if (i.kind === 'membership' && i.status === 'issued') { %><a class="btn btn-blue btn-sm" href="/dashboard/membership">Pay</a><% } %></td></tr><% }) %>
+</tbody></table></div><% } %></section>
+<section class="p-card"><h2>Payments</h2><% if (!payments.length) { %><div class="empty">No payments yet.</div><% } else { %>
+<div class="table-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Invoice</th><th>Method</th><th>Concept</th><th>Reference</th><th class="num">Amount</th><th>Status</th><th>Note</th></tr></thead><tbody>
+<% payments.forEach(function (p) { %><tr><td><%= dateTime(p.created_at) %></td><td><%= p.invoice_number %></td><td><%= p.method === 'card_demo' ? 'Card (sandbox)' : 'Bank transfer' %></td><td><%= p.scope %></td><td><%= p.reference %></td><td class="num"><%= eur(p.amount_cents) %></td><td><%- badge(p.status) %></td><td class="hint"><%= p.review_note || '' %></td></tr><% }) %>
+</tbody></table></div><% } %></section>
+<%- include('../../partials/panel-end') %>

@@ -1,0 +1,34 @@
+/* ───────── Buscador de vehículos (portal) ───────── */
+.vehicle-finder-page .vf-head { border: 0; margin-bottom: 10px; align-items: center; }
+.vehicle-finder-page .vf-all { color: #3bd16f; font-weight: 700; text-decoration: none; }
+.vf-promo { display: flex; align-items: center; justify-content: center; gap: 12px; max-width: 1200px; margin: 0 auto 18px; padding: 8px 0 8px 18px; background: linear-gradient(90deg, #0b2a5c 0%, #123f86 60%, #1d5fcf 100%); color: #fff; text-decoration: none; font-family: var(--font-h); font-weight: 900; font-size: clamp(12px, 1.35vw, 20px); letter-spacing: .01em; border-radius: 2px; white-space: nowrap; overflow: hidden; }
+.vf-promo .vf-promo-a { color: #6aa8ff; } .vf-promo .vf-star { color: #fff; }
+.vf-promo b { background: #2f8cff; padding: 6px 14px; margin-left: 8px; font-size: .85em; }
+.vf-promo:hover b { background: var(--blue); color: #0b1220; }
+.vf-cond-title { color: var(--blue-ink); font-size: 26px; font-weight: 900; margin-bottom: 4px; }
+.vf-cond-sub { color: #a8aab0; } .vf-sub { font-size: 18px; margin-top: 28px; } .vf-copy { color: #9ca8b8; font-size: 14px; }
+.vf-tabs .tab-list { flex-wrap: wrap; }
+/* Deslizador doble de kilometraje */
+.odo-range { flex: 1; min-width: 0; }
+.odo-labels { display: flex; justify-content: space-between; font-size: 12.5px; color: #c7ccd4; margin-bottom: 4px; }
+.odo-labels span:last-child b { color: var(--blue); }
+.odo-track { position: relative; height: 26px; }
+.odo-track::before { content: ''; position: absolute; left: 10px; right: 10px; top: 12px; height: 2px; background: #2a3442; }
+.odo-fill { position: absolute; top: 12px; height: 2px; background: var(--blue); margin: 0 10px; }
+.buyer-portal .finder-card .odo-track input[type=range], .page-dark .finder-card .odo-track input[type=range], .odo-track input[type=range] { position: absolute; left: 0; right: 0; top: 0; width: 100%; height: 26px; min-height: 0; margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; outline: 0; pointer-events: none; -webkit-appearance: none; appearance: none; }
+.odo-track input[type=range]::-webkit-slider-thumb { pointer-events: auto; -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #0b0f16; border: 2px solid var(--blue); cursor: pointer; }
+.odo-track input[type=range]::-moz-range-thumb { pointer-events: auto; width: 18px; height: 18px; border-radius: 50%; background: #0b0f16; border: 2px solid var(--blue); cursor: pointer; }
+.odo-track input[type=range]::-webkit-slider-runnable-track { background: none; }
+.odo-track input[type=range]:focus-visible::-webkit-slider-thumb { outline: 3px solid rgba(106,168,255,.5); }
+/* Locales / Provincia / Código postal */
+.vf-where [data-where] { display: grid; gap: 8px; flex: 1; }
+.vf-where .radio { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: #dfe3ea; }
+.vf-where .radio input { accent-color: var(--blue); }
+/* Consejos de búsqueda */
+.vf-tips { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 24px; align-items: center; margin-top: 48px; }
+.vf-tips h2 { font-size: 24px; font-weight: 900; margin-bottom: 10px; }
+.vf-tips p, .vf-tips li { color: #b8c0cb; font-size: 14.5px; }
+.vf-tips ol { padding-left: 20px; margin: 0 0 22px; } .vf-tips li { margin-bottom: 6px; } .vf-tips li a { color: var(--blue); }
+.vf-tips img { width: 100%; aspect-ratio: 4/3; object-fit: cover; background: #fff; border-radius: 2px; }
+.vf-tips .btn { white-space: normal; text-align: center; }
+@media (max-width: 980px) { .vf-tips { grid-template-columns: minmax(0, 1fr); } .vf-promo { white-space: normal; flex-wrap: wrap; font-size: 13px; padding-right: 18px; } }

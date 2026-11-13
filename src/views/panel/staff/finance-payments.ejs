@@ -1,0 +1,16 @@
+<%- include('../../partials/panel-start') %>
+<h1>Payments queue</h1><p class="lead">Check each bank-transfer receipt against the (fictitious) bank statement, then approve or reject with a reason. Approval reconciles the invoice and, when fully paid, issues the pickup PIN.</p>
+<div class="kpis">
+  <div class="kpi warn"><div class="v"><%= k.pending %></div><div class="l">Pending review</div></div>
+  <div class="kpi"><div class="v"><%= eur(k.pending_amount, { decimals: false }) %></div><div class="l">Amount pending</div></div>
+  <div class="kpi ok"><div class="v"><%= eur(k.collected_30d, { decimals: false }) %></div><div class="l">Collected (30 days)</div></div>
+  <a class="kpi info" href="/finance/balances"><div class="v"><%= eur(k.receivable, { decimals: false }) %></div><div class="l">Receivable</div></a>
+  <a class="kpi <%= k.overdue ? 'warn' : '' %>" href="/finance/invoices?status=issued"><div class="v"><%= k.overdue %></div><div class="l">Overdue invoices</div></a>
+</div>
+<div class="filters-bar"><% [['pending_review','Pending'],['approved','Approved'],['rejected','Rejected'],['all','All']].forEach(function (s) { %><a class="chip <%= status === s[0] ? 'on' : '' %>" href="?status=<%= s[0] %>"><%= s[1] %></a><% }) %><a class="btn btn-light btn-sm" href="/api/v1/reports/payments.csv">Export CSV</a></div>
+<div class="p-card"><% if (!rows.length) { %><div class="empty">Queue is empty. 🎉</div><% } else { %>
+<div class="table-wrap"><table class="tbl"><thead><tr><th>ID</th><th>Submitted</th><th>Buyer</th><th>Invoice / order</th><th>Method</th><th>Reference</th><th class="num">Amount</th><th>Receipt</th><th>Status</th><th></th></tr></thead><tbody>
+<% rows.forEach(function (p) { %><tr><td><%= p.id %></td><td class="hint nowrap"><%= dateTime(p.created_at) %></td><td><%= p.first_name %> <%= p.last_name %><br><span class="hint"><%= p.email %></span></td><td><%= p.invoice_number %><br><span class="hint"><%= p.order_number || p.kind %> · paid <%= eur(p.paid_cents) %> / <%= eur(p.total_cents) %></span></td><td><%= p.method === 'card_demo' ? 'Card (sandbox)' : 'Bank transfer' %><br><span class="hint"><%= p.scope %></span></td><td><code><%= p.reference %></code></td><td class="num"><strong><%= eur(p.amount_cents) %></strong></td><td><% if (p.proof_id) { %><a href="/files/payment-proof/<%= p.proof_id %>" target="_blank" rel="noopener">Open</a><% } else { %>—<% } %></td><td><%- badge(p.status) %><% if (p.review_note) { %><br><span class="hint"><%= p.review_note %></span><% } %></td>
+<td class="actions"><% if (p.status === 'pending_review') { %><button class="btn btn-green btn-sm" type="button" data-api="/api/v1/payments/<%= p.id %>/review" data-body='{"approve":true}' data-prompt="Reconciliation note (optional):" data-prompt-field="note">Approve</button><button class="btn btn-red btn-sm" type="button" data-api="/api/v1/payments/<%= p.id %>/review" data-body='{"approve":false}' data-prompt="Reason for rejection (sent to the buyer):" data-prompt-field="note">Reject</button><% } %></td></tr><% }) %>
+</tbody></table></div><% } %></div>
+<%- include('../../partials/panel-end') %>

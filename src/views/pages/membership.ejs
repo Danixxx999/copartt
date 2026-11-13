@@ -1,0 +1,20 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main">
+  <section class="sec-dark memberships"><div class="dots-left" aria-hidden="true"></div>
+    <h1 class="sec-title">Membership Options</h1>
+    <p class="sec-sub">As an copart Member, you'll be able to search our inventory of used and repairable cars, trucks and SUVs. Upgrade to Basic or Premium to bid in our live auctions. Bidding limits are business rules editable by administrators.</p>
+    <ul class="checks-row"><li><svg class="ic"><use href="#i-check"/></svg> Pay Annually</li><li><svg class="ic"><use href="#i-check"/></svg> Refund available within 7 days</li><li><svg class="ic"><use href="#i-check"/></svg> Access to over 10.000 vehicles</li></ul>
+    <%- include('../partials/plan-cards', { plans: plans }) %>
+    <div class="wrap-narrow" style="margin-top:40px"><div class="table-wrap"><table class="tbl"><thead><tr><th>Rule</th><% plans.forEach(function (p) { %><th><%= p.name %></th><% }) %></tr></thead><tbody>
+      <tr><td>Annual price (+VAT)</td><% plans.forEach(function (p) { %><td><%= p.price_cents ? eur(p.price_cents) : 'Free' %></td><% }) %></tr>
+      <tr><td>Can bid</td><% plans.forEach(function (p) { %><td><%= p.can_bid ? 'Yes' : 'No' %></td><% }) %></tr>
+      <tr><td>Max bid per vehicle</td><% plans.forEach(function (p) { %><td><%= p.can_bid ? (p.max_bid_cents ? eur(p.max_bid_cents) : 'No limit') : '—' %></td><% }) %></tr>
+      <tr><td>Vehicles per auction</td><% plans.forEach(function (p) { %><td><%= p.can_bid ? (p.max_lots_per_event || 'No limit') : '—' %></td><% }) %></tr>
+      <tr><td>Combined limit per auction</td><% plans.forEach(function (p) { %><td><%= p.can_bid ? (p.max_total_cents ? eur(p.max_total_cents) : 'No limit') : '—' %></td><% }) %></tr>
+      <tr><td>Documents required</td><% plans.forEach(function (p) { %><td><%= p.requires_documents ? 'Yes' : 'No' %></td><% }) %></tr>
+    </tbody></table></div><p class="hint">Prices and limits are academic demo values inspired by the public reference page.</p></div>
+  </section>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

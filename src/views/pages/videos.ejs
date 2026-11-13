@@ -1,0 +1,15 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="page-dark">
+  <div class="wrap">
+    <h1 class="page-title">Videos</h1>
+    <p class="muted">Video tutorials are placeholders in this academic demo (no external video is embedded). Each card links to the written guide.</p>
+    <div class="grid-3" style="margin-top:20px">
+      <% [['How to register', '/how-it-works'], ['How to pre-bid', '/how-to-buy'], ['The live auction room', '/auctions'], ['Paying your invoice', '/how-to-buy'], ['Pickup with PIN', '/faq'], ['Requesting transport', '/transport']].forEach(function (v, i) { %>
+      <a class="card-dark" href="<%= v[1] %>" style="text-decoration:none"><div style="aspect-ratio:16/9;background:linear-gradient(135deg,#13294a,#1f5fcf);display:grid;place-items:center;border-radius:4px"><svg class="ic" style="width:56px;height:56px;color:#fff"><use href="#i-play"/></svg></div><h3 style="margin-top:12px"><%= v[0] %></h3></a>
+      <% }) %>
+    </div>
+  </div>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

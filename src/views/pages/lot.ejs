@@ -1,0 +1,97 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<% var demoGallery = images.length && images.every(function(i){return isDemoImage(i.path)}) && displayImage(images[0].path)!==images[0].path; var galleryImages = demoGallery ? [{path:displayImage(images[0].path)}] : images; %>
+<main id="main" class="page-dark reference-lot" data-lot-id="<%= lot.id %>" data-event-id="<%= lot.event_id %>">
+  <div class="crumbs"><a href="/">Inicio</a> › <a href="/vehicles">Resultados de búsqueda</a> › Lot #<%= lot.lot_number %></div>
+  <div class="page-head">
+    <div><h1 class="page-title" style="color:#fff;font-size:26px"><%= lotTitle(lot) %></h1>
+      <p style="margin:0;color:#a9b6c1">VIN: <%= maskVin(lot.vin) %> &nbsp; · &nbsp; Número de lote: <%= lot.lot_number %> &nbsp; · &nbsp; Carril/Artículo: <%= lot.sequence %></p></div>
+    <div class="lot-sale-meta"><p>Nombre de la Venta: &nbsp; <a href="/vehicles?event=<%= lot.event_id %>"><%= lot.event_name %></a></p><p>Locales: &nbsp; <a href="/locations/<%= lot.location_code %>"><%= lot.location_name %></a></p></div>
+    <button type="button" class="btn btn-light watch-btn<%= watching ? ' on' : '' %>" data-watch="<%= lot.id %>" aria-pressed="<%= watching %>"><svg class="ic"><use href="#i-star"/></svg> <span class="watch-label"><%= watching ? 'En favoritos' : 'Lista de favoritos' %></span></button>
+  </div>
+  <div class="lot-grid">
+    <section aria-label="Photos">
+      <div class="gallery-main" title="Click para ampliar"><img src="<%= galleryImages[0] ? galleryImages[0].path : displayImage(null) %>" alt="<%= lotTitle(lot) %><%= demoGallery?' — imagen ilustrativa':' — foto principal' %>" width="600" height="450"><button type="button" class="gallery-favorite watch-btn<%= watching ? ' on' : '' %>" data-watch="<%= lot.id %>" aria-pressed="<%= watching %>">♡ <span class="watch-label"><%= watching?'En favoritos':'Lista de favoritos' %></span></button><% if(demoGallery) { %><span class="illustration-label">Imagen ilustrativa · No es una foto del lote</span><% } %></div>
+      <div class="gallery-controls"><button type="button" data-photo-prev aria-label="Foto anterior">❮</button><span data-photo-count>1 / <%= galleryImages.length || 1 %></span><button type="button" data-photo-next aria-label="Foto siguiente">❯</button></div>
+      <div class="thumbs"><% galleryImages.forEach(function (im, i) { %><button type="button" class="<%= i === 0 ? 'on' : '' %>" data-src="<%= im.path %>" aria-label="Foto <%= i + 1 %>"><img src="<%= im.path %>" alt="" loading="lazy"></button><% }) %></div>
+      <p class="hint" style="margin-top:8px"><%= demoGallery?'Imagen generada para el inventario de demostración. Las fotografías reales se muestran cuando el vendedor las carga.':'Consulte las fotos del vendedor e inspeccione el vehículo antes de ofertar.' %></p>
+    </section>
+    <section class="specs-col" aria-label="Vehicle information">
+      <h2 style="font-size:17px">Información del vehículo</h2>
+      <div class="hl-chips"><% if (lot.runs_drives) { %><span class="hl-chip ok">Run and Drive</span><% } else { %><span class="hl-chip">Does not drive</span><% } %><% if (lot.has_keys) { %><span class="hl-chip ok">Keys available</span><% } %><span class="hl-chip"><%= lot.condition === 'salvage' ? 'Salvage' : 'Used' %></span><% if (lot.featured) { %><span class="hl-chip blue">Featured</span><% } %></div>
+      <dl class="spec-list">
+        <dt>Código de título</dt><dd><%= lot.document_type %></dd>
+        <dt>Odómetro</dt><dd><%= km(lot.odometer_km) %> (<%= lot.odometer_status === 'actual' ? 'Actual' : 'No verificado' %>)</dd>
+        <dt>Daño principal</dt><dd><%= lot.primary_damage %></dd>
+        <dt>Daño secundario</dt><dd><%= lot.secondary_damage || '—' %></dd>
+        <dt>Condición</dt><dd><%= lot.condition === 'salvage' ? 'Salvage' : 'Used' %></dd>
+        <dt>Valor minorista estimado</dt><dd><%= eur(lot.estimated_value_cents) %></dd>
+        <dt>Destacados</dt><dd><%= lot.highlights || (lot.runs_drives ? 'Run and Drive' : 'Does not drive') %></dd>
+        <dt>Tipo de carrocería</dt><dd><%= lot.type_name %></dd>
+        <dt>Motor</dt><dd><%= lot.engine || '—' %></dd>
+        <dt>Transmisión</dt><dd><%= cap(lot.transmission) %></dd>
+        <dt>Combustible</dt><dd><%= cap(lot.fuel) %></dd>
+        <dt>Tiene llave</dt><dd><%= lot.has_keys ? 'Sí' : 'No' %></dd>
+        <dt>Documentos</dt><dd><%= docs.length ? docs.map(function (d) { return d.doc_type.replace('_', ' '); }).join(', ') : 'Disponible en la ubicación' %></dd>
+        <dt>Ubicación</dt><dd><a href="/locations/<%= lot.location_code %>" style="color:var(--blue)"><%= lot.location_name %></a></dd>
+      </dl>
+      <% if (lot.description) { %><p class="hint" style="margin-top:12px"><%= lot.description %></p><% } %>
+      <details class="sale-details"><summary>Información de venta</summary>
+      <dl class="spec-list">
+        <dt>Nombre de la venta</dt><dd><%= lot.event_name %></dd>
+        <dt>Fecha de venta</dt><dd><%= dateTime(lot.auction_date) %> (Madrid)</dd>
+        <dt>Artículo #</dt><dd><%= lot.sequence %></dd>
+        <dt>Locales</dt><dd><a href="/locations/<%= lot.location_code %>" style="color:var(--blue)"><%= lot.location_name %></a></dd>
+        <dt>Estado de venta</dt><dd><%= lot.status === 'awarded' ? 'Sold' + (lot.sold_via === 'buy_now' ? ' (Buy It Now)' : lot.sold_via === 'counter_offer' ? ' (counter offer)' : '') : lot.reserve_met ? 'Reserve met – will sell to the high bidder' : 'On minimum bid (seller approval below reserve)' %></dd>
+        <dt>Compra inmediata</dt><dd><%= lot.buy_now_cents ? eur(lot.buy_now_cents) : 'No disponible' %></dd>
+        <dt>Última actualización</dt><dd><%= dateTime(lot.lot_updated_at) %></dd>
+      </dl></details>
+    </section>
+    <aside class="bid-box" aria-label="Bid information">
+      <div class="bb-hd"><span>Información de oferta</span><span class="conn" data-conn>Conectando…</span></div>
+      <div class="bb-body">
+        <div><div class="hint" data-price-label><%= lot.current_bid_cents ? 'Oferta actual' : 'Precio inicial' %></div><div class="big-bid" data-price><%= eur(lot.current_bid_cents || lot.starting_bid_cents) %></div>
+          <div class="hint"><span data-bid-count><%= lot.bid_count %></span> ofertas · Reserva <span data-reserve><%= lot.reserve_met ? 'alcanzada' : 'no alcanzada' %></span></div></div>
+        <% if (lot.status === 'live') { %><div><div class="hint">La subasta cierra en</div><div class="clock" data-countdown="<%= new Date(lot.ends_at).toISOString() %>" data-done-text="Closing…" data-lot-clock>—</div></div>
+        <% } else if (['prebidding','scheduled'].includes(lot.status)) { %><div><div class="hint">Inicio de subasta (hora de Madrid) · <%= dateTime(lot.auction_date) %></div><div class="clock" data-countdown="<%= new Date(lot.auction_date).toISOString() %>" data-done-text="Starting…">—</div></div><% } %>
+        <% var binOpen = lot.status === 'prebidding' && lot.buy_now_cents && (lot.current_bid_cents || 0) < lot.buy_now_cents; %>
+        <% if (binOpen) { %><div class="bin-box" data-bin-box>
+          <div class="bin-row"><div><div class="hint">Precio de compra inmediata</div><div class="bin-price"><%= eur(lot.buy_now_cents) %></div></div><svg class="ic ic-lg" aria-hidden="true"><use href="#i-cart"/></svg></div>
+          <% if (elig.ok) { %><button class="btn btn-brown btn-block" type="button" data-api="/api/v1/lots/<%= lot.id %>/buy-now" data-confirm="Buy <%= lotTitle(lot) %> now for <%= eur(lot.buy_now_cents) %> + fees? The purchase is binding (demo) and the lot closes immediately.">Comprar ahora</button>
+          <% } else { %><p class="hint" style="margin:6px 0 0">Disponible para miembros habilitados antes de la subasta en vivo.</p><% } %>
+          <p class="hint" style="margin:6px 0 0">Compre a precio fijo antes de que comience la subasta en vivo.</p></div><% } %>
+        <% if (lot.status === 'awarded') { %><div class="alert alert-ok" style="margin:0">Sold for <strong><%= eur(lot.current_bid_cents) %></strong><%= lot.sold_via === 'buy_now' ? ' with Buy It Now' : lot.sold_via === 'counter_offer' ? ' after a counter offer' : '' %>.</div><% } %>
+        <% if (myMax) { %><div class="alert alert-info" style="margin:0" data-my-status>Your maximum bid: <strong><%= eur(myMax) %></strong> · <span data-leading><%= lot.leader_user_id === (user && user.id) ? 'You are the high bidder' : 'You have been outbid' %></span></div><% } %>
+        <% if (['prebidding','live'].includes(lot.status)) { %>
+          <% if (elig.ok) { %>
+            <form data-api="/api/v1/lots/<%= lot.id %>/bids" data-idempotent novalidate id="bid-form">
+              <input type="hidden" name="kind" value="<%= lot.status === 'live' ? 'live' : 'prebid' %>">
+              <div class="form-row"><label for="amount"><%= lot.status === 'live' ? 'Su oferta / máxima (€)' : 'Su oferta máxima (€)' %></label>
+                <div class="bid-stepper"><input id="amount" name="amount" type="number" min="<%= minBid / 100 %>" step="25" value="<%= minBid / 100 %>" required data-min-bid><button type="button" data-bid-step="-1" aria-label="Disminuir oferta">−</button><button type="button" data-bid-step="1" aria-label="Aumentar oferta">+</button></div>
+                <span class="hint">Oferta mínima: <strong data-min-label><%= eur(minBid) %></strong>. El sistema oferta por usted hasta su máximo.<% if (user.plan && user.plan.max_bid_cents) { %> Límite de su plan: <%= eur(user.plan.max_bid_cents) %>.<% } %></span></div>
+              <button class="btn btn-green btn-block btn-lg" type="submit"><%= lot.status === 'live' ? 'Ofertar ahora' : 'Ofertar ahora' %></button>
+            </form>
+            <% { %><a class="btn btn-blue btn-block" href="/auctions/<%= lot.event_id %>/live">Entrar a la subasta en vivo</a><% } %>
+          <% } else { %>
+            <button class="btn btn-block ineligible-bid" type="button" disabled>Ofertar ahora</button><div class="eligibility-row"><span>Elegibilidad</span><strong>No puede ofertar <span aria-hidden="true">●</span></strong></div><p class="eligibility-reason"><%= ({UNAUTHENTICATED:'Inicie sesión para ofertar.',GUEST:'Su membresía permite explorar y guardar vehículos. Actualice su plan para ofertar.',NO_MEMBERSHIP:'Elija una membresía para comenzar a ofertar.',NOT_VERIFIED:'Complete la verificación de sus documentos para ofertar.'})[elig.code] || elig.reason %></p>
+            <% if (!user) { %><a class="btn btn-blue btn-block" href="/login?next=/lot/<%= lot.lot_number %>">Iniciar sesión para ofertar</a><a class="btn btn-brown btn-block" href="/register">Registrarse</a>
+            <% } else if (elig.code === 'GUEST' || elig.code === 'NO_MEMBERSHIP') { %><a class="btn btn-blue btn-block" href="/dashboard/membership">Actualizar membresía</a>
+            <% } else if (elig.code === 'NOT_VERIFIED') { %><a class="btn btn-blue btn-block" href="/dashboard/documents">Subir documentos</a><% } %>
+          <% } %>
+        <% } else { %><div class="alert alert-info" style="margin:0">Bidding is closed for this lot (<%= label(lot.status) %>).</div><% } %>
+        <details class="sale-details">
+          <summary>Costos estimados</summary>
+          <% fees.items.forEach(function (i) { %><div class="kv"><span><%= i.category === 'vehicle' ? 'Vehicle (at current bid)' : i.description %></span><span><%= eur(i.amount_cents + i.tax_cents) %></span></div><% }) %>
+          <div class="kv"><strong>Total estimado</strong><strong><%= eur(fees.total) %></strong></div>
+          <p class="hint">Valores del entorno de demostración. <a href="/fee-calculator" style="color:var(--blue)">Calculadora de tarifas</a> · <a href="/transport" style="color:var(--blue)">Cotización de transporte</a></p>
+        </details>
+        <details class="history sale-details"><summary>Historial de ofertas</summary><ul data-history><% if (!history.length) { %><li class="muted" data-empty>Aún no hay ofertas.</li><% } %><% history.forEach(function (b) { %><li><span><%= b.bidder %> · <%= b.kind %></span><span><%= eur(b.amount_cents) %></span></li><% }) %></ul></details>
+        <div class="hint">Venta: <%= lot.event_name %> · <%= dateTime(lot.auction_date) %> · Vendedor de demostración verificado</div>
+      </div>
+      <section class="lot-notes"><h3>Mis notas</h3><% if(user) { %><textarea data-lot-notes="ap-notes-<%= user.id %>-<%= lot.id %>" placeholder="Agregar notas..." aria-label="Mis notas del vehículo" rows="3"></textarea><p class="hint">Guardadas en este navegador.</p><% } else { %><textarea placeholder="Agregar notas..." aria-label="Mis notas del vehículo" rows="2" disabled></textarea><p class="hint"><a href="/login?next=/lot/<%= lot.lot_number %>">Inicie sesión para guardar sus notas</a></p><% } %></section>
+    </aside>
+  </div>
+  <% if (similar.length) { %><section style="margin-top:40px"><h2 class="sec-title" style="text-align:left;font-size:22px">Vehículos similares</h2><div class="results-grid"><% similar.forEach(function (l) { %><%- include('../partials/lot-card', { l: l }) %><% }) %></div></section><% } %>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot', { scripts: ['/socket.io/socket.io.js', '/js/live.js'] }) %>

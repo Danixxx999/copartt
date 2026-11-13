@@ -1,0 +1,35 @@
+<%- include('../../partials/panel-start') %>
+<div class="m-head"><div><h1 class="m-title">Account Information</h1><p class="lead"><%= user.email %> · <%= cap(user.account_type) %> account · Member # <%= String(user.id).padStart(6, '0') %> · member since <%= date(profile.member_since) %></p></div></div>
+<div class="grid-2" style="align-items:start">
+  <section class="widget"><div class="w-hd"><h2><svg class="ic"><use href="#i-user"/></svg>Contact information</h2></div><div class="w-bd">
+    <form data-api="/api/v1/profile" data-method="PATCH" novalidate>
+      <div class="form-grid">
+        <div class="form-row"><label for="p-fn">First name</label><input id="p-fn" name="first_name" value="<%= profile.first_name %>" required></div>
+        <div class="form-row"><label for="p-ln">Last name</label><input id="p-ln" name="last_name" value="<%= profile.last_name %>" required></div>
+        <div class="form-row"><label for="p-ph">Phone (<%= profile.phone_prefix %>)</label><input id="p-ph" name="phone" value="<%= profile.phone %>" inputmode="numeric"></div>
+        <div class="form-row"><label for="p-co">Company</label><input id="p-co" name="company_name" value="<%= profile.company_name || '' %>"></div>
+        <div class="form-row"><label for="p-ad">Address</label><input id="p-ad" name="address" value="<%= profile.address %>"></div>
+        <div class="form-row"><label for="p-ci">City</label><input id="p-ci" name="city" value="<%= profile.city %>"></div>
+        <div class="form-row"><label for="p-cp">Postal code</label><input id="p-cp" name="postal_code" value="<%= profile.postal_code %>"></div>
+        <div class="form-row"><label for="p-lg">Language</label><select id="p-lg" name="language"><option value="en" <%= profile.language==='en'?'selected':'' %>>English</option><option value="es" <%= profile.language==='es'?'selected':'' %>>Español</option></select></div>
+      </div>
+      <button class="btn btn-blue" type="submit">Save</button>
+    </form>
+  </div></section>
+  <div>
+    <section class="widget"><div class="w-hd"><h2><svg class="ic"><use href="#i-lock"/></svg>Change password</h2></div><div class="w-bd">
+      <% if (impersonator) { %><div class="alert alert-warn">Password changes are disabled while an administrator is signed in as this user.</div><% } else { %>
+      <form data-api="/api/v1/auth/change-password" data-reset novalidate>
+        <div class="form-row"><label for="cp1">Current password</label><input id="cp1" name="current_password" type="password" autocomplete="current-password" required></div>
+        <div class="form-row"><label for="cp2">New password</label><input id="cp2" name="new_password" type="password" autocomplete="new-password" required><span class="hint">Min. 10 characters, letters and numbers. Stored with Argon2id.</span></div>
+        <button class="btn btn-blue" type="submit">Change password</button>
+      </form><% } %>
+    </div></section>
+    <section class="widget"><div class="w-hd"><h2><svg class="ic"><use href="#i-shield"/></svg>Security</h2></div><div class="w-bd">
+      <dl class="kv-list"><dt>Last sign-in</dt><dd><%= dateTime(profile.last_login_at) %></dd><dt>Roles</dt><dd><%= user.roles.join(', ') %></dd><dt>Verification</dt><dd><%- badge(user.verification_status) %></dd></dl>
+      <h3 style="margin:12px 0 6px;font-size:14px">Active sessions</h3>
+      <table class="tbl"><tbody><% sessions.forEach(function (s) { %><tr><td><span class="hint"><%= (s.user_agent || 'Unknown device').slice(0, 60) %></span><br><span class="hint"><%= s.ip %> · since <%= dateTime(s.created_at) %></span></td></tr><% }) %></tbody></table>
+    </div></section>
+  </div>
+</div>
+<%- include('../../partials/panel-end') %>

@@ -1,0 +1,12 @@
+<% if (typeof annBanners !== 'undefined' && annBanners && annBanners.length) { %>
+<div class="ann-stack">
+  <% annBanners.forEach(function (a) { %>
+  <div class="ann-banner ann-<%= a.style %>" role="status" data-ann="<%= a.id %>">
+    <% if (a.image_url) { %><img class="ann-img" src="<%= a.image_url %>" alt=""><% } %>
+    <div class="ann-text"><strong><%= a.title %></strong><% if (a.body) { %> <span><%= a.body %></span><% } %></div>
+    <% if (a.cta_url) { %><a class="ann-cta" href="<%= a.cta_url %>"><%= a.cta_text || t('for_details') %> ›</a><% } %>
+    <% if (a.dismissible) { %><button type="button" class="ann-x" data-ann-dismiss="<%= a.id %>" aria-label="<%= t('Cerrar') %>">✕</button><% } %>
+  </div>
+  <% }) %>
+</div>
+<% } %>

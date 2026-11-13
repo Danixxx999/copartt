@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="<%= htmlLang %>" dir="ltr" class="<%= dir === 'rtl' ? 'script-rtl' : '' %>">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><%= title ? title + ' | copart' : 'copart – Online Vehicle Auctions (academic replica)' %></title>
+<meta name="description" content="<%= description || 'Academic replica of an online vehicle auction platform. Used, salvage and repairable vehicles in 100% online auctions.' %>">
+<meta name="robots" content="noindex">
+<meta name="csrf-token" content="<%= csrfToken %>">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Red+Hat+Display:wght@500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/site.css">
+<link rel="stylesheet" href="/css/member.css">
+<link rel="stylesheet" href="/css/member-density.css?v=2">
+<link rel="stylesheet" href="/css/home-reference.css?v=3">
+<link rel="stylesheet" href="/css/session-states.css?v=4">
+<link rel="stylesheet" href="/css/portal-pages.css?v=1">
+<link rel="stylesheet" href="/css/i18n-region.css?v=2">
+<link rel="stylesheet" href="/css/finder.css?v=1">
+<link rel="stylesheet" href="/css/account.css?v=1">
+<link rel="stylesheet" href="/css/auth.css?v=1">
+</head>
+<body class="<%= typeof bodyClass !== 'undefined' ? bodyClass : '' %> <%= referenceLayout ? 'buyer-portal ' + (isMemberPortal ? 'member-portal' : 'visitor-portal') + ' theme-' + colorTheme : '' %>" data-session-state="<%= isMemberPortal?'member':'visitor' %>">
+<a class="skip-link" href="#main">Skip to content</a>
+<%- include('icons') %>

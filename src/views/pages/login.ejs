@@ -1,0 +1,27 @@
+<%- include('../partials/head', { bodyClass: 'auth-body' }) %>
+<% var seller = query.type === 'seller'; %>
+<%- include('../partials/auth-header', { authOther: ['/register', ht('Registrarse', 'Sign up')] }) %>
+<main id="main" class="auth-split">
+  <div class="auth-art" aria-hidden="true"><img src="/img/copart/demo-suv.jpg" alt=""></div>
+  <section class="auth-panel" aria-labelledby="login-h">
+    <h1 id="login-h"><%= seller ? ht('Inicio de sesión de vendedor', 'Seller sign in') : ht('Inicio de sesión de miembro', 'Member sign in') %></h1>
+    <% var socialMsg = { unavailable: ht('Ese inicio de sesión no está disponible todavía.', 'That sign-in is not available yet.'), cancelled: ht('Inicio de sesión cancelado.', 'Sign-in cancelled.'), state: ht('La sesión expiró, inténtelo de nuevo.', 'Session expired, please try again.'), error: ht('No se pudo completar el inicio de sesión. Inténtelo de nuevo.', 'Could not complete sign-in. Please try again.'), suspended: ht('Esta cuenta está suspendida.', 'This account is suspended.') }[query.social]; %>
+    <% if (socialMsg) { %><div class="alert alert-err" style="background:#3a0d10;border:1px solid #b33a42;color:#ffd0d3"><%= socialMsg %></div><% } %>
+    <% if (!seller) { %><%- include('../partials/social-login', { socialNext: next }) %><div class="auth-sep"><%= ht('o con su correo', 'or with your email') %></div><% } %>
+    <form data-api="/api/v1/auth/login" novalidate class="auth-form">
+      <input type="hidden" name="account_type" value="<%= seller ? 'seller' : 'buyer' %>">
+      <input type="hidden" name="next" value="<%= next %>">
+      <div class="form-row"><label for="email"><%= ht('Correo electrónico o número de miembro', 'Email or member number') %></label><input id="email" name="email" autocomplete="username" required autofocus></div>
+      <div class="form-row"><label for="pw"><%= t('Contraseña') %></label><div class="pw-wrap"><input id="pw" name="password" type="password" autocomplete="current-password" required><button type="button" data-toggle-pw="pw" aria-label="<%= ht('Mostrar contraseña', 'Show password') %>" aria-pressed="false"><svg class="ic"><use href="#i-eye"/></svg></button></div></div>
+      <div class="auth-row"><label class="check"><input type="checkbox" name="remember"> <span><%= ht('Recordarme', 'Remember me') %></span></label><a href="/forgot-password"><%= ht('¿Olvidó su contraseña?', 'Forgot password') %></a></div>
+      <button class="btn auth-btn" type="submit"><%= t('sign_in') %></button>
+    </form>
+    <p class="auth-foot"><% if (seller) { %><%= ht('¿Es comprador?', 'Are you a buyer?') %> <a href="/login<%= next ? '?next=' + encodeURIComponent(next) : '' %>"><%= ht('Cambiar a miembro', 'Switch to member') %></a><% } else { %><%= ht('¿No es miembro?', 'Not a member?') %> <a href="/login?type=seller<%= next ? '&next=' + encodeURIComponent(next) : '' %>"><%= ht('Cambiar a vendedor', 'Switch to seller') %></a><% } %></p>
+    <p class="auth-foot"><%= ht('¿Nuevo en copart?', 'New to copart?') %> <a href="/register"><%= ht('Cree su cuenta', 'Create your account') %></a></p>
+    <details class="auth-demo"><summary><%= ht('Cuentas de demostración (proyecto académico)', 'Demo accounts (academic project)') %></summary>
+      <p><%= ht('Contraseña de todas', 'Password for all') %>: <code>Demo2026!</code></p>
+      <ul><li>admin@copart.test — <%= ht('Dueño / administrador', 'Owner / administrator') %></li><li>premium@copart.test · basic@copart.test · guest@copart.test</li><li>vendedor@copart.test — <%= ht('Vendedor (use "Cambiar a vendedor")', 'Seller (use "Switch to seller")') %></li><li>finanzas@copart.test · logistica@copart.test</li></ul>
+    </details>
+  </section>
+</main>
+<%- include('../partials/foot') %>

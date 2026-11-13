@@ -1,0 +1,6 @@
+<%- include('../../partials/panel-start') %>
+<h1>Sellers</h1><p class="lead">Approve seller applications before they can list vehicles.</p>
+<div class="p-card"><div class="table-wrap"><table class="tbl"><thead><tr><th>Company</th><th>Type</th><th>Account</th><th class="num">Vehicles</th><th class="num">Sales</th><th>Status</th><th></th></tr></thead><tbody>
+<% rows.forEach(function (s) { %><tr><td><strong><%= s.company_name %></strong></td><td><%= s.seller_type %></td><td><a href="/admin/users/<%= s.user_id %>"><%= s.email %></a></td><td class="num"><%= s.vehicles %></td><td class="num"><%= eur(s.sales) %></td><td><%- badge(s.approved ? 'approved' : 'pending') %></td><td><% if (s.approved) { %><button class="btn btn-light btn-sm" type="button" data-api="/api/v1/admin/sellers/<%= s.id %>/approve" data-body='{"approve":false}' data-confirm="Disable this seller?">Disable</button><% } else { %><button class="btn btn-green btn-sm" type="button" data-api="/api/v1/admin/sellers/<%= s.id %>/approve" data-body='{"approve":true}'>Approve</button><% } %></td></tr><% }) %>
+</tbody></table></div></div>
+<%- include('../../partials/panel-end') %>
