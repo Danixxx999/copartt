@@ -1,4 +1,4 @@
 <%- include('../../partials/panel-start') %>
-<h1>Yards</h1><p class="lead">Stock and opening hours per yard.</p>
-<div class="grid-3"><% rows.forEach(function (y) { %><section class="p-card"><h2><%= y.name %></h2><p class="hint"><%= y.address %>, <%= y.postal_code %> <%= y.city %></p><p>Listed: <strong><%= y.listed %></strong> · Sold: <strong><%= y.sold %></strong></p><p class="hint">Office: <%= y.hours %><br>Pickup: <%= y.pickup_hours %><br><%= y.phone %> · <%= y.email %></p><a class="btn btn-light btn-sm" href="/vehicles?location=<%= y.code %>">Vehicles</a></section><% }) %></div>
+<h1>Sedes</h1><p class="lead">Stock y horarios por sede.</p>
+<div class="grid-3"><% rows.forEach(function (y) { %><section class="p-card"><h2><%= y.name %></h2><p class="hint"><%= y.address %>, <%= y.postal_code %> <%= y.city %></p><p>En venta: <strong><%= y.listed %></strong> · Vendidos: <strong><%= y.sold %></strong></p><p class="hint">Oficina: <%= y.hours %><br>Recogida: <%= y.pickup_hours %><br><%= y.phone %> · <%= y.email %></p><a class="btn btn-light btn-sm" href="/vehicles?location=<%= y.code %>">Vehículos</a></section><% }) %></div>
 <%- include('../../partials/panel-end') %>

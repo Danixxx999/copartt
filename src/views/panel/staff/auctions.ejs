@@ -1,13 +1,13 @@
 <%- include('../../partials/panel-start') %>
-<h1 style="display:flex;justify-content:space-between">Auctions &amp; lots <button class="btn btn-blue btn-sm" type="button" data-open-dialog="new-event">+ Schedule auction</button></h1>
-<p class="lead">Event status (scheduled → live → ended) is separate from each lot's status. “Start now” opens the live room and the server auctions lots one by one.</p>
-<div class="p-card"><div class="table-wrap"><table class="tbl"><thead><tr><th>Auction</th><th>Starts (Madrid)</th><th>Location</th><th class="num">Lots</th><th class="num">Sold</th><th class="num">Total</th><th>Status</th><th></th></tr></thead><tbody>
-<% rows.forEach(function (e) { %><tr><td><a href="/admin/auctions/<%= e.id %>"><strong><%= e.name %></strong></a></td><td><%= dateTime(e.starts_at) %></td><td><%= e.location_name || 'National' %></td><td class="num"><%= e.lots %></td><td class="num"><%= e.sold %></td><td class="num"><%= eur(e.total) %></td><td><%- badge(e.status) %></td>
-<td class="actions"><a class="btn btn-light btn-sm" href="/auctions/<%= e.id %>/live">Room</a><% if (e.status === 'scheduled') { %><button class="btn btn-green btn-sm" type="button" data-api="/api/v1/admin/events/<%= e.id %>/start" data-confirm="Start this auction now?">Start now</button><button class="btn btn-red btn-sm" type="button" data-api="/api/v1/admin/events/<%= e.id %>/cancel" data-confirm="Cancel this auction? Lots return to inventory.">Cancel</button><% } %></td></tr><% }) %>
+<h1 style="display:flex;justify-content:space-between">Subastas y lotes <button class="btn btn-blue btn-sm" type="button" data-open-dialog="new-event">+ Programar subasta</button></h1>
+<p class="lead">El estado del evento (programada → en vivo → finalizada) es distinto del estado de cada lote. «Iniciar ahora» abre la sala en vivo y el servidor subasta los lotes uno a uno.</p>
+<div class="p-card"><div class="table-wrap"><table class="tbl"><thead><tr><th>Subasta</th><th>Empieza (Madrid)</th><th>Ubicación</th><th class="num">Lotes</th><th class="num">Vendidos</th><th class="num">Total</th><th>Estado</th><th></th></tr></thead><tbody>
+<% rows.forEach(function (e) { %><tr><td><a href="/admin/auctions/<%= e.id %>"><strong><%= e.name %></strong></a></td><td><%= dateTime(e.starts_at) %></td><td><%= e.location_name || 'Nacional' %></td><td class="num"><%= e.lots %></td><td class="num"><%= e.sold %></td><td class="num"><%= eur(e.total) %></td><td><%- badge(e.status) %></td>
+<td class="actions"><a class="btn btn-light btn-sm" href="/auctions/<%= e.id %>/live">Sala</a><% if (e.status === 'scheduled') { %><button class="btn btn-green btn-sm" type="button" data-api="/api/v1/admin/events/<%= e.id %>/start" data-confirm="¿Iniciar esta subasta ahora?">Iniciar ahora</button><button class="btn btn-red btn-sm" type="button" data-api="/api/v1/admin/events/<%= e.id %>/cancel" data-confirm="¿Cancelar esta subasta? Los lotes vuelven al inventario.">Cancelar</button><% } %></td></tr><% }) %>
 </tbody></table></div></div>
-<dialog id="new-event"><div class="dlg"><h2>Schedule auction</h2><form data-api="/api/v1/admin/events" novalidate>
-  <div class="form-row"><label for="en">Name</label><input id="en" name="name" value="Martes en toda España" required></div>
-  <div class="form-row"><label for="es">Start (Madrid time)</label><input id="es" name="starts_at" type="datetime-local" required></div>
-  <div class="form-row"><label for="el">Location</label><select id="el" name="location_id"><option value="">National (all of Spain)</option><% locations.forEach(function (l) { %><option value="<%= l.id %>"><%= l.name %></option><% }) %></select></div>
-  <div class="dlg-actions"><button class="btn btn-light" type="button" data-close>Cancel</button><button class="btn btn-blue" type="submit">Schedule</button></div></form></div></dialog>
+<dialog id="new-event"><div class="dlg"><h2>Programar subasta</h2><form data-api="/api/v1/admin/events" novalidate>
+  <div class="form-row"><label for="en">Nombre</label><input id="en" name="name" value="Martes en toda España" required></div>
+  <div class="form-row"><label for="es">Inicio (hora de Madrid)</label><input id="es" name="starts_at" type="datetime-local" required></div>
+  <div class="form-row"><label for="el">Ubicación</label><select id="el" name="location_id"><option value="">Nacional (toda España)</option><% locations.forEach(function (l) { %><option value="<%= l.id %>"><%= l.name %></option><% }) %></select></div>
+  <div class="dlg-actions"><button class="btn btn-light" type="button" data-close>Cancelar</button><button class="btn btn-blue" type="submit">Programar</button></div></form></div></dialog>
 <%- include('../../partials/panel-end') %>

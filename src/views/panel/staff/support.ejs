@@ -1,9 +1,9 @@
 <%- include('../../partials/panel-start') %>
-<h1>Support tickets</h1><p class="lead">Messages from the contact form. Replies are sent as demo emails and in-app notifications.</p>
-<% if (!rows.length) { %><div class="empty">No tickets.</div><% } %>
+<h1>Tickets de soporte</h1><p class="lead">Mensajes del formulario de contacto. Las respuestas se envían como correos demo y notificaciones en la app.</p>
+<% if (!rows.length) { %><div class="empty">No hay tickets.</div><% } %>
 <% rows.forEach(function (t) { %><section class="p-card"><h2 style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>#<%= t.id %> · <%= t.subject %></span><span><%- badge(t.status) %></span></h2>
   <p class="hint"><%= t.name %> &lt;<%= t.email %>&gt; · <%= t.topic %> · <%= dateTime(t.created_at) %></p><p><%= t.message %></p>
-  <% if (t.response) { %><div class="alert alert-info"><strong>Reply:</strong> <%= t.response %></div><% } %>
-  <form data-api="/api/v1/admin/tickets/<%= t.id %>" data-method="PATCH" novalidate><div class="form-grid" style="grid-template-columns:2fr 1fr"><div class="form-row"><label for="r<%= t.id %>">Reply</label><textarea id="r<%= t.id %>" name="response" rows="2"></textarea></div><div class="form-row"><label for="s<%= t.id %>">Status</label><select id="s<%= t.id %>" name="status"><% ['open','in_progress','closed'].forEach(function (s) { %><option value="<%= s %>" <%= t.status === s ? 'selected' : '' %>><%= label(s) %></option><% }) %></select></div></div><button class="btn btn-blue btn-sm" type="submit">Update</button></form>
+  <% if (t.response) { %><div class="alert alert-info"><strong>Respuesta:</strong> <%= t.response %></div><% } %>
+  <form data-api="/api/v1/admin/tickets/<%= t.id %>" data-method="PATCH" novalidate><div class="form-grid" style="grid-template-columns:2fr 1fr"><div class="form-row"><label for="r<%= t.id %>">Respuesta</label><textarea id="r<%= t.id %>" name="response" rows="2"></textarea></div><div class="form-row"><label for="s<%= t.id %>">Estado</label><select id="s<%= t.id %>" name="status"><% ['open','in_progress','closed'].forEach(function (s) { %><option value="<%= s %>" <%= t.status === s ? 'selected' : '' %>><%= label(s) %></option><% }) %></select></div></div><button class="btn btn-blue btn-sm" type="submit">Actualizar</button></form>
 </section><% }) %>
 <%- include('../../partials/panel-end') %>

@@ -3,7 +3,7 @@ const {login}=require('./helpers');
 
 test('visitante → cliente → salir: cambian menú, portada y membresías',async({page})=>{
  await page.goto('/');
- await expect(page.locator('body')).toHaveClass(/visitor-portal.*theme-dark/);
+ await expect(page.locator('body')).toHaveClass(/visitor-portal.*theme-light/);
  await expect(page.locator('.portal-caption')).toHaveCount(0);
  await expect(page.locator('.hdr-nav a[href="/dashboard"]')).toHaveCount(0);
  await expect(page.locator('.hdr-right>a[href="/register"]')).toBeVisible();

@@ -1,22 +1,22 @@
 <%- include('../../partials/panel-start') %>
-<h1 style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">Roles &amp; permissions <button class="btn btn-green btn-sm" type="button" data-open-dialog="new-role"><svg class="ic"><use href="#i-plus"/></svg> New role</button></h1>
-<p class="lead">Every screen and API endpoint checks these permissions on the server. Create custom roles (for example “Yard supervisor” or “Content editor”) and assign them in Users. The Administrator role always keeps user and role management so nobody gets locked out.</p>
+<h1 style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">Roles y permisos <button class="btn btn-green btn-sm" type="button" data-open-dialog="new-role"><svg class="ic"><use href="#i-plus"/></svg> Nuevo rol</button></h1>
+<p class="lead">Cada pantalla y endpoint de la API comprueba estos permisos en el servidor. Crea roles personalizados (por ejemplo “Supervisor de sede” o “Editor de contenido”) y asígnalos en Usuarios. El rol Administrador siempre conserva la gestión de usuarios y roles para que nadie quede bloqueado.</p>
 <% roles.forEach(function (r) { %>
 <section class="p-card role-card">
   <form data-api="/api/v1/admin/roles/<%= r.id %>" data-method="PATCH" novalidate>
     <div class="role-hd">
-      <div><h2 style="margin:0"><%= r.name %> <code class="hint"><%= r.code %></code> <% if (r.is_system) { %><span class="badge badge-gray">system</span><% } else { %><span class="badge badge-blue">custom</span><% } %></h2><span class="hint"><%= r.users %> user(s) · <%= r.perms.length %> permission(s)</span></div>
-      <div class="actions"><a class="btn btn-light btn-sm" href="/admin/users?role=<%= r.code %>">See users</a><% if (!r.is_system) { %><button class="btn btn-red btn-sm" type="button" data-api="/api/v1/admin/roles/<%= r.id %>" data-method="DELETE" data-confirm="Delete role <%= r.name %>?">Delete</button><% } %></div>
+      <div><h2 style="margin:0"><%= r.name %> <code class="hint"><%= r.code %></code> <% if (r.is_system) { %><span class="badge badge-gray">sistema</span><% } else { %><span class="badge badge-blue">personalizado</span><% } %></h2><span class="hint"><%= r.users %> usuario(s) · <%= r.perms.length %> permiso(s)</span></div>
+      <div class="actions"><a class="btn btn-light btn-sm" href="/admin/users?role=<%= r.code %>">Ver usuarios</a><% if (!r.is_system) { %><button class="btn btn-red btn-sm" type="button" data-api="/api/v1/admin/roles/<%= r.id %>" data-method="DELETE" data-confirm="¿Eliminar el rol <%= r.name %>?">Eliminar</button><% } %></div>
     </div>
-    <div class="form-grid"><div class="form-row"><label for="rn<%= r.id %>">Name</label><input id="rn<%= r.id %>" name="name" value="<%= r.name %>" required></div><div class="form-row"><label for="rd<%= r.id %>">Description</label><input id="rd<%= r.id %>" name="description" value="<%= r.description %>"></div></div>
-    <div class="perm-grid"><% perms.forEach(function (p) { var locked = r.code === 'admin' && (p.code === 'users.manage' || p.code === 'roles.manage'); %><label class="check perm" title="<%= locked ? 'Always granted to Administrator' : p.description %>"><% if (locked) { %><input type="hidden" name="permissions" value="<%= p.code %>"><input type="checkbox" checked disabled><% } else { %><input type="checkbox" name="permissions" value="<%= p.code %>" data-multi <%= r.perms.includes(p.code) ? 'checked' : '' %>><% } %> <span><code><%= p.code %></code><small><%= p.description %><%= locked ? ' (locked)' : '' %></small></span></label><% }) %></div>
-    <button class="btn btn-blue" type="submit">Save <%= r.name %></button>
+    <div class="form-grid"><div class="form-row"><label for="rn<%= r.id %>">Nombre</label><input id="rn<%= r.id %>" name="name" value="<%= r.name %>" required></div><div class="form-row"><label for="rd<%= r.id %>">Descripción</label><input id="rd<%= r.id %>" name="description" value="<%= r.description %>"></div></div>
+    <div class="perm-grid"><% perms.forEach(function (p) { var locked = r.code === 'admin' && (p.code === 'users.manage' || p.code === 'roles.manage'); %><label class="check perm" title="<%= locked ? 'Siempre otorgado al Administrador' : p.description %>"><% if (locked) { %><input type="hidden" name="permissions" value="<%= p.code %>"><input type="checkbox" checked disabled><% } else { %><input type="checkbox" name="permissions" value="<%= p.code %>" data-multi <%= r.perms.includes(p.code) ? 'checked' : '' %>><% } %> <span><code><%= p.code %></code><small><%= p.description %><%= locked ? ' (bloqueado)' : '' %></small></span></label><% }) %></div>
+    <button class="btn btn-blue" type="submit">Guardar <%= r.name %></button>
   </form>
 </section>
 <% }) %>
-<dialog id="new-role"><div class="dlg dlg-wide"><h2>New role</h2><form data-api="/api/v1/admin/roles" novalidate>
-  <div class="form-grid"><div class="form-row"><label for="nr-c">Code *</label><input id="nr-c" name="code" placeholder="content_editor" required></div><div class="form-row"><label for="nr-n">Name *</label><input id="nr-n" name="name" placeholder="Content editor" required></div></div>
-  <div class="form-row"><label for="nr-d">Description</label><input id="nr-d" name="description"></div>
+<dialog id="new-role"><div class="dlg dlg-wide"><h2>Nuevo rol</h2><form data-api="/api/v1/admin/roles" novalidate>
+  <div class="form-grid"><div class="form-row"><label for="nr-c">Código *</label><input id="nr-c" name="code" placeholder="content_editor" required></div><div class="form-row"><label for="nr-n">Nombre *</label><input id="nr-n" name="name" placeholder="Editor de contenido" required></div></div>
+  <div class="form-row"><label for="nr-d">Descripción</label><input id="nr-d" name="description"></div>
   <div class="perm-grid"><% perms.forEach(function (p) { %><label class="check perm"><input type="checkbox" name="permissions" value="<%= p.code %>" data-multi> <span><code><%= p.code %></code><small><%= p.description %></small></span></label><% }) %></div>
-  <div class="dlg-actions"><button class="btn btn-light" type="button" data-close>Cancel</button><button class="btn btn-green" type="submit">Create role</button></div></form></div></dialog>
+  <div class="dlg-actions"><button class="btn btn-light" type="button" data-close>Cancelar</button><button class="btn btn-green" type="submit">Crear rol</button></div></form></div></dialog>
 <%- include('../../partials/panel-end') %>

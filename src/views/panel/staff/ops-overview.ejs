@@ -1,14 +1,14 @@
 <%- include('../../partials/panel-start') %>
-<h1>Logistics overview</h1><p class="lead">Awarded lots, pickups, transport and yard stock.</p>
+<h1>Resumen de logística</h1><p class="lead">Lotes adjudicados, recogidas, transporte y stock por sede.</p>
 <div class="kpis">
-  <a class="kpi ok" href="/ops/pickups"><div class="v"><%= k.ready %></div><div class="l">Ready for pickup</div></a>
-  <a class="kpi info" href="/ops/transport"><div class="v"><%= k.transport %></div><div class="l">Active transports</div></a>
-  <div class="kpi"><div class="v"><%= k.awaiting_payment %></div><div class="l">Awaiting payment</div></div>
-  <div class="kpi"><div class="v"><%= k.done_7d %></div><div class="l">Completed (7 days)</div></div>
+  <a class="kpi ok" href="/ops/pickups"><div class="v"><%= k.ready %></div><div class="l">Listos para recoger</div></a>
+  <a class="kpi info" href="/ops/transport"><div class="v"><%= k.transport %></div><div class="l">Transportes activos</div></a>
+  <div class="kpi"><div class="v"><%= k.awaiting_payment %></div><div class="l">Esperando pago</div></div>
+  <div class="kpi"><div class="v"><%= k.done_7d %></div><div class="l">Completados (7 días)</div></div>
 </div>
 <div class="grid-2" style="align-items:start;grid-template-columns:minmax(0,2fr) minmax(0,1fr)">
-  <section class="p-card"><h2>Awarded lots</h2><div class="table-wrap"><table class="tbl"><thead><tr><th>Order</th><th>Vehicle</th><th>Yard</th><th>Buyer</th><th>Status</th><th>PIN</th></tr></thead><tbody>
-    <% rows.forEach(function (o) { %><tr><td><%= o.order_number %><br><span class="hint">Lot #<%= o.lot_number %></span></td><td><%= o.year %> <%= o.make %> <%= o.model %></td><td><%= o.yard_code %></td><td><%= o.first_name %> <%= o.last_name %></td><td><%- badge(o.status) %></td><td><%- o.pass_status ? badge(o.pass_status) : '—' %></td></tr><% }) %></tbody></table></div></section>
-  <section class="p-card"><h2>By yard</h2><table class="tbl"><thead><tr><th>Yard</th><th class="num">Stock</th><th class="num">Ready</th></tr></thead><tbody><% byYard.forEach(function (y) { %><tr><td><%= y.name %></td><td class="num"><%= y.stock %></td><td class="num"><%= y.ready %></td></tr><% }) %></tbody></table></section>
+  <section class="p-card"><h2>Lotes adjudicados</h2><div class="table-wrap"><table class="tbl"><thead><tr><th>Pedido</th><th>Vehículo</th><th>Sede</th><th>Comprador</th><th>Estado</th><th>PIN</th></tr></thead><tbody>
+    <% rows.forEach(function (o) { %><tr><td><%= o.order_number %><br><span class="hint">Lote #<%= o.lot_number %></span></td><td><%= o.year %> <%= o.make %> <%= o.model %></td><td><%= o.yard_code %></td><td><%= o.first_name %> <%= o.last_name %></td><td><%- badge(o.status) %></td><td><%- o.pass_status ? badge(o.pass_status) : '—' %></td></tr><% }) %></tbody></table></div></section>
+  <section class="p-card"><h2>Por sede</h2><table class="tbl"><thead><tr><th>Sede</th><th class="num">Stock</th><th class="num">Listos</th></tr></thead><tbody><% byYard.forEach(function (y) { %><tr><td><%= y.name %></td><td class="num"><%= y.stock %></td><td class="num"><%= y.ready %></td></tr><% }) %></tbody></table></section>
 </div>
 <%- include('../../partials/panel-end') %>

@@ -41,7 +41,7 @@ test('suplantación: el admin entra como otro usuario, queda auditado y vuelve a
   let me = (await a.get('/api/v1/auth/me')).body;
   assert.equal(me.user.email, 'basic@copart.test');
   assert.equal(me.impersonator.email, 'admin@copart.test');
-  assert.match((await a.get('/dashboard')).body, /You are signed in as/);
+  assert.match((await a.get('/dashboard')).body, /Estás actuando como/);
   assert.equal((await a.post('/api/v1/auth/change-password', { current_password: 'x', new_password: 'OtraClave2026' })).status, 403, 'password change blocked while impersonating');
   assert.equal((await a.post(`/api/v1/admin/users/${basic.id}/impersonate`)).status, 403, 'impersonated buyer has no admin permissions');
   const stop = await a.post('/api/v1/auth/impersonation/stop');

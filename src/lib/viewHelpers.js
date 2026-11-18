@@ -48,8 +48,8 @@ async function locals(req, res, next) {
     const referenceLayout = isMemberPortal || !staffSurface;
     const selectedTheme = ['light','dark'].includes(req.query.theme) ? req.query.theme : null;
     if (selectedTheme) res.cookie('ap_theme', selectedTheme, { sameSite:'lax', path:'/', maxAge:365*86400_000 });
-    // Por defecto, el mismo aspecto que la referencia (cabecera celeste, menú gris, fondo negro). El tema claro es opcional.
-    const colorTheme = isMemberPortal ? 'dark' : selectedTheme || (['light','dark'].includes(req.cookies?.ap_theme) ? req.cookies.ap_theme : 'dark');
+    // Por defecto, el aspecto real de Copart: cabecera azul marino→royal, menú negro, botones amarillos, fondo claro. El tema oscuro es opcional.
+    const colorTheme = isMemberPortal ? 'dark' : selectedTheme || (['light','dark'].includes(req.cookies?.ap_theme) ? req.cookies.ap_theme : 'light');
     Object.assign(res.locals, { eur, date, dateTime, time, weekday, label, badge, lotTitle, km, cap, displayImage, isDemoImage, isMemberPortal, referenceLayout, colorTheme, cookieChoice: !!req.cookies?.ap_cookie_preferences, path: req.path, query: req.query, title: null, description: null });
     res.locals.qsWith = (patch) => { const p = new URLSearchParams(req.query); for (const [k, v] of Object.entries(patch)) { if (v === null || v === undefined || v === '') p.delete(k); else p.set(k, v); } return p.toString(); };
     res.locals.banner = await topBanner();

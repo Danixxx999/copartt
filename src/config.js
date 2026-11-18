@@ -10,7 +10,7 @@ const config = {
   isProd: env === 'production',
   isTest: env === 'test',
   port: Number(process.env.PORT || 3000),
-  host: process.env.HOST || '127.0.0.1',
+  host: process.env.HOST || (env === 'production' ? '0.0.0.0' : '127.0.0.1'),
   databaseUrl: env === 'test' ? (process.env.TEST_DATABASE_URL || process.env.DATABASE_URL) : process.env.DATABASE_URL,
   appSecret: process.env.APP_SECRET || 'dev-only-secret',
   uploadDir: path.resolve(ROOT, process.env.UPLOAD_DIR || './storage/uploads'),

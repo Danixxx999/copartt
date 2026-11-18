@@ -1,0 +1,36 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="page-dark" style="padding:0">
+  <section class="svc-hero">
+    <div class="wrap">
+      <span class="tag"><%= ht('Información en cada lote', 'Info on every lot') %></span>
+      <h1><%= ht('Informes de vehículo', 'Vehicle Reports') %></h1>
+      <p><%= ht('Antes de pujar, revisa el estado real del vehículo. Cada lote incluye un informe con los daños, el odómetro, el tipo de título, las fotos y una estimación de valor, para que decidas con confianza.', 'Before bidding, check the real condition of the vehicle. Every lot includes a report with damage, odometer, title type, photos and an estimated value, so you can decide with confidence.') %></p>
+      <a class="btn btn-pill" style="background:#ffbc32;color:#111" href="/vehicles"><%= ht('Ver inventario', 'View inventory') %></a>
+    </div>
+  </section>
+
+  <section class="svc-section">
+    <h2><%= ht('Qué incluye cada informe', 'What each report includes') %></h2>
+    <p class="svc-lead"><%= ht('Toda la información se muestra en la ficha del lote, sin costo adicional.', 'All the information is shown on the lot page, at no extra cost.') %></p>
+    <div class="svc-grid">
+      <div class="svc-card"><h3><%= ht('Daños y estado', 'Damage & condition') %></h3><p><%= ht('Daño principal y secundario, si arranca, estado de las llaves y una descripción del estado general.', 'Primary and secondary damage, whether it runs, key status and a description of the overall condition.') %></p></div>
+      <div class="svc-card"><h3><%= ht('Odómetro', 'Odometer') %></h3><p><%= ht('Kilometraje registrado y si la lectura es real, no verificada o excede el límite mecánico.', 'Recorded mileage and whether the reading is actual, not verified or exceeds mechanical limits.') %></p></div>
+      <div class="svc-card"><h3><%= ht('Tipo de título', 'Title type') %></h3><p><%= ht('Título limpio, de salvamento o de desguace, y la región donde se emite el documento.', 'Clean, salvage or dismantle title, and the region where the document is issued.') %></p></div>
+      <div class="svc-card"><h3><%= ht('Galería de fotos', 'Photo gallery') %></h3><p><%= ht('Múltiples fotos de alta resolución del exterior, interior, motor y zonas dañadas.', 'Multiple high-resolution photos of the exterior, interior, engine and damaged areas.') %></p></div>
+      <div class="svc-card"><h3><%= ht('Estimación de valor', 'Estimated value') %></h3><p><%= ht('Valor minorista estimado y coste total aproximado (precio + comisiones) para planear tu puja.', 'Estimated retail value and approximate total cost (price + fees) to plan your bid.') %></p></div>
+      <div class="svc-card"><h3><%= ht('Ubicación y VIN', 'Location & VIN') %></h3><p><%= ht('VIN, sede donde se encuentra, horarios de inspección y de recogida del vehículo.', 'VIN, yard where it is located, inspection hours and pickup hours.') %></p></div>
+    </div>
+  </section>
+
+  <section class="svc-section alt">
+    <h2><%= ht('Cómo leer un informe', 'How to read a report') %></h2>
+    <div class="svc-grid">
+      <div class="svc-card"><h3><span class="num">1</span><%= ht('Busca el lote', 'Find the lot') %></h3><p><%= ht('Usa el buscador o las alertas para encontrar vehículos que te interesen.', 'Use the finder or alerts to find vehicles you are interested in.') %></p></div>
+      <div class="svc-card"><h3><span class="num">2</span><%= ht('Revisa el estado', 'Review the condition') %></h3><p><%= ht('Lee el daño, el odómetro y el tipo de título; mira todas las fotos con detalle.', 'Read the damage, odometer and title type; look at every photo in detail.') %></p></div>
+      <div class="svc-card"><h3><span class="num">3</span><%= ht('Calcula el costo', 'Calculate the cost') %></h3><p><%= ht('Usa la calculadora de comisiones para estimar el total antes de pujar.', 'Use the fee calculator to estimate the total before bidding.') %> <a href="/fee-calculator"><%= ht('Abrir calculadora', 'Open calculator') %></a></p></div>
+    </div>
+  </section>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

@@ -14,6 +14,9 @@ const view = require('./lib/viewHelpers');
 function createApp() {
   const app = express();
   app.disable('x-powered-by');
+  // Detrás del proxy HTTPS del hosting: confía en la primera cabecera X-Forwarded-* para que
+  // req.secure, req.protocol (cookies seguras, URI de OAuth) y req.ip (rate limit) sean correctos.
+  if (config.isProd) app.set('trust proxy', 1);
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname, 'views'));
 

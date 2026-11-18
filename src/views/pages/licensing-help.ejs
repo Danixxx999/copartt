@@ -1,0 +1,40 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="page-dark" style="padding:0">
+  <section class="svc-hero">
+    <div class="wrap">
+      <span class="tag"><%= ht('¿Sin licencia? Sin problema', 'No license? No problem') %></span>
+      <h1><%= ht('Ayuda con licencias', 'Licensing Help') %></h1>
+      <p><%= ht('Algunos vehículos requieren una licencia comercial para pujar, según la región. Aquí te explicamos cuándo la necesitas y cómo comprar aunque no la tengas.', 'Some vehicles require a business license to bid, depending on the region. Here we explain when you need one and how to buy even if you don\'t have it.') %></p>
+      <a class="btn btn-pill" style="background:#ffbc32;color:#111" href="/brokers"><%= ht('Ver brókers', 'View brokers') %></a>
+    </div>
+  </section>
+
+  <section class="svc-section">
+    <h2><%= ht('¿Cuándo necesitas licencia?', 'When do you need a license?') %></h2>
+    <div class="svc-grid cols-2">
+      <div class="svc-card"><h3><%= ht('Lotes con restricción', 'Restricted lots') %></h3><p><%= ht('Ciertos vehículos (sobre todo de salvamento) solo pueden comprarlos compradores con licencia de concesionario o de desguace en esa región. En la ficha del lote se indica "Se requiere licencia".', 'Certain vehicles (especially salvage) can only be bought by buyers with a dealer or dismantler license in that region. The lot page shows "License required".') %></p></div>
+      <div class="svc-card"><h3><%= ht('Compra desde el extranjero', 'Buying from abroad') %></h3><p><%= ht('Si compras desde fuera del país, puede pedirse un registro o licencia comercial válida que confirme que tu negocio vende vehículos. Si no la tienes, compra a través de un bróker aprobado.', 'If you buy from outside the country, a valid business registration or license confirming your business sells vehicles may be required. If you don\'t have one, buy through an approved broker.') %></p></div>
+    </div>
+  </section>
+
+  <section class="svc-section alt">
+    <h2><%= ht('Opciones si no tienes licencia', 'Options if you have no license') %></h2>
+    <div class="svc-grid">
+      <div class="svc-card"><h3><%= ht('Vehículos sin licencia', 'No-license-required vehicles') %></h3><p><%= ht('Muchos lotes están abiertos a cualquier persona sin licencia. Filtra el inventario por "Sin licencia requerida".', 'Many lots are open to anyone without a license. Filter the inventory by "No license required".') %></p><ul><li><a href="/vehicles"><%= ht('Ver inventario', 'View inventory') %></a></li></ul></div>
+      <div class="svc-card"><h3><%= ht('Comprar con un bróker', 'Buy with a broker') %></h3><p><%= ht('Un bróker con licencia puja y compra por ti en los lotes restringidos, y gestiona el papeleo y el envío.', 'A licensed broker bids and buys for you on restricted lots, and handles paperwork and shipping.') %></p><ul><li><a href="/brokers"><%= ht('Buscar un bróker', 'Find a broker') %></a></li></ul></div>
+      <div class="svc-card"><h3><%= ht('Hazte miembro', 'Become a member') %></h3><p><%= ht('Regístrate como empresa y sube tu licencia comercial para desbloquear el acceso completo a las subastas.', 'Register as a business and upload your business license to unlock full access to auctions.') %></p><ul><li><a href="/register"><%= ht('Registrarse', 'Register') %></a></li></ul></div>
+    </div>
+  </section>
+
+  <section class="svc-section">
+    <h2><%= ht('Preguntas frecuentes', 'Frequently asked questions') %></h2>
+    <div class="svc-faq">
+      <details><summary><%= ht('¿Cómo sé si un lote requiere licencia?', 'How do I know if a lot requires a license?') %></summary><p><%= ht('La ficha del lote muestra el aviso "Se requiere licencia" cuando aplica. Si no aparece, cualquier miembro puede pujar.', 'The lot page shows the "License required" notice when it applies. If it doesn\'t appear, any member can bid.') %></p></details>
+      <details><summary><%= ht('¿Qué licencia sirve?', 'Which license works?') %></summary><p><%= ht('Normalmente una licencia de concesionario o de desguace vigente en la región del vehículo, o su equivalente en tu país.', 'Usually a current dealer or dismantler license valid in the vehicle\'s region, or its equivalent in your country.') %></p></details>
+      <details><summary><%= ht('¿El bróker necesita mi licencia?', 'Does the broker need my license?') %></summary><p><%= ht('No. El bróker usa su propia licencia para comprar en tu nombre, por eso puedes acceder a lotes restringidos sin tener la tuya.', 'No. The broker uses its own license to buy on your behalf, which is why you can access restricted lots without having yours.') %></p></details>
+    </div>
+  </section>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

@@ -1,16 +1,16 @@
 <%- include('../../partials/panel-start') %>
-<h1>Reports</h1><p class="lead">Summary and CSV exports (UTF-8, Excel compatible).</p>
+<h1>Informes</h1><p class="lead">Resumen y exportaciones CSV (UTF-8, compatible con Excel).</p>
 <div class="kpis">
-  <div class="kpi info"><div class="v"><%= summary.orders %></div><div class="l">Orders</div></div>
-  <div class="kpi ok"><div class="v"><%= eur(summary.gmv, { decimals: false }) %></div><div class="l">Gross sales</div></div>
-  <div class="kpi ok"><div class="v"><%= eur(summary.collected, { decimals: false }) %></div><div class="l">Collected (approved payments)</div></div>
-  <div class="kpi"><div class="v"><%= summary.bids %></div><div class="l">Bids</div></div>
-  <div class="kpi"><div class="v"><%= summary.sell_through === null ? '—' : summary.sell_through + '%' %></div><div class="l">Sell-through rate</div></div>
+  <div class="kpi info"><div class="v"><%= summary.orders %></div><div class="l">Pedidos</div></div>
+  <div class="kpi ok"><div class="v"><%= eur(summary.gmv, { decimals: false }) %></div><div class="l">Ventas brutas</div></div>
+  <div class="kpi ok"><div class="v"><%= eur(summary.collected, { decimals: false }) %></div><div class="l">Cobrado (pagos aprobados)</div></div>
+  <div class="kpi"><div class="v"><%= summary.bids %></div><div class="l">Pujas</div></div>
+  <div class="kpi"><div class="v"><%= summary.sell_through === null ? '—' : summary.sell_through + '%' %></div><div class="l">Tasa de venta</div></div>
 </div>
 <div class="grid-2" style="align-items:start">
-  <section class="p-card"><h2>Sales by make</h2><% var max = Math.max.apply(null, byMake.map(function (m) { return Number(m.total); }).concat([1])); %>
+  <section class="p-card"><h2>Ventas por marca</h2><% var max = Math.max.apply(null, byMake.map(function (m) { return Number(m.total); }).concat([1])); %>
     <% byMake.forEach(function (m) { %><div style="display:grid;grid-template-columns:120px 1fr 110px;gap:8px;align-items:center;margin:6px 0;font-size:13px"><span><%= m.name %></span><span style="height:14px;background:var(--blue);border-radius:3px;width:<%= Math.max(2, Number(m.total) / max * 100) %>%"></span><span class="num"><%= eur(m.total, { decimals: false }) %> (<%= m.n %>)</span></div><% }) %>
-    <% if (!byMake.length) { %><div class="empty">No sales yet.</div><% } %></section>
-  <section class="p-card"><h2>Exports</h2><table class="tbl"><tbody><% reports.forEach(function (r) { %><tr><td><%= r[1].title %></td><td><a class="btn btn-light btn-sm" href="/api/v1/reports/<%= r[0] %>.csv">Download CSV</a></td></tr><% }) %></tbody></table></section>
+    <% if (!byMake.length) { %><div class="empty">Todavía no hay ventas.</div><% } %></section>
+  <section class="p-card"><h2>Exportaciones</h2><table class="tbl"><tbody><% reports.forEach(function (r) { %><tr><td><%= r[1].title %></td><td><a class="btn btn-light btn-sm" href="/api/v1/reports/<%= r[0] %>.csv">Descargar CSV</a></td></tr><% }) %></tbody></table></section>
 </div>
 <%- include('../../partials/panel-end') %>

@@ -128,6 +128,9 @@ router.get('/transport', async (req, res) => {
   render(res, 'transport', { locations, myOrders, tracking, trackingQuery: req.query.tracking || '', events, title: 'National and International Transport' });
 });
 router.get('/sell-a-vehicle', (req, res) => render(res, 'sell-a-vehicle', { title: 'Sell a Vehicle' }));
+router.get(['/brokers', '/brokers-alliance-gateway'], (req, res) => render(res, 'brokers', { title: 'Brokers' }));
+router.get(['/vehicle-reports', '/vehicle-report'], (req, res) => render(res, 'vehicle-reports', { title: 'Vehicle Reports' }));
+router.get(['/licensing-help', '/help-with-licensing'], (req, res) => render(res, 'licensing-help', { title: 'Licensing Help' }));
 router.get('/contact', (req, res) => render(res, 'contact', { title: 'Contact Us' }));
 router.get(['/help', '/help-center'], (req, res) => render(res, 'help', { title: 'Help Center' }));
 router.get('/how-to-buy', async (req, res) => render(res, 'how-to-buy', { fee: await settings.get('buyer_fee'), adminFee: await settings.get('admin_fee_cents'), title: 'How to Buy' }));

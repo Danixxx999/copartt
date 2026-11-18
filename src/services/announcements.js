@@ -35,12 +35,11 @@ async function activeFor(user, { bannerOnly = false } = {}) {
 async function push(client, announcement) {
   const q = client || db;
   const roleFilter = { buyers: "r.code='buyer'", sellers: "r.code='seller'", staff: "r.code IN ('admin','finance','ops')" }[announcement.audience];
-  const planFilter = ['guest', 'basic', 'premium'].includes(announcement.audience)
-    ? "u.id IN (SELECT s.user_id FROM subscriptions s JOIN membership_plans mp ON mp.id=s.plan_id WHERE s.status='active' AND mp.code=$2)" : null;
-  let sql = 'SELECT DISTINCT u.id FROM users u', params = [announcement.title];
-  if (roleFilter) sql += ` JOIN user_roles ur ON ur.user_id=u.id JOIN roles r ON r.id=ur.role_id WHERE u.status='active' AND ${roleFilter}`;
-  else if (planFilter) { sql += ` WHERE u.status='active' AND ${planFilter}`; params.push(announcement.audience); }
-  else sql += " WHERE u.status='active'";
+  const isPlan = ['guest', 'basic', 'premium'].includes(announcement.audience);
+  let sql, params = [];
+  if (roleFilter) sql = `SELECT DISTINCT u.id FROM users u JOIN user_roles ur ON ur.user_id=u.id JOIN roles r ON r.id=ur.role_id WHERE u.status='active' AND ${roleFilter}`;
+  else if (isPlan) { sql = "SELECT u.id FROM users u WHERE u.status='active' AND u.id IN (SELECT s.user_id FROM subscriptions s JOIN membership_plans mp ON mp.id=s.plan_id WHERE s.status='active' AND mp.code=$1)"; params = [announcement.audience]; }
+  else sql = "SELECT u.id FROM users u WHERE u.status='active'";
   const targets = await q.many(sql, params);
   const link = announcement.cta_url || '/dashboard/notifications';
   for (const t of targets) await q.query('INSERT INTO notifications(user_id, title, body, link) VALUES ($1,$2,$3,$4)', [t.id, announcement.title, announcement.body, link]);

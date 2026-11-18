@@ -62,6 +62,10 @@ const E = [
   ['post', '/admin/vehicles/{id}/documents', 'Owner', 'Subir documento del vehículo', true], ['post', '/admin/vehicles/{id}/featured', 'Owner', 'Destacar en la home', true, { featured: 'boolean' }],
   ['post', '/admin/pages', 'Content', 'Crear página CMS (/page/slug)', true], ['delete', '/admin/pages/{slug}', 'Content', 'Borrar página (no legales)', true],
   ['post', '/admin/banners', 'Content', 'Crear banner (top / home)', true], ['delete', '/admin/banners/{id}', 'Content', 'Borrar banner', true],
+  ['post', '/admin/announcements', 'Announcements', 'Crear anuncio/publicidad (audiencia, estilo, banner/buzón)', true, { title: 'string', body: 'string', style: 'info|promo|alert|success', audience: 'all|buyers|sellers|guest|basic|premium|staff', placement: 'banner|feed|both', push_now: 'boolean' }],
+  ['patch', '/admin/announcements/{id}', 'Announcements', 'Editar anuncio', true], ['delete', '/admin/announcements/{id}', 'Announcements', 'Borrar anuncio', true],
+  ['post', '/admin/announcements/{id}/push', 'Announcements', 'Enviar al buzón de notificaciones de la audiencia', true],
+  ['post', '/announcements/{id}/dismiss', 'Announcements', 'El miembro cierra un banner de anuncio', true],
 ];
 const spec = {
   openapi: '3.1.0',

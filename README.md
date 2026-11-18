@@ -36,6 +36,22 @@ docker compose up --build      # http://localhost:3000
 
 **Con Node 22+ y un PostgreSQL propio:** copia `.env.example` a `.env`, ajusta `DATABASE_URL`, y ejecuta `npm install && npm run setup && npm start`.
 
+### Subir a un hosting con dominio (producción)
+
+1. **Base de datos**: crea un PostgreSQL (el del hosting o uno gestionado) y copia su cadena en `DATABASE_URL`.
+2. **Variables de entorno** en el panel del hosting (no subas el `.env` al repositorio):
+   - `NODE_ENV=production`
+   - `APP_SECRET=` una cadena aleatoria de **32+ caracteres** (p. ej. `openssl rand -hex 32`).
+   - `DATABASE_URL=postgres://usuario:clave@host:5432/basedatos`
+   - `PORT` lo suele fijar el hosting; si no, `3000`. En PaaS se escucha en `0.0.0.0` automáticamente.
+   - Opcionales: claves de pago (`/admin/payments`) y de login social (`/admin/social-login`), y `OAUTH_BASE_URL=https://tu-dominio` si usas Google/Microsoft.
+3. **Arranque**: `npm ci --omit=dev && npm start`. Al iniciar, el servidor **aplica las migraciones** y **asegura los datos base** (roles, permisos, planes, ajustes) automáticamente; no hay que ejecutar nada más.
+   - Para cargar también datos de demostración (usuarios y vehículos de ejemplo), ejecuta una vez `npm run seed`.
+4. **HTTPS**: ponlo detrás del proxy del hosting (lo normal). En producción la app confía en `X-Forwarded-Proto` (`trust proxy`), así las cookies de sesión viajan como *Secure* y las URLs de OAuth salen en `https`.
+5. **Salud**: el endpoint `GET /health` responde `{"ok":true}` para los chequeos del hosting.
+
+**Con Docker en un servidor** (incluye su propio PostgreSQL): `docker compose up -d --build`. Para producción real, edita `docker-compose.yml` y pon `NODE_ENV: production` y un `APP_SECRET` propio.
+
 ## 3. Cuentas de demostración
 
 Contraseña de todas: **`Demo2026!`** (variable `DEMO_PASSWORD` del `.env`).

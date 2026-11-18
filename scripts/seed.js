@@ -29,7 +29,8 @@ function madrid(date, hour, minute = 0) {
 }
 function nextWeekday(dow, hour, skip = 0) { // dow: 0=dom..6=sáb
   const now = new Date(); const d = new Date(now);
-  for (let i = 0; i < 14; i++) { d.setUTCDate(now.getUTCDate() + i); const t = madrid(d, hour); if (t.getUTCDay() === dow && t > now) { if (skip-- <= 0) return t; } }
+  // Hasta 28 días para cubrir siempre la 2ª/3ª ocurrencia aunque hoy sea ese mismo día.
+  for (let i = 0; i < 28; i++) { d.setUTCDate(now.getUTCDate() + i); const t = madrid(d, hour); if (t.getUTCDay() === dow && t > now) { if (skip-- <= 0) return t; } }
   throw new Error('no date');
 }
 
@@ -233,7 +234,7 @@ async function seedDemo() {
   const { matchLot } = require('../src/services/alerts');
 
   const U = {};
-  U.admin = await createUser({ email: 'admin@copart.test', first: 'Ana', last: 'Administradora', roles: ['admin'] });
+  U.admin = await createUser({ email: 'admin@copart.test', first: 'Lucas', last: 'Botero', roles: ['admin'] });
   U.finance = await createUser({ email: 'finanzas@copart.test', first: 'Fernando', last: 'Finanzas', roles: ['finance'] });
   U.ops = await createUser({ email: 'logistica@copart.test', first: 'Lucía', last: 'Logística', roles: ['ops'] });
   U.seller = await createUser({ email: 'vendedor@copart.test', first: 'Sergio', last: 'Seguros', roles: ['seller'], accountType: 'business', company: 'Aseguradora Ficticia S.A.' });

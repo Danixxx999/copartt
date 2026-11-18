@@ -4562,6 +4562,284 @@
           }
         ]
       }
+    },
+    "/admin/announcements": {
+      "post": {
+        "tags": [
+          "Announcements"
+        ],
+        "summary": "Crear anuncio/publicidad (audiencia, estilo, banner/buzón)",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "string"
+                  },
+                  "body": {
+                    "type": "string",
+                    "description": "string"
+                  },
+                  "style": {
+                    "type": "string",
+                    "description": "info|promo|alert|success"
+                  },
+                  "audience": {
+                    "type": "string",
+                    "description": "all|buyers|sellers|guest|basic|premium|staff"
+                  },
+                  "placement": {
+                    "type": "string",
+                    "description": "banner|feed|both"
+                  },
+                  "push_now": {
+                    "type": "string",
+                    "description": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/announcements/{id}": {
+      "patch": {
+        "tags": [
+          "Announcements"
+        ],
+        "summary": "Editar anuncio",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Announcements"
+        ],
+        "summary": "Borrar anuncio",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/admin/announcements/{id}/push": {
+      "post": {
+        "tags": [
+          "Announcements"
+        ],
+        "summary": "Enviar al buzón de notificaciones de la audiencia",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
+    },
+    "/announcements/{id}/dismiss": {
+      "post": {
+        "tags": [
+          "Announcements"
+        ],
+        "summary": "El miembro cierra un banner de anuncio",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Validación",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          },
+          "403": {
+            "description": "Sin permiso (RBAC) o CSRF"
+          },
+          "404": {
+            "description": "No encontrado"
+          },
+          "409": {
+            "description": "Regla de negocio"
+          }
+        },
+        "security": [
+          {
+            "session": [],
+            "csrf": []
+          }
+        ]
+      }
     }
   }
 }

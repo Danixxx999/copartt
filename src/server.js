@@ -9,6 +9,10 @@ const db = require('./db');
 
 async function start({ port = config.port, host = config.host, runEngine = true } = {}) {
   await migrate({ quiet: true });
+  // Datos base imprescindibles (roles, permisos, planes, ajustes, páginas). Idempotente: no pisa
+  // los cambios del propietario. Garantiza que una instancia recién desplegada funcione sin más pasos.
+  try { await require('../scripts/seed').upsertReference(); }
+  catch (e) { console.error('[seed] no se pudieron asegurar los datos base:', e.message); }
   const app = createApp();
   const server = http.createServer(app);
   const io = realtime.attach(server);

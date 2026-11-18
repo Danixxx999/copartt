@@ -1,33 +1,33 @@
 <%- include('../../partials/panel-start') %>
-<h1 style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">Users <span class="actions"><a class="btn btn-light btn-sm" href="/api/v1/reports/users.csv">Export CSV</a><% if (user.has('roles.manage')) { %><a class="btn btn-light btn-sm" href="/admin/roles">Roles &amp; permissions</a><% } %><button class="btn btn-green btn-sm" type="button" data-open-dialog="new-user"><svg class="ic"><use href="#i-plus"/></svg> New user</button></span></h1>
-<p class="lead">Create accounts of any type, change roles and memberships, verify documents, reset passwords or sign in as a user to see exactly what they see.</p>
+<h1 style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">Usuarios <span class="actions"><a class="btn btn-light btn-sm" href="/api/v1/reports/users.csv">Exportar CSV</a><% if (user.has('roles.manage')) { %><a class="btn btn-light btn-sm" href="/admin/roles">Roles y permisos</a><% } %><button class="btn btn-green btn-sm" type="button" data-open-dialog="new-user"><svg class="ic"><use href="#i-plus"/></svg> Nuevo usuario</button></span></h1>
+<p class="lead">Cree cuentas de cualquier tipo, cambie roles y membresías, verifique documentos, restablezca contraseñas o entre como un usuario para ver exactamente lo que ve.</p>
 <div class="kpis">
-  <div class="kpi info"><div class="v"><%= counts.total %></div><div class="l">Total users</div></div>
-  <div class="kpi ok"><div class="v"><%= counts.online %></div><div class="l">With an active session</div></div>
-  <div class="kpi"><div class="v"><%= counts.new_7d %></div><div class="l">New in 7 days</div></div>
-  <a class="kpi <%= counts.pending_docs ? 'warn' : '' %>" href="/admin/documents"><div class="v"><%= counts.pending_docs %></div><div class="l">Documents to review</div></a>
-  <div class="kpi <%= counts.suspended ? 'warn' : '' %>"><div class="v"><%= counts.suspended %></div><div class="l">Suspended</div></div>
+  <div class="kpi info"><div class="v"><%= counts.total %></div><div class="l">Usuarios totales</div></div>
+  <div class="kpi ok"><div class="v"><%= counts.online %></div><div class="l">Con sesión activa</div></div>
+  <div class="kpi"><div class="v"><%= counts.new_7d %></div><div class="l">Nuevos (7 días)</div></div>
+  <a class="kpi <%= counts.pending_docs ? 'warn' : '' %>" href="/admin/documents"><div class="v"><%= counts.pending_docs %></div><div class="l">Documentos por revisar</div></a>
+  <div class="kpi <%= counts.suspended ? 'warn' : '' %>"><div class="v"><%= counts.suspended %></div><div class="l">Suspendidos</div></div>
 </div>
-<form class="filters-bar" method="get"><label class="sr-only" for="uq">Search</label><input id="uq" name="q" value="<%= q %>" placeholder="Email, name, company" style="max-width:280px"><label class="sr-only" for="ur">Role</label><select id="ur" name="role" style="max-width:200px"><option value="">All roles</option><% roles.forEach(function (r) { %><option value="<%= r.code %>" <%= role === r.code ? 'selected' : '' %>><%= r.name %></option><% }) %></select><button class="btn btn-blue btn-sm" type="submit">Filter</button><span class="hint"><%= total %> users</span></form>
-<div class="p-card"><div class="table-wrap"><table class="tbl"><thead><tr><th>ID</th><th>User</th><th>Type</th><th>Roles</th><th>Plan</th><th>Verification</th><th>Status</th><th>Last login</th><th></th></tr></thead><tbody>
+<form class="filters-bar" method="get"><label class="sr-only" for="uq">Buscar</label><input id="uq" name="q" value="<%= q %>" placeholder="Correo, nombre, empresa" style="max-width:280px"><label class="sr-only" for="ur">Rol</label><select id="ur" name="role" style="max-width:200px"><option value="">Todos los roles</option><% roles.forEach(function (r) { %><option value="<%= r.code %>" <%= role === r.code ? 'selected' : '' %>><%= r.name %></option><% }) %></select><button class="btn btn-blue btn-sm" type="submit">Filtrar</button><span class="hint"><%= total %> usuarios</span></form>
+<div class="p-card"><div class="table-wrap"><table class="tbl"><thead><tr><th>ID</th><th>Usuario</th><th>Tipo</th><th>Roles</th><th>Plan</th><th>Verificación</th><th>Estado</th><th>Último acceso</th><th></th></tr></thead><tbody>
 <% rows.forEach(function (u) { var isAdm = String(u.roles || '').split(', ').indexOf('admin') >= 0; %><tr><td><%= u.id %></td><td><strong><%= u.first_name %> <%= u.last_name %></strong><br><span class="hint"><%= u.email %><%= u.company_name ? ' · ' + u.company_name : '' %></span></td><td><%= u.account_type %></td><td><%= u.roles %></td><td><%= u.plan || '—' %></td><td><%- badge(u.verification_status) %></td><td><%- badge(u.status) %></td><td class="hint"><%= u.last_login_at ? dateTime(u.last_login_at) : '—' %></td>
-  <td class="actions"><a class="btn btn-light btn-sm" href="/admin/users/<%= u.id %>">Manage</a><% if (user.has('users.impersonate') && u.id !== user.id && !isAdm && u.status === 'active' && !impersonator) { %><button class="btn btn-blue btn-sm" type="button" data-api="/api/v1/admin/users/<%= u.id %>/impersonate" data-confirm="Sign in as <%= u.email %>? You will see the site exactly as this user. This is recorded in the audit log." title="Sign in as this user"><svg class="ic"><use href="#i-login"/></svg> Sign in as</button><% } %></td></tr><% }) %>
+  <td class="actions"><a class="btn btn-light btn-sm" href="/admin/users/<%= u.id %>">Gestionar</a><% if (user.has('users.impersonate') && u.id !== user.id && !isAdm && u.status === 'active' && !impersonator) { %><button class="btn btn-blue btn-sm" type="button" data-api="/api/v1/admin/users/<%= u.id %>/impersonate" data-confirm="¿Entrar como <%= u.email %>? Verá el sitio exactamente como este usuario. Queda registrado en la auditoría." title="Entrar como este usuario"><svg class="ic"><use href="#i-login"/></svg> Entrar como</button><% } %></td></tr><% }) %>
 </tbody></table></div>
 <% if (pages > 1) { %><nav class="pager"><% for (var i = 1; i <= pages; i++) { %><% if (i === page) { %><span class="on"><%= i %></span><% } else { %><a href="?<%= qsWith({ page: i }) %>"><%= i %></a><% } %><% } %></nav><% } %></div>
-<dialog id="new-user"><div class="dlg dlg-wide"><h2>New user</h2><form data-api="/api/v1/admin/users" novalidate>
+<dialog id="new-user"><div class="dlg dlg-wide"><h2>Nuevo usuario</h2><form data-api="/api/v1/admin/users" novalidate>
   <div class="form-grid">
-    <div class="form-row"><label for="nu-fn">First name *</label><input id="nu-fn" name="first_name" required></div>
-    <div class="form-row"><label for="nu-ln">Last name *</label><input id="nu-ln" name="last_name" required></div>
-    <div class="form-row"><label for="nu-em">Email *</label><input id="nu-em" name="email" type="email" required></div>
-    <div class="form-row"><label for="nu-pw">Temporary password * (min. 10)</label><input id="nu-pw" name="password" type="text" minlength="10" required value="" placeholder="e.g. Bienvenido2026!"></div>
-    <div class="form-row"><label for="nu-ph">Phone</label><input id="nu-ph" name="phone" inputmode="numeric" placeholder="600123456"></div>
-    <div class="form-row"><label for="nu-ci">City</label><input id="nu-ci" name="city"></div>
-    <div class="form-row"><label for="nu-at">Account type</label><select id="nu-at" name="account_type"><option value="individual">Individual</option><option value="business">Business</option></select></div>
-    <div class="form-row"><label for="nu-co">Company</label><input id="nu-co" name="company_name"></div>
-    <div class="form-row"><label for="nu-pl">Membership (buyers)</label><select id="nu-pl" name="plan"><option value="none">None</option><option value="guest">Guest</option><option value="basic">Basic</option><option value="premium" selected>Premium</option></select></div>
-    <div class="form-row"><label for="nu-vs">Verification</label><select id="nu-vs" name="verification_status"><option value="approved">Approved (can bid)</option><option value="pending">Pending review</option><option value="unverified">Not verified</option></select></div>
+    <div class="form-row"><label for="nu-fn">Nombre *</label><input id="nu-fn" name="first_name" required></div>
+    <div class="form-row"><label for="nu-ln">Apellidos *</label><input id="nu-ln" name="last_name" required></div>
+    <div class="form-row"><label for="nu-em">Correo *</label><input id="nu-em" name="email" type="email" required></div>
+    <div class="form-row"><label for="nu-pw">Contraseña temporal * (mín. 10)</label><input id="nu-pw" name="password" type="text" minlength="10" required value="" placeholder="ej. Bienvenido2026!"></div>
+    <div class="form-row"><label for="nu-ph">Teléfono</label><input id="nu-ph" name="phone" inputmode="numeric" placeholder="600123456"></div>
+    <div class="form-row"><label for="nu-ci">Ciudad</label><input id="nu-ci" name="city"></div>
+    <div class="form-row"><label for="nu-at">Tipo de cuenta</label><select id="nu-at" name="account_type"><option value="individual">Particular</option><option value="business">Empresa</option></select></div>
+    <div class="form-row"><label for="nu-co">Empresa</label><input id="nu-co" name="company_name"></div>
+    <div class="form-row"><label for="nu-pl">Membresía (compradores)</label><select id="nu-pl" name="plan"><option value="none">Ninguna</option><option value="guest">Guest</option><option value="basic">Basic</option><option value="premium" selected>Premium</option></select></div>
+    <div class="form-row"><label for="nu-vs">Verificación</label><select id="nu-vs" name="verification_status"><option value="approved">Aprobada (puede pujar)</option><option value="pending">Pendiente de revisión</option><option value="unverified">Sin verificar</option></select></div>
   </div>
-  <fieldset class="role-pick"><legend class="lbl">Roles *</legend><div class="actions"><% roles.forEach(function (r) { %><label class="check"><input type="checkbox" name="roles" value="<%= r.code %>" data-multi <%= r.code === 'buyer' ? 'checked' : '' %>> <%= r.name %></label><% }) %></div><span class="hint">Seller role creates an approved seller account with the company name. A user can have several roles.</span></fieldset>
-  <label class="check" style="margin:8px 0 4px"><input type="checkbox" name="notify_user" checked> Send a welcome email (Demo mailbox)</label>
-  <div class="dlg-actions"><button class="btn btn-light" type="button" data-close>Cancel</button><button class="btn btn-green" type="submit">Create user</button></div></form></div></dialog>
+  <fieldset class="role-pick"><legend class="lbl">Roles *</legend><div class="actions"><% roles.forEach(function (r) { %><label class="check"><input type="checkbox" name="roles" value="<%= r.code %>" data-multi <%= r.code === 'buyer' ? 'checked' : '' %>> <%= r.name %></label><% }) %></div><span class="hint">El rol Vendedor crea una cuenta de vendedor aprobada con el nombre de la empresa. Un usuario puede tener varios roles.</span></fieldset>
+  <label class="check" style="margin:8px 0 4px"><input type="checkbox" name="notify_user" checked> Enviar un correo de bienvenida (Buzón de prueba)</label>
+  <div class="dlg-actions"><button class="btn btn-light" type="button" data-close>Cancelar</button><button class="btn btn-green" type="submit">Crear usuario</button></div></form></div></dialog>
 <%- include('../../partials/panel-end') %>

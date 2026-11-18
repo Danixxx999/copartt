@@ -18,7 +18,7 @@
   </div></section>
   <div>
     <section class="widget"><div class="w-hd"><h2><svg class="ic"><use href="#i-lock"/></svg>Change password</h2></div><div class="w-bd">
-      <% if (impersonator) { %><div class="alert alert-warn">Password changes are disabled while an administrator is signed in as this user.</div><% } else { %>
+      <% if (impersonator) { %><div class="alert alert-warn">El cambio de contraseña está deshabilitado mientras un administrador actúa como este usuario.</div><% } else { %>
       <form data-api="/api/v1/auth/change-password" data-reset novalidate>
         <div class="form-row"><label for="cp1">Current password</label><input id="cp1" name="current_password" type="password" autocomplete="current-password" required></div>
         <div class="form-row"><label for="cp2">New password</label><input id="cp2" name="new_password" type="password" autocomplete="new-password" required><span class="hint">Min. 10 characters, letters and numbers. Stored with Argon2id.</span></div>

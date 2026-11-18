@@ -1,5 +1,5 @@
 <%- include('../../partials/panel-start') %>
-<h1>Demo mailbox</h1><p class="lead">Emails the system would send (welcome, alerts, password reset, invoices, ticket replies). Nothing leaves this server.</p>
-<% if (!rows.length) { %><div class="empty">No emails yet.</div><% } %>
+<h1>Buzón demo</h1><p class="lead">Correos que el sistema enviaría (bienvenida, alertas, restablecer contraseña, facturas, respuestas a tickets). Nada sale de este servidor.</p>
+<% if (!rows.length) { %><div class="empty">Todavía no hay correos.</div><% } %>
 <% rows.forEach(function (m) { %><details class="p-card" style="padding:12px 16px"><summary style="cursor:pointer"><strong><%= m.subject %></strong> <span class="hint">→ <%= m.to_email %> · <%= dateTime(m.created_at) %></span></summary><pre style="white-space:pre-wrap;font-family:inherit;margin:10px 0 0"><%= m.body %></pre></details><% }) %>
 <%- include('../../partials/panel-end') %>

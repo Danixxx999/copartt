@@ -1,72 +1,72 @@
 <%- include('../../partials/panel-start') %>
-<p class="hint"><a href="/admin/users">← Users</a></p>
+<p class="hint"><a href="/admin/users">← Usuarios</a></p>
 <div class="u-head">
   <span class="mn-avatar mn-avatar-lg" aria-hidden="true"><%= (u.first_name || '?').charAt(0) %><%= (u.last_name || '').charAt(0) %></span>
   <div style="flex:1;min-width:220px"><h1 style="margin:0"><%= u.name %> <span class="hint">#<%= u.id %></span> <%- badge(u.status) %></h1>
-    <p class="lead" style="margin:2px 0 0"><%= u.email %> · <%= u.account_type %><%= u.company_name ? ' · ' + u.company_name : '' %> · registered <%= date(u.created_at) %> · last login <%= extra.last_login_at ? dateTime(extra.last_login_at) : 'never' %></p>
-    <p class="hint" style="margin:4px 0 0">Roles: <strong><%= u.roles.join(', ') || '—' %></strong> · Plan: <strong><%= u.plan ? u.plan.name : 'none' %></strong> · <%= bids.n %> bids · <%= orders.length %> purchases · <%= extra.watch %> watched<%= extra.vehicles ? ' · ' + extra.vehicles + ' vehicles listed' : '' %></p></div>
+    <p class="lead" style="margin:2px 0 0"><%= u.email %> · <%= u.account_type %><%= u.company_name ? ' · ' + u.company_name : '' %> · registrado <%= date(u.created_at) %> · último acceso <%= extra.last_login_at ? dateTime(extra.last_login_at) : 'nunca' %></p>
+    <p class="hint" style="margin:4px 0 0">Roles: <strong><%= u.roles.join(', ') || '—' %></strong> · Plan: <strong><%= u.plan ? u.plan.name : 'ninguno' %></strong> · <%= bids.n %> pujas · <%= orders.length %> compras · <%= extra.watch %> favoritos<%= extra.vehicles ? ' · ' + extra.vehicles + ' vehículos publicados' : '' %></p></div>
   <div class="actions">
-    <% if (user.has('users.impersonate') && u.id !== user.id && !u.roles.includes('admin') && u.status === 'active' && !impersonator) { %><button class="btn btn-blue" type="button" data-api="/api/v1/admin/users/<%= u.id %>/impersonate" data-confirm="Sign in as <%= u.email %>? You will see and act as this user until you press 'Return to my account'. Recorded in the audit log."><svg class="ic"><use href="#i-login"/></svg> Sign in as this user</button><% } %>
-    <button class="btn btn-light" type="button" data-open-dialog="msg-dlg"><svg class="ic"><use href="#i-mail"/></svg> Send message</button>
+    <% if (user.has('users.impersonate') && u.id !== user.id && !u.roles.includes('admin') && u.status === 'active' && !impersonator) { %><button class="btn btn-blue" type="button" data-api="/api/v1/admin/users/<%= u.id %>/impersonate" data-confirm="¿Entrar como <%= u.email %>? Verá y actuará como este usuario hasta que pulse «Volver a mi cuenta». Queda registrado en la auditoría."><svg class="ic"><use href="#i-login"/></svg> Entrar como este usuario</button><% } %>
+    <button class="btn btn-light" type="button" data-open-dialog="msg-dlg"><svg class="ic"><use href="#i-mail"/></svg> Enviar mensaje</button>
   </div>
 </div>
 
 <div class="grid-2" style="align-items:start">
-  <section class="p-card"><h2>Account, roles &amp; membership</h2>
-    <form data-api="/api/v1/admin/users/<%= u.id %>" data-method="PATCH" data-confirm="Save changes to this user? This action is audited." novalidate>
+  <section class="p-card"><h2>Cuenta, roles y membresía</h2>
+    <form data-api="/api/v1/admin/users/<%= u.id %>" data-method="PATCH" data-confirm="¿Guardar los cambios de este usuario? Esta acción queda auditada." novalidate>
       <div class="form-grid">
-        <div class="form-row"><label for="us">Status</label><select id="us" name="status"><option value="active" <%= u.status==='active'?'selected':'' %>>Active</option><option value="suspended" <%= u.status==='suspended'?'selected':'' %>>Suspended (cannot sign in)</option></select></div>
-        <div class="form-row"><label for="uv">Verification</label><select id="uv" name="verification_status"><% ['unverified','pending','approved','rejected'].forEach(function (s) { %><option value="<%= s %>" <%= u.verification_status===s?'selected':'' %>><%= label(s) %></option><% }) %></select></div>
-        <div class="form-row"><label for="up">Membership</label><select id="up" name="plan"><option value="none">None</option><% ['guest','basic','premium'].forEach(function (p) { %><option value="<%= p %>" <%= u.plan && u.plan.code===p ? 'selected' : '' %>><%= cap(p) %></option><% }) %></select></div>
+        <div class="form-row"><label for="us">Estado</label><select id="us" name="status"><option value="active" <%= u.status==='active'?'selected':'' %>>Activo</option><option value="suspended" <%= u.status==='suspended'?'selected':'' %>>Suspendido (no puede entrar)</option></select></div>
+        <div class="form-row"><label for="uv">Verificación</label><select id="uv" name="verification_status"><% ['unverified','pending','approved','rejected'].forEach(function (s) { %><option value="<%= s %>" <%= u.verification_status===s?'selected':'' %>><%= label(s) %></option><% }) %></select></div>
+        <div class="form-row"><label for="up">Membresía</label><select id="up" name="plan"><option value="none">Ninguna</option><% ['guest','basic','premium'].forEach(function (p) { %><option value="<%= p %>" <%= u.plan && u.plan.code===p ? 'selected' : '' %>><%= cap(p) %></option><% }) %></select></div>
       </div>
-      <fieldset class="role-pick"><legend class="lbl">Roles</legend><div class="actions"><% roles.forEach(function (r) { %><label class="check" title="<%= r.description %>"><input type="checkbox" name="roles" value="<%= r.code %>" data-multi <%= u.roles.includes(r.code) ? 'checked' : '' %>> <%= r.name %><%= r.is_system ? '' : ' (custom)' %></label><% }) %></div></fieldset>
-      <button class="btn btn-blue" type="submit">Save</button>
+      <fieldset class="role-pick"><legend class="lbl">Roles</legend><div class="actions"><% roles.forEach(function (r) { %><label class="check" title="<%= r.description %>"><input type="checkbox" name="roles" value="<%= r.code %>" data-multi <%= u.roles.includes(r.code) ? 'checked' : '' %>> <%= r.name %><%= r.is_system ? '' : ' (personalizado)' %></label><% }) %></div></fieldset>
+      <button class="btn btn-blue" type="submit">Guardar</button>
     </form>
-    <h3 style="margin-top:16px;font-size:14px">Effective permissions</h3><p class="hint"><%= u.permissions.join(' · ') || 'none' %></p>
+    <h3 style="margin-top:16px;font-size:14px">Permisos efectivos</h3><p class="hint"><%= u.permissions.join(' · ') || 'ninguno' %></p>
   </section>
-  <section class="p-card"><h2>Personal &amp; company data</h2>
+  <section class="p-card"><h2>Datos personales y de empresa</h2>
     <form data-api="/api/v1/admin/users/<%= u.id %>/profile" data-method="PATCH" novalidate>
       <div class="form-grid">
-        <div class="form-row"><label for="pf-fn">First name</label><input id="pf-fn" name="first_name" value="<%= u.first_name %>" required></div>
-        <div class="form-row"><label for="pf-ln">Last name</label><input id="pf-ln" name="last_name" value="<%= u.last_name %>" required></div>
-        <div class="form-row"><label for="pf-em">Email (sign-in)</label><input id="pf-em" name="email" type="email" value="<%= u.email %>" required></div>
-        <div class="form-row"><label for="pf-at">Account type</label><select id="pf-at" name="account_type"><option value="individual" <%= u.account_type==='individual'?'selected':'' %>>Individual</option><option value="business" <%= u.account_type==='business'?'selected':'' %>>Business</option></select></div>
-        <div class="form-row"><label for="pf-pp">Phone prefix</label><input id="pf-pp" name="phone_prefix" value="<%= extra.phone_prefix %>"></div>
-        <div class="form-row"><label for="pf-ph">Phone</label><input id="pf-ph" name="phone" value="<%= extra.phone %>" inputmode="numeric"></div>
-        <div class="form-row"><label for="pf-co">Company</label><input id="pf-co" name="company_name" value="<%= u.company_name || '' %>"></div>
-        <div class="form-row"><label for="pf-tx">Tax ID</label><input id="pf-tx" name="tax_id" value="<%= extra.tax_id || '' %>"></div>
-        <div class="form-row"><label for="pf-ad">Address</label><input id="pf-ad" name="address" value="<%= extra.address %>"></div>
-        <div class="form-row"><label for="pf-ci">City</label><input id="pf-ci" name="city" value="<%= extra.city %>"></div>
-        <div class="form-row"><label for="pf-cp">Postal code</label><input id="pf-cp" name="postal_code" value="<%= extra.postal_code %>"></div>
-        <div class="form-row"><label for="pf-lg">Language</label><select id="pf-lg" name="language"><option value="en" <%= extra.language==='en'?'selected':'' %>>English</option><option value="es" <%= extra.language==='es'?'selected':'' %>>Español</option></select></div>
+        <div class="form-row"><label for="pf-fn">Nombre</label><input id="pf-fn" name="first_name" value="<%= u.first_name %>" required></div>
+        <div class="form-row"><label for="pf-ln">Apellidos</label><input id="pf-ln" name="last_name" value="<%= u.last_name %>" required></div>
+        <div class="form-row"><label for="pf-em">Correo (acceso)</label><input id="pf-em" name="email" type="email" value="<%= u.email %>" required></div>
+        <div class="form-row"><label for="pf-at">Tipo de cuenta</label><select id="pf-at" name="account_type"><option value="individual" <%= u.account_type==='individual'?'selected':'' %>>Particular</option><option value="business" <%= u.account_type==='business'?'selected':'' %>>Empresa</option></select></div>
+        <div class="form-row"><label for="pf-pp">Prefijo</label><input id="pf-pp" name="phone_prefix" value="<%= extra.phone_prefix %>"></div>
+        <div class="form-row"><label for="pf-ph">Teléfono</label><input id="pf-ph" name="phone" value="<%= extra.phone %>" inputmode="numeric"></div>
+        <div class="form-row"><label for="pf-co">Empresa</label><input id="pf-co" name="company_name" value="<%= u.company_name || '' %>"></div>
+        <div class="form-row"><label for="pf-tx">NIF / CIF</label><input id="pf-tx" name="tax_id" value="<%= extra.tax_id || '' %>"></div>
+        <div class="form-row"><label for="pf-ad">Dirección</label><input id="pf-ad" name="address" value="<%= extra.address %>"></div>
+        <div class="form-row"><label for="pf-ci">Ciudad</label><input id="pf-ci" name="city" value="<%= extra.city %>"></div>
+        <div class="form-row"><label for="pf-cp">Código postal</label><input id="pf-cp" name="postal_code" value="<%= extra.postal_code %>"></div>
+        <div class="form-row"><label for="pf-lg">Idioma</label><select id="pf-lg" name="language"><option value="en" <%= extra.language==='en'?'selected':'' %>>English</option><option value="es" <%= extra.language==='es'?'selected':'' %>>Español</option></select></div>
       </div>
-      <button class="btn btn-blue" type="submit">Save data</button>
+      <button class="btn btn-blue" type="submit">Guardar datos</button>
     </form>
   </section>
 </div>
 
 <div class="grid-2" style="align-items:start">
-  <section class="p-card"><h2>Password &amp; sessions</h2>
-    <form data-api="/api/v1/admin/users/<%= u.id %>/password" data-confirm="Set a new password for <%= u.email %>?" data-reset novalidate>
-      <div class="form-row"><label for="np">New password (min. 10)</label><input id="np" name="password" type="text" minlength="10" required autocomplete="off"></div>
-      <label class="check" style="margin-bottom:10px"><input type="checkbox" name="revoke_sessions" checked> Sign the user out of all devices</label>
-      <button class="btn btn-blue" type="submit">Set password</button>
+  <section class="p-card"><h2>Contraseña y sesiones</h2>
+    <form data-api="/api/v1/admin/users/<%= u.id %>/password" data-confirm="¿Fijar una nueva contraseña para <%= u.email %>?" data-reset novalidate>
+      <div class="form-row"><label for="np">Nueva contraseña (mín. 10)</label><input id="np" name="password" type="text" minlength="10" required autocomplete="off"></div>
+      <label class="check" style="margin-bottom:10px"><input type="checkbox" name="revoke_sessions" checked> Cerrar la sesión del usuario en todos los dispositivos</label>
+      <button class="btn btn-blue" type="submit">Fijar contraseña</button>
     </form>
-    <h3 style="margin-top:18px;font-size:14px">Active sessions (<%= sessions.length %>)</h3>
-    <% if (!sessions.length) { %><p class="hint">No active sessions.</p><% } else { %><table class="tbl"><tbody><% sessions.forEach(function (s) { %><tr><td><span class="hint"><%= (s.user_agent || 'Unknown device').slice(0, 70) %></span><br><span class="hint"><%= s.ip %> · since <%= dateTime(s.created_at) %><%= s.impersonator_id ? ' · opened by an administrator' : '' %></span></td></tr><% }) %></tbody></table>
-    <% if (u.id !== user.id) { %><button class="btn btn-light btn-sm" style="margin-top:10px" type="button" data-api="/api/v1/admin/users/<%= u.id %>/sessions/revoke" data-confirm="Close all sessions of this user?">Sign out everywhere</button><% } %><% } %>
+    <h3 style="margin-top:18px;font-size:14px">Sesiones activas (<%= sessions.length %>)</h3>
+    <% if (!sessions.length) { %><p class="hint">Sin sesiones activas.</p><% } else { %><table class="tbl"><tbody><% sessions.forEach(function (s) { %><tr><td><span class="hint"><%= (s.user_agent || 'Dispositivo desconocido').slice(0, 70) %></span><br><span class="hint"><%= s.ip %> · desde <%= dateTime(s.created_at) %><%= s.impersonator_id ? ' · abierta por un administrador' : '' %></span></td></tr><% }) %></tbody></table>
+    <% if (u.id !== user.id) { %><button class="btn btn-light btn-sm" style="margin-top:10px" type="button" data-api="/api/v1/admin/users/<%= u.id %>/sessions/revoke" data-confirm="¿Cerrar todas las sesiones de este usuario?">Cerrar en todas partes</button><% } %><% } %>
   </section>
-  <section class="p-card"><h2>Documents</h2><% if (!docs.length) { %><div class="empty">No documents.</div><% } else { %><table class="tbl"><tbody><% docs.forEach(function (d) { %><tr><td><%= d.doc_type.replace(/_/g,' ') %><br><span class="hint"><%= d.original_name %></span></td><td><%- badge(d.status) %></td><td class="actions"><a href="/files/verification/<%= d.id %>" target="_blank" rel="noopener">View</a><% if (d.status === 'pending') { %><button class="btn btn-green btn-sm" type="button" data-api="/api/v1/admin/documents/<%= d.id %>/review" data-body='{"approve":true}'>Approve</button><button class="btn btn-red btn-sm" type="button" data-api="/api/v1/admin/documents/<%= d.id %>/review" data-body='{"approve":false}' data-prompt="Reason for rejection:">Reject</button><% } %></td></tr><% }) %></tbody></table><% } %></section>
+  <section class="p-card"><h2>Documentos</h2><% if (!docs.length) { %><div class="empty">Sin documentos.</div><% } else { %><table class="tbl"><tbody><% docs.forEach(function (d) { %><tr><td><%= d.doc_type.replace(/_/g,' ') %><br><span class="hint"><%= d.original_name %></span></td><td><%- badge(d.status) %></td><td class="actions"><a href="/files/verification/<%= d.id %>" target="_blank" rel="noopener">Ver</a><% if (d.status === 'pending') { %><button class="btn btn-green btn-sm" type="button" data-api="/api/v1/admin/documents/<%= d.id %>/review" data-body='{"approve":true}'>Aprobar</button><button class="btn btn-red btn-sm" type="button" data-api="/api/v1/admin/documents/<%= d.id %>/review" data-body='{"approve":false}' data-prompt="Motivo del rechazo:">Rechazar</button><% } %></td></tr><% }) %></tbody></table><% } %></section>
 </div>
 <div class="grid-2" style="align-items:start">
-  <section class="p-card"><h2>Purchases &amp; invoices</h2><% if (!orders.length && !invoices.length) { %><div class="empty">None.</div><% } else { %><table class="tbl"><tbody><% orders.forEach(function (o) { %><tr><td><%= o.order_number %></td><td>Lot <a href="/lot/<%= o.lot_number %>">#<%= o.lot_number %></a></td><td class="num"><%= eur(o.hammer_cents) %></td><td><%- badge(o.status) %></td></tr><% }) %><% invoices.forEach(function (i) { %><tr><td><a href="/dashboard/invoices/<%= i.id %>.pdf" target="_blank" rel="noopener"><%= i.invoice_number %></a></td><td><%= i.kind %></td><td class="num"><%= eur(i.total_cents) %></td><td><%- badge(i.status) %></td></tr><% }) %></tbody></table><% } %></section>
-  <section class="p-card"><h2>Recent bids</h2><% if (!recentBids.length) { %><div class="empty">No bids.</div><% } else { %><table class="tbl"><tbody><% recentBids.forEach(function (b) { %><tr><td class="hint"><%= dateTime(b.created_at) %></td><td>Lot <a href="/lot/<%= b.lot_number %>">#<%= b.lot_number %></a></td><td><%= b.kind %></td><td class="num"><%= eur(b.amount_cents) %></td><td><%- badge(b.lot_status) %></td></tr><% }) %></tbody></table><% } %></section>
+  <section class="p-card"><h2>Compras y facturas</h2><% if (!orders.length && !invoices.length) { %><div class="empty">Ninguna.</div><% } else { %><table class="tbl"><tbody><% orders.forEach(function (o) { %><tr><td><%= o.order_number %></td><td>Lote <a href="/lot/<%= o.lot_number %>">#<%= o.lot_number %></a></td><td class="num"><%= eur(o.hammer_cents) %></td><td><%- badge(o.status) %></td></tr><% }) %><% invoices.forEach(function (i) { %><tr><td><a href="/dashboard/invoices/<%= i.id %>.pdf" target="_blank" rel="noopener"><%= i.invoice_number %></a></td><td><%= i.kind %></td><td class="num"><%= eur(i.total_cents) %></td><td><%- badge(i.status) %></td></tr><% }) %></tbody></table><% } %></section>
+  <section class="p-card"><h2>Pujas recientes</h2><% if (!recentBids.length) { %><div class="empty">Sin pujas.</div><% } else { %><table class="tbl"><tbody><% recentBids.forEach(function (b) { %><tr><td class="hint"><%= dateTime(b.created_at) %></td><td>Lote <a href="/lot/<%= b.lot_number %>">#<%= b.lot_number %></a></td><td><%= b.kind %></td><td class="num"><%= eur(b.amount_cents) %></td><td><%- badge(b.lot_status) %></td></tr><% }) %></tbody></table><% } %></section>
 </div>
-<section class="p-card"><h2>Audit trail</h2><table class="tbl"><tbody><% log.forEach(function (a) { %><tr><td class="hint"><%= dateTime(a.created_at) %></td><td><code><%= a.action %></code></td><td><%= a.entity %> #<%= a.entity_id %></td><td class="hint"><%= a.actor_email || 'system' %></td></tr><% }) %></tbody></table></section>
-<% if (u.id !== user.id) { %><section class="p-card danger-zone"><h2>Danger zone</h2><p class="hint">Deleting is only possible for accounts without bids, purchases, invoices or vehicles. Otherwise suspend the account to keep the history.</p><button class="btn btn-red" type="button" data-api="/api/v1/admin/users/<%= u.id %>" data-method="DELETE" data-confirm="Permanently delete <%= u.email %>? This cannot be undone.">Delete user</button></section><% } %>
-<dialog id="msg-dlg"><div class="dlg"><h2>Message to <%= u.first_name %></h2><form data-api="/api/v1/admin/users/<%= u.id %>/message" data-reset novalidate>
-  <div class="form-row"><label for="m-t">Subject</label><input id="m-t" name="title" required></div>
-  <div class="form-row"><label for="m-b">Message</label><textarea id="m-b" name="body" rows="5" required></textarea></div>
-  <label class="check" style="margin-bottom:10px"><input type="checkbox" name="send_email" checked> Also send by email (Demo mailbox)</label>
-  <div class="dlg-actions"><button class="btn btn-light" type="button" data-close>Cancel</button><button class="btn btn-blue" type="submit">Send</button></div></form></div></dialog>
+<section class="p-card"><h2>Rastro de auditoría</h2><table class="tbl"><tbody><% log.forEach(function (a) { %><tr><td class="hint"><%= dateTime(a.created_at) %></td><td><code><%= a.action %></code></td><td><%= a.entity %> #<%= a.entity_id %></td><td class="hint"><%= a.actor_email || 'sistema' %></td></tr><% }) %></tbody></table></section>
+<% if (u.id !== user.id) { %><section class="p-card danger-zone"><h2>Zona de peligro</h2><p class="hint">Solo se puede borrar una cuenta sin pujas, compras, facturas ni vehículos. Si los tiene, suspéndala para conservar el historial.</p><button class="btn btn-red" type="button" data-api="/api/v1/admin/users/<%= u.id %>" data-method="DELETE" data-confirm="¿Borrar permanentemente a <%= u.email %>? No se puede deshacer.">Borrar usuario</button></section><% } %>
+<dialog id="msg-dlg"><div class="dlg"><h2>Mensaje a <%= u.first_name %></h2><form data-api="/api/v1/admin/users/<%= u.id %>/message" data-reset novalidate>
+  <div class="form-row"><label for="m-t">Asunto</label><input id="m-t" name="title" required></div>
+  <div class="form-row"><label for="m-b">Mensaje</label><textarea id="m-b" name="body" rows="5" required></textarea></div>
+  <label class="check" style="margin-bottom:10px"><input type="checkbox" name="send_email" checked> Enviar también por correo (Buzón de prueba)</label>
+  <div class="dlg-actions"><button class="btn btn-light" type="button" data-close>Cancelar</button><button class="btn btn-blue" type="submit">Enviar</button></div></form></div></dialog>
 <%- include('../../partials/panel-end') %>

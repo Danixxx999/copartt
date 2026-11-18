@@ -1,0 +1,45 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="page-dark" style="padding:0">
+  <section class="svc-hero">
+    <div class="wrap">
+      <span class="tag"><%= ht('Con la confianza de miles de compradores', 'Trusted by 1M+ buyers worldwide') %></span>
+      <h1><%= ht('¿No puedes pujar? Un bróker te ayuda', 'Not able to bid? Brokers can assist') %></h1>
+      <p><%= ht('Los brókers son profesionales con licencia independientes que te ayudan a comprar vehículos en zonas que exigen una licencia comercial, para que puedas pujar y comprar en cualquier región y enviar el vehículo a donde necesites.', 'Brokers are independent licensed professionals who help you buy vehicles in areas that require a business license, so you can bid, buy and ship anywhere.') %></p>
+      <a class="btn btn-pill" style="background:#ffbc32;color:#111" href="/register"><%= ht('Empezar', 'Get started') %></a>
+    </div>
+  </section>
+
+  <section class="svc-section">
+    <h2><%= ht('¿Por qué usar un bróker?', 'Why use a broker?') %></h2>
+    <p class="svc-lead"><%= ht('Algunos lotes requieren una licencia profesional para pujar según la región. Si no la tienes, un bróker autorizado puja y compra por ti, y además gestiona papeleo, inspección y envío.', 'Some lots require a professional license to bid depending on the region. If you don\'t have one, an approved broker bids and buys for you and also handles paperwork, inspection and shipping.') %></p>
+    <div class="svc-grid">
+      <div class="svc-card"><h3><span class="num">1</span><%= ht('Antes de pujar', 'Before you bid') %></h3><ul><li><%= ht('Registro y cumplimiento sencillos: el bróker configura la membresía y la licencia.', 'Easy registration & compliance: the broker sets up membership and licensing.') %></li><li><%= ht('Acceso a subastas restringidas que exigen licencia comercial.', 'Access to restricted auctions that require a business license.') %></li><li><%= ht('Asesoría experta y búsqueda del vehículo adecuado.', 'Expert guidance and vehicle search.') %></li></ul></div>
+      <div class="svc-card"><h3><span class="num">2</span><%= ht('Durante la puja', 'During bidding') %></h3><ul><li><%= ht('Acceso al inventario completo, incluso a subastas no abiertas al público.', 'Access to the full inventory, including auctions not open to the public.') %></li><li><%= ht('Puja tú mismo desde su plataforma o deja que pujen por ti.', 'Bid yourself from their platform or have them bid for you.') %></li><li><%= ht('Soporte en tiempo real: precios, estrategia y actualizaciones.', 'Real-time support: pricing, strategy and updates.') %></li></ul></div>
+      <div class="svc-card"><h3><span class="num">3</span><%= ht('Después de ganar', 'After you win') %></h3><ul><li><%= ht('Gestión de títulos, aduanas y documentos de exportación.', 'Title, customs and export document handling.') %></li><li><%= ht('Transporte nacional e internacional y despacho de aduana.', 'Domestic and international shipping and customs clearance.') %></li><li><%= ht('Seguimiento del envío y un contacto local dedicado.', 'Shipment tracking and a dedicated local contact.') %></li></ul></div>
+    </div>
+  </section>
+
+  <section class="svc-section alt">
+    <h2><%= ht('Tipos de bróker', 'Types of broker') %></h2>
+    <p class="svc-lead"><%= ht('Elige según dónde estés y a dónde quieras enviar el vehículo.', 'Choose based on where you are and where you want to ship the vehicle.') %></p>
+    <div class="svc-note"><%= ht('Nota académica: los brókers y pasarelas que se listan abajo son ejemplos ficticios de un proyecto universitario. No representan empresas reales.', 'Academic note: the brokers and gateways listed below are fictional examples from a university project. They do not represent real companies.') %></div>
+    <div class="svc-grid">
+      <div class="svc-card"><h3><%= ht('Brókers nacionales', 'Domestic brokers') %></h3><p><%= ht('Para comprar dentro del país en regiones que exigen licencia de concesionario. Gestionan la inscripción, el cumplimiento y la entrega local.', 'For buying within the country in regions that require a dealer license. They handle registration, compliance and local delivery.') %></p><ul><li>AutoBid Partners — Demo, SP</li><li>Mercado Veloz — Demo, MD</li><li>Vía Subasta — Demo, VC</li></ul></div>
+      <div class="svc-card"><h3><%= ht('Brókers internacionales', 'Non-domestic brokers') %></h3><p><%= ht('Especializados en operaciones transfronterizas: compra, envío internacional, despacho de aduana y documentación de exportación.', 'Specialized in cross-border deals: purchase, international shipping, customs clearance and export documentation.') %></p><ul><li>Global Motors Demo — <%= ht('Exporta a 20+ países','Exports to 20+ countries') %></li><li>TransMundo Demo</li><li>EuroImport Demo</li></ul></div>
+      <div class="svc-card"><h3><%= ht('Pasarelas aliadas', 'Alliance gateways') %></h3><p><%= ht('Oficinas locales que combinan acceso a pujas, logística y soporte presencial para simplificar toda la compra.', 'Local offices that combine bidding access, logistics and in-person support to simplify the whole purchase.') %></p><ul><li>Gateway Demo — Bogotá</li><li>Gateway Demo — Ciudad de México</li><li>Gateway Demo — Madrid</li></ul></div>
+    </div>
+  </section>
+
+  <section class="svc-section">
+    <h2><%= ht('Preguntas frecuentes', 'Frequently asked questions') %></h2>
+    <div class="svc-faq">
+      <details><summary><%= ht('¿Necesito un bróker para cada compra?', 'Do I need a broker for every purchase?') %></summary><p><%= ht('No. Solo lo necesitas si el lote está en una región que exige licencia y tú no la tienes. En los demás casos puedes pujar directamente como miembro.', 'No. You only need one if the lot is in a region that requires a license and you don\'t have it. Otherwise you can bid directly as a member.') %></p></details>
+      <details><summary><%= ht('¿Cómo elijo qué bróker usar?', 'How do I choose which broker to use?') %></summary><p><%= ht('Compara los servicios que ofrece (inspección, envío, aduana), sus comisiones y las regiones a las que llega. Revisa siempre sus términos antes de empezar.', 'Compare the services they offer (inspection, shipping, customs), their fees and the regions they reach. Always review their terms before starting.') %></p></details>
+      <details><summary><%= ht('¿Qué comisiones cobra un bróker?', 'What fees do brokers charge?') %></summary><p><%= ht('Cada bróker fija sus propias comisiones, independientes de las de la plataforma. Pídelas por escrito antes de pujar.', 'Each broker sets its own fees, independent from the platform\'s. Ask for them in writing before bidding.') %></p></details>
+      <details><summary><%= ht('¿El bróker es parte de la plataforma?', 'Is the broker part of the platform?') %></summary><p><%= ht('No. Los brókers son empresas independientes. Al usarlos, compras el vehículo a través de ellos, no de la plataforma.', 'No. Brokers are independent businesses. When using them, you buy the vehicle through them, not through the platform.') %></p></details>
+    </div>
+  </section>
+</main>
+<%- include('../partials/footer') %>
+<%- include('../partials/foot') %>

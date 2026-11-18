@@ -35,7 +35,7 @@ test('vendedor crea borrador; admin y finanzas/logística acceden a sus paneles'
   await expect(page).toHaveURL(/\/seller\/vehicles\/\d+\/edit/);
   await expect(page.getByText('Photos (0/12)')).toBeVisible();
 
-  for (const [email, url, heading] of [['admin@copart.test', '/admin', /Hola, Ana|Hello, Ana/], ['finanzas@copart.test', '/finance', 'Payments queue'], ['logistica@copart.test', '/ops', 'Logistics overview']]) {
+  for (const [email, url, heading] of [['admin@copart.test', '/admin', /Hola, Lucas|Hello, Lucas/], ['finanzas@copart.test', '/finance', 'Cola de pagos'], ['logistica@copart.test', '/ops', 'Resumen de logística']]) {
     const ctx = await browser.newContext(); const p = await ctx.newPage();
     await login(p, email); await p.goto(url);
     await expect(p.getByRole('heading', { name: heading })).toBeVisible();

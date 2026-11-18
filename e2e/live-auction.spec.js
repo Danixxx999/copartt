@@ -7,10 +7,10 @@ test('sala en vivo: 2 navegadores, puja en tiempo real, un único líder', async
   await login(admin, 'admin@copart.test');
   await admin.goto('/admin/auctions');
   const row = admin.locator('tr', { hasText: 'Sala demo' }).first();
-  const roomHref = await row.locator('a', { hasText: 'Room' }).getAttribute('href');
-  if (await row.getByRole('button', { name: 'Start now' }).count()) {
+  const roomHref = await row.getByRole('link', { name: 'Sala', exact: true }).getAttribute('href');
+  if (await row.getByRole('button', { name: 'Iniciar ahora' }).count()) {
     admin.once('dialog', d => d.accept());
-    await row.getByRole('button', { name: 'Start now' }).click();
+    await row.getByRole('button', { name: 'Iniciar ahora' }).click();
     await admin.waitForURL(/\/live$/);
   }
 

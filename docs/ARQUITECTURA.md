@@ -152,4 +152,4 @@ Varios nodos: `@socket.io/redis-adapter` para difundir eventos entre instancias;
 | E2E | `e2e/*.spec.js` | Visitante (desktop + móvil 390px), guest, premium, vendedor, paneles de staff, **2 navegadores en la sala en vivo**, propietario entra como comprador y vuelve |
 | Idioma y región | `tests/i18n.test.js` | Los 6 idiomas en menú y tablero, cookie persistente, árabe, filtro por país en resultados/sedes, `?country=all`, API |
 | Mi cuenta y pagos | `tests/account.test.js` | 13 páginas de cuenta, teléfono/direcciones/correo/contraseña, solo tarjetas de prueba (rechazo de tarjetas reales y Luhn), número nunca guardado, depósito, rechazo, reembolso por Finanzas, títulos por región, preferencias, cerrar otras sesiones, admin de pasarelas sin mostrar claves |
-| Humo | `scripts/crawl.js` | 147 páginas con cada rol, idioma y región |
+| Humo | `scripts/crawl.js` | 150 páginas con cada rol, idioma y región |

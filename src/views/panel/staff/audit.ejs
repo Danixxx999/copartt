@@ -1,8 +1,8 @@
 <%- include('../../partials/panel-start') %>
-<h1>Audit log</h1><p class="lead">Every sensitive action: logins, bids, approvals, payments, PIN validations, settings.</p>
-<form class="filters-bar" method="get"><label class="sr-only" for="aq">Filter</label><input id="aq" name="q" value="<%= q %>" placeholder="action, entity or email" style="max-width:300px"><button class="btn btn-blue btn-sm" type="submit">Filter</button></form>
-<div class="p-card"><div class="table-wrap"><table class="tbl"><thead><tr><th>Time</th><th>Actor</th><th>Action</th><th>Entity</th><th>Data</th><th>IP</th></tr></thead><tbody>
-<% rows.forEach(function (a) { %><tr><td class="hint nowrap"><%= dateTime(a.created_at) %></td><td><%= a.email || 'system' %></td><td><code><%= a.action %></code></td><td><%= a.entity %> #<%= a.entity_id || '—' %></td><td><code style="font-size:11px"><%= JSON.stringify(a.data).slice(0, 120) %></code></td><td class="hint"><%= a.ip || '' %></td></tr><% }) %>
+<h1>Registro de auditoría</h1><p class="lead">Toda acción sensible: inicios de sesión, pujas, aprobaciones, pagos, validaciones de PIN y ajustes.</p>
+<form class="filters-bar" method="get"><label class="sr-only" for="aq">Filtrar</label><input id="aq" name="q" value="<%= q %>" placeholder="acción, entidad o email" style="max-width:300px"><button class="btn btn-blue btn-sm" type="submit">Filtrar</button></form>
+<div class="p-card"><div class="table-wrap"><table class="tbl"><thead><tr><th>Hora</th><th>Actor</th><th>Acción</th><th>Entidad</th><th>Datos</th><th>IP</th></tr></thead><tbody>
+<% rows.forEach(function (a) { %><tr><td class="hint nowrap"><%= dateTime(a.created_at) %></td><td><%= a.email || 'sistema' %></td><td><code><%= a.action %></code></td><td><%= a.entity %> #<%= a.entity_id || '—' %></td><td><code style="font-size:11px"><%= JSON.stringify(a.data).slice(0, 120) %></code></td><td class="hint"><%= a.ip || '' %></td></tr><% }) %>
 </tbody></table></div>
-<nav class="pager"><% if (page > 1) { %><a href="?<%= qsWith({ page: page - 1 }) %>">‹ Newer</a><% } %><span class="on"><%= page %></span><% if (rows.length === 50) { %><a href="?<%= qsWith({ page: page + 1 }) %>">Older ›</a><% } %></nav></div>
+<nav class="pager"><% if (page > 1) { %><a href="?<%= qsWith({ page: page - 1 }) %>">‹ Más recientes</a><% } %><span class="on"><%= page %></span><% if (rows.length === 50) { %><a href="?<%= qsWith({ page: page + 1 }) %>">Más antiguos ›</a><% } %></nav></div>
 <%- include('../../partials/panel-end') %>

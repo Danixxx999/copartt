@@ -1,10 +1,10 @@
 <%- include('../../partials/panel-start') %>
-<h1>Pickup validation</h1><p class="lead">Ask the buyer for the order number and the 6-digit PIN shown in their dashboard. You never see the PIN in the system; it is checked against a hash. 5 failed attempts revoke the pass.</p>
-<section class="p-card" style="max-width:560px;border-left:4px solid var(--green)"><h2>Validate PIN</h2>
+<h1>Validación de recogida</h1><p class="lead">Pide al comprador el número de pedido y el PIN de 6 dígitos que aparece en su panel. El sistema nunca te muestra el PIN; se comprueba contra un hash. Con 5 intentos fallidos el pase se revoca.</p>
+<section class="p-card" style="max-width:560px;border-left:4px solid var(--green)"><h2>Validar PIN</h2>
   <form data-api="/api/v1/pickup-passes/validate" data-reset novalidate>
-    <div class="form-grid"><div class="form-row"><label for="on">Order number</label><input id="on" name="order_number" placeholder="SO-2026-…" required></div><div class="form-row"><label for="pin">PIN</label><input id="pin" name="pin" inputmode="numeric" maxlength="6" autocomplete="off" required style="letter-spacing:.3em;font-size:18px"></div></div>
-    <button class="btn btn-green" type="submit">Validate and release vehicle</button>
+    <div class="form-grid"><div class="form-row"><label for="on">Número de pedido</label><input id="on" name="order_number" placeholder="SO-2026-…" required></div><div class="form-row"><label for="pin">PIN</label><input id="pin" name="pin" inputmode="numeric" maxlength="6" autocomplete="off" required style="letter-spacing:.3em;font-size:18px"></div></div>
+    <button class="btn btn-green" type="submit">Validar y entregar vehículo</button>
   </form></section>
-<section class="p-card"><h2>Ready for pickup &amp; recent pickups</h2><% if (!rows.length) { %><div class="empty">Nothing ready.</div><% } else { %><div class="table-wrap"><table class="tbl"><thead><tr><th>Order</th><th>Vehicle</th><th>Yard</th><th>Buyer</th><th>Order status</th><th>Pass</th><th class="num">Failed attempts</th></tr></thead><tbody>
+<section class="p-card"><h2>Listos para recoger y recogidas recientes</h2><% if (!rows.length) { %><div class="empty">Nada listo.</div><% } else { %><div class="table-wrap"><table class="tbl"><thead><tr><th>Pedido</th><th>Vehículo</th><th>Sede</th><th>Comprador</th><th>Estado del pedido</th><th>Pase</th><th class="num">Intentos fallidos</th></tr></thead><tbody>
   <% rows.forEach(function (o) { %><tr><td><strong><%= o.order_number %></strong></td><td><%= o.year %> <%= o.make %> <%= o.model %> · #<%= o.lot_number %></td><td><%= o.yard %></td><td><%= o.first_name %> <%= o.last_name %></td><td><%- badge(o.status) %></td><td><%- o.pass_status ? badge(o.pass_status) : '—' %></td><td class="num"><%= o.failed_attempts || 0 %></td></tr><% }) %></tbody></table></div><% } %></section>
 <%- include('../../partials/panel-end') %>

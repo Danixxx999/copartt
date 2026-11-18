@@ -1,31 +1,31 @@
 <%- include('../../partials/panel-start') %>
-<p class="hint"><a href="/admin/vehicles">← Vehicles</a></p>
-<h1 style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><span><%= v.year %> <%= v.make %> <%= v.model %> <%= v.trim %> <%- badge(v.status) %></span><% if (v.status !== 'sold') { %><a class="btn btn-blue btn-sm" href="/admin/vehicles/<%= v.id %>/edit"><svg class="ic"><use href="#i-edit"/></svg> Edit data &amp; photos</a><% } %></h1>
+<p class="hint"><a href="/admin/vehicles">← Vehículos</a></p>
+<h1 style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><span><%= v.year %> <%= v.make %> <%= v.model %> <%= v.trim %> <%- badge(v.status) %></span><% if (v.status !== 'sold') { %><a class="btn btn-blue btn-sm" href="/admin/vehicles/<%= v.id %>/edit"><svg class="ic"><use href="#i-edit"/></svg> Editar datos y fotos</a><% } %></h1>
 <p class="lead">#<%= v.id %> · VIN <code><%= v.vin %></code> · <%= v.company_name %> · <%= v.location_name %></p>
 <div class="grid-2" style="align-items:start">
   <div>
-    <section class="p-card"><h2>Photos</h2><div class="img-grid"><% images.forEach(function (im) { %><figure><img src="<%= im.path %>" alt=""></figure><% }) %></div><% if (!images.length) { %><div class="empty">No photos.</div><% } %></section>
-    <section class="p-card"><h2>Data</h2><table class="tbl"><tbody>
-      <tr><td>Type</td><td><%= v.type_name %></td></tr><tr><td>Condition</td><td><%= cap(v.condition) %></td></tr><tr><td>Damage</td><td><%= v.damage1 %><%= v.damage2 ? ' / ' + v.damage2 : '' %></td></tr><tr><td>Odometer</td><td><%= km(v.odometer_km) %></td></tr><tr><td>Fuel / transmission</td><td><%= cap(v.fuel) %> / <%= cap(v.transmission) %></td></tr><tr><td>Keys / runs</td><td><%= v.has_keys ? 'Yes' : 'No' %> / <%= v.runs_drives ? 'Yes' : 'No' %></td></tr><tr><td>Document</td><td><%= v.document_type %></td></tr><tr><td>Est. value</td><td><%= eur(v.estimated_value_cents) %></td></tr><tr><td>Description</td><td><%= v.description %></td></tr>
+    <section class="p-card"><h2>Fotos</h2><div class="img-grid"><% images.forEach(function (im) { %><figure><img src="<%= im.path %>" alt=""></figure><% }) %></div><% if (!images.length) { %><div class="empty">Sin fotos.</div><% } %></section>
+    <section class="p-card"><h2>Datos</h2><table class="tbl"><tbody>
+      <tr><td>Tipo</td><td><%= v.type_name %></td></tr><tr><td>Condición</td><td><%= cap(v.condition) %></td></tr><tr><td>Daños</td><td><%= v.damage1 %><%= v.damage2 ? ' / ' + v.damage2 : '' %></td></tr><tr><td>Odómetro</td><td><%= km(v.odometer_km) %></td></tr><tr><td>Combustible / transmisión</td><td><%= cap(v.fuel) %> / <%= cap(v.transmission) %></td></tr><tr><td>Llaves / arranca</td><td><%= v.has_keys ? 'Sí' : 'No' %> / <%= v.runs_drives ? 'Sí' : 'No' %></td></tr><tr><td>Documento</td><td><%= v.document_type %></td></tr><tr><td>Valor estimado</td><td><%= eur(v.estimated_value_cents) %></td></tr><tr><td>Descripción</td><td><%= v.description %></td></tr>
     </tbody></table>
-    <h3 style="margin-top:12px">Documents</h3><% if (!docs.length) { %><p class="hint">None uploaded.</p><% } %><ul><% docs.forEach(function (d) { %><li><a href="/files/vehicle-doc/<%= d.id %>" target="_blank" rel="noopener"><%= d.doc_type %> – <%= d.original_name %></a></li><% }) %></ul></section>
+    <h3 style="margin-top:12px">Documentos</h3><% if (!docs.length) { %><p class="hint">Ninguno subido.</p><% } %><ul><% docs.forEach(function (d) { %><li><a href="/files/vehicle-doc/<%= d.id %>" target="_blank" rel="noopener"><%= d.doc_type %> – <%= d.original_name %></a></li><% }) %></ul></section>
   </div>
   <div>
     <% if (['pending_approval','approved'].includes(v.status) && !lots.some(function (l) { return ['prebidding','live','scheduled','pending_seller_approval','awarded'].includes(l.status); })) { %>
-    <section class="p-card" style="border-left:4px solid var(--green)"><h2>Approve &amp; publish</h2>
+    <section class="p-card" style="border-left:4px solid var(--green)"><h2>Aprobar y publicar</h2>
       <form data-api="/api/v1/admin/vehicles/<%= v.id %>/review" novalidate>
         <input type="hidden" name="approve" value="true">
-        <div class="form-row"><label for="ev">Auction</label><select id="ev" name="event_id" required><option value="">Select scheduled auction</option><% events.forEach(function (e) { %><option value="<%= e.id %>"><%= e.name %> – <%= dateTime(e.starts_at) %></option><% }) %></select></div>
-        <div class="form-grid"><div class="form-row"><label for="sb">Starting bid (€)</label><input id="sb" name="starting_bid" type="number" min="1" step="25" value="<%= v.estimated_value_cents ? Math.max(100, Math.round(v.estimated_value_cents * 0.15 / 2500) * 25) : 500 %>" required></div>
-        <div class="form-row"><label for="rs">Reserve (€)</label><input id="rs" name="reserve" type="number" min="0" step="25" value="<%= v.estimated_value_cents ? Math.round(v.estimated_value_cents * 0.35 / 2500) * 25 : 0 %>"></div>
-        <div class="form-row"><label for="bn">Buy It Now (€, optional)</label><input id="bn" name="buy_now" type="number" min="0" step="25" value="" placeholder="<%= v.estimated_value_cents ? Math.round(v.estimated_value_cents * 0.62 / 2500) * 25 : '' %>"></div></div>
-        <label class="check" style="margin-bottom:12px"><input type="checkbox" name="featured" <%= v.featured ? 'checked' : '' %>> Featured on home page</label>
-        <button class="btn btn-green" type="submit">Approve and create lot</button>
+        <div class="form-row"><label for="ev">Subasta</label><select id="ev" name="event_id" required><option value="">Elija una subasta programada</option><% events.forEach(function (e) { %><option value="<%= e.id %>"><%= e.name %> – <%= dateTime(e.starts_at) %></option><% }) %></select></div>
+        <div class="form-grid"><div class="form-row"><label for="sb">Precio de salida (€)</label><input id="sb" name="starting_bid" type="number" min="1" step="25" value="<%= v.estimated_value_cents ? Math.max(100, Math.round(v.estimated_value_cents * 0.15 / 2500) * 25) : 500 %>" required></div>
+        <div class="form-row"><label for="rs">Reserva (€)</label><input id="rs" name="reserve" type="number" min="0" step="25" value="<%= v.estimated_value_cents ? Math.round(v.estimated_value_cents * 0.35 / 2500) * 25 : 0 %>"></div>
+        <div class="form-row"><label for="bn">Buy It Now (€, opcional)</label><input id="bn" name="buy_now" type="number" min="0" step="25" value="" placeholder="<%= v.estimated_value_cents ? Math.round(v.estimated_value_cents * 0.62 / 2500) * 25 : '' %>"></div></div>
+        <label class="check" style="margin-bottom:12px"><input type="checkbox" name="featured" <%= v.featured ? 'checked' : '' %>> Destacado en la portada</label>
+        <button class="btn btn-green" type="submit">Aprobar y crear lote</button>
       </form>
     </section><% } %>
-    <% if (v.status === 'pending_approval') { %><section class="p-card"><h2>Reject</h2><form data-api="/api/v1/admin/vehicles/<%= v.id %>/review" novalidate><input type="hidden" name="approve" value="false"><div class="form-row"><label for="rr">Reason (sent to seller)</label><textarea id="rr" name="reason" rows="3" required></textarea></div><button class="btn btn-red" type="submit">Reject</button></form></section><% } %>
-    <% if (['approved','pending_approval'].includes(v.status)) { %><section class="p-card"><button class="btn btn-light" type="button" data-api="/api/v1/admin/vehicles/<%= v.id %>/withdraw" data-confirm="Withdraw this vehicle? Open lots will be cancelled.">Withdraw vehicle</button></section><% } %>
-    <section class="p-card"><h2>Lot history</h2><% if (!lots.length) { %><p class="hint">Never listed.</p><% } %><table class="tbl"><tbody><% lots.forEach(function (l) { %><tr><td><a href="/lot/<%= l.lot_number %>">#<%= l.lot_number %></a></td><td><%= l.event_name %></td><td class="num"><%= eur(l.current_bid_cents) %></td><td><%- badge(l.status) %></td></tr><% }) %></tbody></table></section>
+    <% if (v.status === 'pending_approval') { %><section class="p-card"><h2>Rechazar</h2><form data-api="/api/v1/admin/vehicles/<%= v.id %>/review" novalidate><input type="hidden" name="approve" value="false"><div class="form-row"><label for="rr">Motivo (se envía al vendedor)</label><textarea id="rr" name="reason" rows="3" required></textarea></div><button class="btn btn-red" type="submit">Rechazar</button></form></section><% } %>
+    <% if (['approved','pending_approval'].includes(v.status)) { %><section class="p-card"><button class="btn btn-light" type="button" data-api="/api/v1/admin/vehicles/<%= v.id %>/withdraw" data-confirm="¿Retirar este vehículo? Los lotes abiertos se cancelarán.">Retirar vehículo</button></section><% } %>
+    <section class="p-card"><h2>Historial de lotes</h2><% if (!lots.length) { %><p class="hint">Nunca se ha listado.</p><% } %><table class="tbl"><tbody><% lots.forEach(function (l) { %><tr><td><a href="/lot/<%= l.lot_number %>">#<%= l.lot_number %></a></td><td><%= l.event_name %></td><td class="num"><%= eur(l.current_bid_cents) %></td><td><%- badge(l.status) %></td></tr><% }) %></tbody></table></section>
   </div>
 </div>
 <%- include('../../partials/panel-end') %>

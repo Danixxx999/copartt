@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manual de presentación · Copart (réplica académica)</title>
+<style>
+  :root{--navy:#0b1a2e;--blue:#1f5fcf;--blue2:#6aa8ff;--brown:#8b3d00;--green:#15803d;--amber:#b45309;--ink:#0f172a;--muted:#5b6574;--line:#e3e7ee;--bg:#f4f6fa}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6}
+  .wrap{max-width:960px;margin:0 auto;padding:0 20px}
+  header.top{background:radial-gradient(circle at 85% 0%,rgba(106,168,255,.4),transparent 45%),linear-gradient(120deg,#050b14,#0b1f44 55%,#12366e);color:#fff;padding:46px 0 40px}
+  header.top h1{margin:0 0 6px;font-size:34px}
+  header.top p{margin:4px 0;color:#cdddf5}
+  .tag{display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);padding:4px 12px;border-radius:999px;font-size:13px;margin-top:10px}
+  nav.toc{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:10px 0;z-index:5;font-size:14px}
+  nav.toc a{color:var(--blue);text-decoration:none;margin-right:16px;white-space:nowrap}
+  nav.toc .wrap{overflow-x:auto;display:flex;gap:4px}
+  section{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px 26px;margin:22px 0;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+  h2{font-size:22px;margin:0 0 4px;display:flex;align-items:center;gap:10px}
+  h2 .n{background:var(--navy);color:#fff;width:30px;height:30px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex:none}
+  h3{font-size:16px;margin:18px 0 6px}
+  .sub{color:var(--muted);margin-top:0}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14.5px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#f7f9fc;color:#475569;font-size:12.5px;text-transform:uppercase;letter-spacing:.03em}
+  code{background:#eef2f8;padding:2px 6px;border-radius:5px;font-size:13px}
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700}
+  .p-admin{background:#e0edff;color:#1f5fcf}.p-buyer{background:#dcfce7;color:#15803d}.p-seller{background:#ffedd5;color:#9a3412}.p-staff{background:#ede9fe;color:#6d28d9}
+  ol.steps{counter-reset:s;list-style:none;padding:0;margin:0}
+  ol.steps>li{counter-increment:s;position:relative;padding:12px 0 12px 46px;border-bottom:1px dashed var(--line)}
+  ol.steps>li:last-child{border-bottom:0}
+  ol.steps>li::before{content:counter(s);position:absolute;left:0;top:12px;width:30px;height:30px;background:var(--blue);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+  .wow{background:#fff7ed;border-left:4px solid var(--brown);padding:10px 14px;border-radius:0 8px 8px 0;margin:8px 0;font-size:14px}
+  .wow b{color:var(--brown)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .card{border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .card h4{margin:0 0 4px;font-size:15px}
+  .muted{color:var(--muted);font-size:13.5px}
+  .note{background:#fffbeb;border:1px solid #fcd34d;border-radius:10px;padding:14px 16px;color:#78350f;font-size:14px}
+  .ok{color:var(--green);font-weight:700}
+  kbd{background:#0b1a2e;color:#fff;border-radius:5px;padding:2px 8px;font-size:12px}
+  footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}header.top h1{font-size:26px}}
+  @media print{nav.toc{display:none}body{background:#fff}section{box-shadow:none;break-inside:avoid}header.top{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <h1>Copart — Plataforma de subastas de vehículos</h1>
+  <p>Réplica académica funcional · Manual de presentación y demostración</p>
+  <p class="muted" style="color:#9fb6dc">Proyecto universitario · Web + API + PostgreSQL · subastas en tiempo real, pagos simulados, panel de administración completo.</p>
+  <span class="tag">Entorno de pruebas — datos ficticios, sin pagos reales</span>
+</div></header>
+
+<nav class="toc"><div class="wrap">
+  <a href="#arranque">1 · Arrancar</a>
+  <a href="#cuentas">2 · Cuentas</a>
+  <a href="#demo">3 · Guion de demo</a>
+  <a href="#dinamicas">4 · Dinámicas</a>
+  <a href="#dueno">5 · Panel del dueño</a>
+  <a href="#arquitectura">6 · Cómo está hecho</a>
+  <a href="#limites">7 · Límites</a>
+</div></nav>
+
+<div class="wrap">
+
+<section id="arranque">
+  <h2><span class="n">1</span> Cómo arrancar el proyecto</h2>
+  <p class="sub">Todo está instalado de forma portable; no hace falta instalar nada en el equipo.</p>
+  <h3>En este computador</h3>
+  <p>Doble clic en <code>INICIAR.bat</code>. Arranca la base de datos y el servidor, y abre <b>http://localhost:3000</b>.</p>
+  <h3>Desde la terminal (VS Code)</h3>
+  <table>
+    <tr><th>Comando</th><th>Qué hace</th></tr>
+    <tr><td><code>npm run db:start</code></td><td>Inicia PostgreSQL (puerto 5433)</td></tr>
+    <tr><td><code>npm start</code></td><td>Inicia la web en http://localhost:3000</td></tr>
+    <tr><td><code>npm run reset-demo -- --yes</code></td><td>Deja los datos de demostración como nuevos (útil antes de presentar)</td></tr>
+    <tr><td><code>npm test</code></td><td>Ejecuta las 31 pruebas automáticas (deben pasar todas)</td></tr>
+  </table>
+  <div class="note"><b>Consejo para la presentación:</b> ejecuta <code>npm run reset-demo -- --yes</code> justo antes, para tener una subasta en vivo fresca que iniciar delante del profe.</div>
+</section>
+
+<section id="cuentas">
+  <h2><span class="n">2</span> Cuentas para entrar</h2>
+  <p class="sub">Entra en <b>/login</b>. Contraseña de <b>todas</b>: <code>Demo2026!</code></p>
+  <table>
+    <tr><th>Correo</th><th>Rol</th><th>Para mostrar</th></tr>
+    <tr><td><code>admin@copart.test</code></td><td><span class="pill p-admin">Dueño / Admin</span></td><td>Controla TODO: usuarios, subastas, pagos, roles, anuncios, informes</td></tr>
+    <tr><td><code>finanzas@copart.test</code></td><td><span class="pill p-staff">Finanzas</span></td><td>Aprueba transferencias y reembolsos, emite el PIN</td></tr>
+    <tr><td><code>logistica@copart.test</code></td><td><span class="pill p-staff">Logística</span></td><td>Valida el PIN de recogida y gestiona transporte</td></tr>
+    <tr><td><code>vendedor@copart.test</code></td><td><span class="pill p-seller">Vendedor</span></td><td>Publica vehículos, acepta/rechaza/contraoferta (elige «Vendedor» al entrar)</td></tr>
+    <tr><td><code>premium@copart.test</code></td><td><span class="pill p-buyer">Comprador Premium</span></td><td>Puja sin límite por vehículo; ideal para ganar en la demo</td></tr>
+    <tr><td><code>premium2@copart.test</code></td><td><span class="pill p-buyer">Comprador Premium</span></td><td>El segundo postor para mostrar la puja en tiempo real entre dos</td></tr>
+    <tr><td><code>basic@copart.test</code></td><td><span class="pill p-buyer">Comprador Basic</span></td><td>Puja hasta 5.000 € por vehículo (muestra el límite del plan)</td></tr>
+    <tr><td><code>guest@copart.test</code></td><td><span class="pill p-buyer">Invitado</span></td><td>Mira y guarda favoritos pero <b>no puede pujar</b></td></tr>
+    <tr><td><code>pendiente@copart.test</code></td><td><span class="pill p-buyer">Docs en revisión</span></td><td>No puede pujar hasta que se aprueben sus documentos</td></tr>
+  </table>
+  <p class="muted">También se puede entrar con el <b>número de miembro</b> (ej. <code>000001</code>) en lugar del correo. Los botones «Continuar con Google / Microsoft» están listos: se activan cuando se configuran sus claves (ver sección 5).</p>
+</section>
+
+<section id="demo">
+  <h2><span class="n">3</span> Guion de demostración (≈10 min)</h2>
+  <p class="sub">La ruta recomendada para enseñar que <b>todo funciona de punta a punta</b>.</p>
+  <ol class="steps">
+    <li><b>La web pública.</b> Abre <b>/</b> sin sesión: cabecera, subastas en vivo, vehículos populares, buscador, pie. Cambia <b>idioma</b> (hay 6: ES, EN, FR, عربي, RU, PL) y <b>región</b> (11 países) arriba a la derecha — el inventario cambia solo.</li>
+    <li><b>Buscar un vehículo.</b> Entra a <em>Buscador de vehículos</em>, filtra por marca/condición/kilometraje y abre una ficha de lote: galería, VIN enmascarado, daños, calculadora de costes.</li>
+    <li><b>Invitado no puede pujar.</b> Entra con <code>guest@</code> e intenta ofertar: el servidor lo bloquea (no es solo ocultar el botón). Agrega el lote a favoritos.</li>
+    <li><b>Vendedor publica.</b> Con <code>vendedor@</code> (modo Vendedor) crea un vehículo y súbelo. Con <code>admin@</code> › <em>Vehículos y aprobaciones</em> apruébalo y asígnalo a una subasta con precio de salida, reserva y opción <em>Buy It Now</em>. Ya aparece en el buscador público.</li>
+    <li><b>Subasta en vivo (lo más vistoso).</b> Con <code>admin@</code> › <em>Subastas</em> › <b>Iniciar ahora</b> en «Sala demo». Abre la sala con <code>premium@</code> en una ventana y <code>premium2@</code> en otra (o ventana de incógnito).
+      <div class="wow"><b>⏱ Dinámica:</b> verás el <b>temporizador en cuenta atrás</b> que controla el servidor, y cómo la puja de uno <b>le aparece al otro al instante</b>. Si alguien puja en los últimos segundos, el reloj se <b>extiende solo</b> (anti-sniping). Al cerrar, hay <b>un único ganador</b>.</div></li>
+    <li><b>Comprar sin subasta.</b> En un lote con etiqueta <em>Buy It Now</em>, cómpralo a precio fijo: se cierra al instante y genera la factura.</li>
+    <li><b>Contraoferta.</b> Si una puja no llega a la reserva, el <code>vendedor@</code> envía una contraoferta y el comprador la acepta o rechaza desde <em>Estado de la oferta › Contraofertas</em>.</li>
+    <li><b>Pagar y recoger.</b> El ganador va a <em>Lotes ganados</em> → factura (PDF) → paga las tasas con tarjeta sandbox <code>4242 4242 4242 4242</code> y el vehículo por transferencia (sube el justificante).</li>
+    <li><b>Finanzas y Logística.</b> <code>finanzas@</code> aprueba la transferencia → se emite el <b>PIN</b>. <code>logistica@</code> valida el PIN y marca el pedido como completado.</li>
+    <li><b>Anuncios dinámicos.</b> Con <code>admin@</code> › <em>Anuncios y publicidad</em> crea un anuncio y márcalo «enviar al buzón». <div class="wow"><b>📣 Dinámica:</b> aparece al instante como <b>banner</b> en la cabecera de los compradores y en su <b>buzón de notificaciones</b>; ellos pueden cerrarlo.</div></li>
+    <li><b>Auditoría.</b> Todo lo anterior queda registrado en <em>Administración › Registro de auditoría</em> y los correos demo en <em>Buzón de prueba</em>.</li>
+  </ol>
+</section>
+
+<section id="dinamicas">
+  <h2><span class="n">4</span> Las dinámicas (qué se mueve solo)</h2>
+  <div class="grid">
+    <div class="card"><h4>⏱ Reloj de subasta (servidor)</h4><p class="muted">Cada lote abre 20 s. El reloj vive en el servidor, no en el navegador: si recargas o se reinicia, la subasta continúa donde iba. Nadie puede «hacer trampa» con el reloj de su PC.</p></div>
+    <div class="card"><h4>⚡ Tiempo real (WebSocket)</h4><p class="muted">Las pujas se transmiten en vivo por Socket.IO: lo que puja uno aparece al instante en la pantalla del otro, sin recargar.</p></div>
+    <div class="card"><h4>🛡 Anti-sniping</h4><p class="muted">Si entra una puja con menos de 10 s restantes, el cierre se extiende, como en las subastas reales.</p></div>
+    <div class="card"><h4>🤖 Puja automática (proxy)</h4><p class="muted">Pones tu máximo y el sistema puja por ti el mínimo necesario para ir ganando, hasta tu tope. El rival solo ve el precio, no tu máximo.</p></div>
+    <div class="card"><h4>📣 Anuncios en vivo</h4><p class="muted">El dueño publica avisos/publicidad que salen como banner y notificación a la audiencia elegida, al momento.</p></div>
+    <div class="card"><h4>🔔 Notificaciones</h4><p class="muted">Te avisan cuando te superan la oferta, ganas un lote, te emiten el PIN, etc.</p></div>
+  </div>
+</section>
+
+<section id="dueno">
+  <h2><span class="n">5</span> Lo que el dueño (admin) puede hacer</h2>
+  <p class="sub">Entra con <code>admin@copart.test</code> → menú <em>Administración</em>. Puede controlar absolutamente todo:</p>
+  <div class="grid">
+    <div class="card"><h4>Usuarios</h4><p class="muted">Crear cualquier cuenta, cambiar datos/plan/contraseña, suspender, y <b>«Entrar como» otro usuario</b> para dar soporte (queda auditado).</p></div>
+    <div class="card"><h4>Roles y permisos</h4><p class="muted">Crear roles propios (ej. «Editor») y marcar qué puede hacer cada uno. El menú se adapta a sus permisos.</p></div>
+    <div class="card"><h4>Vehículos y subastas</h4><p class="muted">Publicar vehículos, aprobar los de vendedores, programar e iniciar subastas, poner salida/reserva/Buy It Now.</p></div>
+    <div class="card"><h4>Finanzas y logística</h4><p class="muted">Validar pagos y reembolsos, emitir PIN, gestionar transporte, ver saldos.</p></div>
+    <div class="card"><h4>Anuncios y contenido</h4><p class="muted">Crear anuncios/publicidad, editar páginas y banners del sitio.</p></div>
+    <div class="card"><h4>Informes</h4><p class="muted">Ventas, inventario, pagos, pujas… con exportación a CSV.</p></div>
+    <div class="card"><h4>Pasarelas de pago</h4><p class="muted">Deja listo el cobro real (Stripe, Wompi, PayPal…): se activa poniendo las claves en el servidor. Hoy todo es sandbox.</p></div>
+    <div class="card"><h4>Inicio de sesión social</h4><p class="muted">Google y Microsoft funcionan en cuanto se ponen sus claves; la página explica exactamente qué pegar y dónde.</p></div>
+  </div>
+</section>
+
+<section id="arquitectura">
+  <h2><span class="n">6</span> Cómo está hecho (para explicar)</h2>
+  <div class="grid">
+    <div class="card"><h4>Tecnología</h4><p class="muted">Node.js + Express (servidor), EJS (páginas), <b>PostgreSQL</b> (base de datos), Socket.IO (tiempo real). Un solo proceso, SQL explícito.</p></div>
+    <div class="card"><h4>Base de datos</h4><p class="muted">~43 tablas con migraciones versionadas. Importes en céntimos. Reglas garantizadas por la base: un solo ganador por lote, una membresía activa por usuario, etc.</p></div>
+    <div class="card"><h4>Seguridad</h4><p class="muted">Contraseñas con Argon2id, sesiones con cookie HttpOnly, CSRF en todas las acciones, permisos por endpoint (no solo ocultar botones), límite de intentos, subidas verificadas por firma de bytes.</p></div>
+    <div class="card"><h4>Calidad</h4><p class="muted"><span class="ok">31 pruebas</span> de servidor + <span class="ok">18 en navegador real</span> + recorrido de <span class="ok">150 páginas</span> sin errores.</p></div>
+  </div>
+  <h3>Documentación incluida en el proyecto</h3>
+  <ul class="muted">
+    <li><code>README.md</code> — arranque, cuentas, comandos y <b>cómo subirlo a un hosting con dominio</b>.</li>
+    <li><code>docs/ARQUITECTURA.md</code> — diagramas, modelo de datos, motor de pujas, seguridad.</li>
+    <li><code>docs/AUDITORIA.md</code> — mapa de rutas y criterios de aceptación verificados.</li>
+    <li><b>/api/docs</b> en la web — referencia de la API (98 operaciones).</li>
+  </ul>
+</section>
+
+<section id="limites">
+  <h2><span class="n">7</span> Qué es real y qué es simulado (honestidad)</h2>
+  <ul class="muted">
+    <li><b>Funciona de verdad:</b> registro, login, roles, subastas en tiempo real, facturación con PDF, flujo de pago → finanzas → PIN, anuncios, idiomas y regiones, panel de administración completo.</li>
+    <li><b>Simulado:</b> los pagos (tarjeta sandbox), los correos (se guardan en «Buzón de prueba», no se envían), las tarifas e IBAN. Los vehículos usan imágenes de ejemplo.</li>
+    <li><b>Listo pero sin activar:</b> el cobro real y el login con Google/Microsoft se activan poniendo claves; el sistema ya está preparado.</li>
+  </ul>
+  <div class="note"><b>Nota sobre la marca:</b> este es un proyecto académico; el pie de cada página lo indica. No está afiliado a Copart. Para la entrega, conviene usar un logotipo propio.</div>
+</section>
+
+<footer>Manual generado para la presentación del proyecto · Entorno de pruebas, datos ficticios, sin pagos reales.</footer>
+</div>
+</body>
+</html>

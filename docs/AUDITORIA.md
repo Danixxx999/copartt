@@ -51,14 +51,14 @@
 
 **Comprador (nuevas):** `/dashboard/payments`, `/dashboard/buying-power`, `/dashboard/recently-viewed`, `/dashboard/bids?tab=counter`. **Admin (nuevas):** `/admin/roles`, `/admin/vehicles/new`, `/admin/vehicles/:id/edit`.
 
-**API:** ver `/api/docs` y `/openapi.json` (93 operaciones).
+**API:** ver `/api/docs` y `/openapi.json` (98 operaciones).
 
 ## 4. Criterios de aceptación (estado verificado)
 
 | # | Criterio | Verificado por |
 |---|---|---|
 | 1 | Home parecida a la referencia, desktop y móvil | `docs/screenshots/*` + E2E móvil |
-| 2 | Menús sin 404 ni pantallas vacías | `scripts/crawl.js`: 133 páginas (incluye 6 idiomas, varias regiones y las páginas del portal), 0 errores |
+| 2 | Menús sin 404 ni pantallas vacías | `scripts/crawl.js`: 150 páginas (incluye 6 idiomas, varias regiones y las páginas del portal), 0 errores |
 | 3 | Registro → membresía → panel; persiste tras recargar | integración (test 3) |
 | 4 | Guest no puja; elegible sí | integración (test 2) + E2E |
 | 5 | Vendedor crea/edita → admin aprueba → aparece con filtros | integración (test 4) + E2E |

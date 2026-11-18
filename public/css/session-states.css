@@ -3,7 +3,8 @@
 .visitor-portal .portal-caption { display: none; }
 .visitor-portal .hdr-main { height: clamp(72px,4.74vw,90px); }
 .visitor-portal.theme-light { background: #f4f8fc; color: #535d6a; }
-.visitor-portal.theme-light .hdr-main { background: linear-gradient(100deg,#202327,#0b3cb3 80%,#0938b5); color: #fff; }
+.visitor-portal.theme-light .hdr-main { background: linear-gradient(100deg,#082356 0%,#0d3a9e 55%,#1151c4 100%); color: #fff; }
+.visitor-portal.theme-light .hdr-main::after { background-image: radial-gradient(#4f8bff 2.2px, transparent 2.6px); opacity: .55; }
 .visitor-portal.theme-light .hdr-search input { background: #fff; color: #30394a; border-color: #c7ced7; }
 .visitor-portal.theme-light .hdr-search input::placeholder { color: #9aa5b8; }
 .visitor-portal.theme-light .hdr-search>.btn,.visitor-portal.theme-light .hdr-right>a.btn-brown { background: #ffbc32; color: #080808; }
@@ -41,7 +42,48 @@
 .theme-light .home-browse .tab-list button { color: #566170; }.theme-light .home-browse .tab-list button[aria-selected=true] { color: #0e3b97; }.theme-light .home-browse .link-cols a { color: #0856d9; }
 .theme-light .home-promo-row { background: #f4f8fc; }.theme-light .home-about-copy { background: #e0e2e5; }
 .visitor-portal.theme-light .reference-home .home-about h2 { color: #000; }
-.visitor-portal.theme-light .site-footer { background: #e1e3e7; }
+/* Footer oscuro como el Copart real: fondo carbón, títulos naranja, enlaces blancos */
+.visitor-portal.theme-light .site-footer { background: #1b1d21; color: #c9ccd2; }
+.visitor-portal.theme-light .site-footer .ftr-grid h3 { color: #f5a623; }
+.visitor-portal.theme-light .site-footer .ftr-grid a { color: #e7e9ec; }
+.visitor-portal.theme-light .site-footer .ftr-grid a:hover { color: #fff; }
+.visitor-portal.theme-light .site-footer .ftr-bottom { color: #9aa0a8; border-top: 1px solid #2d3036; padding-top: 18px; }
+.visitor-portal.theme-light .site-footer .ftr-bottom a { color: #c9ccd2; }
+/* Páginas de contenido/servicio (page-dark) en claro, como el Copart real */
+.visitor-portal.theme-light .page-dark { background: #fff; color: #39414d; }
+.visitor-portal.theme-light .page-dark .page-title { color: #07359b; }
+.visitor-portal.theme-light .content-body { color: #3a4452; }
+.visitor-portal.theme-light .content-body h2 { color: #10151c; }
+.visitor-portal.theme-light .content-body a, .visitor-portal.theme-light .page-dark a:not(.btn) { color: #0856d9; }
+.visitor-portal.theme-light .page-dark input:not([type=checkbox]):not([type=radio]):not([type=file]), .visitor-portal.theme-light .page-dark select, .visitor-portal.theme-light .page-dark textarea { background: #fff; color: #10151c; border-color: #c7ced7; }
+/* Tarjetas de servicio (brokers, informes, licencias) */
+.svc-hero { background: linear-gradient(100deg,#07224f,#0c3fa6 70%,#1151c4); color: #fff; padding: 48px 24px; }
+.svc-hero .wrap { display: grid; gap: 10px; }
+.svc-hero .tag { display: inline-block; background: #ffffff22; color: #cfe0ff; font-size: 13px; font-weight: 700; padding: 5px 12px; border-radius: 999px; width: fit-content; }
+.svc-hero h1 { font-size: clamp(28px,3.4vw,42px); font-weight: 900; margin: 0; }
+.svc-hero p { font-size: 17px; max-width: 680px; margin: 6px 0 0; color: #e7eefc; }
+.svc-hero .btn { margin-top: 14px; width: fit-content; }
+.svc-section { padding: 46px 24px; }
+.svc-section.alt { background: #f1f5fb; }
+.svc-section h2 { color: #07359b; font-size: clamp(22px,2.4vw,30px); font-weight: 900; text-align: center; margin: 0 0 8px; }
+.svc-section .svc-lead { text-align: center; max-width: 760px; margin: 0 auto 28px; color: #4a5461; }
+.svc-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 20px; max-width: 1160px; margin: 0 auto; }
+.svc-grid.cols-2 { grid-template-columns: repeat(2,minmax(0,1fr)); max-width: 860px; }
+.svc-card { background: #fff; border: 1px solid #e0e4ea; border-radius: 10px; padding: 24px; box-shadow: 0 2px 6px #0000000d; }
+.svc-card h3 { color: #123b97; font-size: 18px; margin: 0 0 8px; display: flex; align-items: center; gap: 8px; }
+.svc-card p { margin: 0; font-size: 14.5px; color: #4a5461; line-height: 1.6; }
+.svc-card ul { margin: 10px 0 0; padding-left: 18px; font-size: 14px; color: #4a5461; line-height: 1.7; }
+.svc-card .num { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #0a4ff0; color: #fff; font-size: 14px; flex: none; }
+.svc-faq { max-width: 820px; margin: 0 auto; }
+.svc-faq details { background: #fff; border: 1px solid #e0e4ea; border-radius: 8px; padding: 2px 18px; margin-bottom: 10px; }
+.svc-faq summary { cursor: pointer; font-weight: 700; color: #16233a; padding: 14px 0; font-family: var(--font-h); }
+.svc-faq details p { margin: 0 0 14px; color: #4a5461; font-size: 14.5px; }
+.svc-note { background: #fff8e6; border: 1px solid #f3d98a; color: #6b5412; border-radius: 8px; padding: 14px 18px; max-width: 1160px; margin: 0 auto 24px; font-size: 14px; }
+@media(max-width:900px){ .svc-grid,.svc-grid.cols-2 { grid-template-columns: minmax(0,1fr); } }
+/* Banda CTA "Regístrate ahora": azul royal con texto blanco y botón amarillo */
+.visitor-portal.theme-light .cta-band { background: #0a4ff0; }
+.visitor-portal.theme-light .cta-band p { color: #fff; font-weight: 500; }
+.visitor-portal.theme-light .cta-band .btn { background: #ffbc32; color: #141414; font-weight: 700; }
 .visitor-portal:has(.reference-lot) { background: #000; color: #bfc3c9; }
 .visitor-portal:has(.reference-lot) .hdr-nav { background: #e1e2e4; }.visitor-portal:has(.reference-lot) .hdr-nav>ul>li>a,.visitor-portal:has(.reference-lot) .hdr-nav>ul>li>button { color: #111; }.visitor-portal:has(.reference-lot) .hdr-nav>ul>li>a.nav-sell { background: #853d00; color: #fff; }
 .visitor-portal:has(.reference-lot) .hdr-nav .nav-help { background: #c5c8cd; }
